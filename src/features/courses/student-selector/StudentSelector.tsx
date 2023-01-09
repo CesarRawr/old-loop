@@ -22,6 +22,7 @@ export default function StudentSelector(props: SelectorProps) {
   return (
     <div>
       <ListInput 
+        isLoading={props.isLoading}
         name="alumnos" 
         placeholder="Alumno" 
         optionList={students}

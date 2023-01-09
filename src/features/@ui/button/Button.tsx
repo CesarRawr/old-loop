@@ -1,16 +1,27 @@
-import React from 'react';
-import styles from './Button.module.css';
+import React, {useRef, useEffect, useState} from 'react';
+import style from './Button.module.css';
 import {MouseElementFunction} from '../../../types';
 
 export default function Button(props: ButtonProps) {
+  const ref = useRef<any>(null);
+  const [styles, setStyles] = useState<any>({});
+
+  useEffect(() => {
+    if (!!ref) {
+      setStyles({
+        maxHeight: ref.current.offsetHeight,
+      });
+    }
+  }, [ref]);
+
   return (
     <button 
+      ref={ref}
       type={props.type ? props.type: "button"}
-      className={styles.btn} 
+      className={style.btn} 
       onClick={props.onClick} 
       disabled={props.disabled}
-      style={props.style}
-      >
+      style={{...props.style, ...styles}}>
       {
         props.text
       }

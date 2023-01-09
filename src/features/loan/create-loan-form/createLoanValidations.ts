@@ -1,5 +1,5 @@
 // Validaciones sencillas
-export const firstValidations = ({formData, selectedDevices}: FirstValidationsProps) => {
+export const firstValidations = (formData: any, selectedDevices: any) => {
 	const formDataProperties: string[] = [
     "aulas",
     "horaFin",
@@ -9,13 +9,27 @@ export const firstValidations = ({formData, selectedDevices}: FirstValidationsPr
     "nrcs"
   ];
 
-	let isEmpty = false;
+  // Revisar si no hay campos vacios
   for (let property of formDataProperties) {
-    isEmpty = !formData.hasOwnProperty(property);
+    if (!formData.hasOwnProperty(property)) {
+      return {
+        isValid: false,
+        dialog: {
+          title: 'Alerta',
+          description: 'No dejes campos vacios',
+        }
+      }
+    }
   }
 
-  // Terminar si hay campos vacios
-  if (isEmpty) {
+  // Revisar si no hay campos vacios
+  if (!formData.aulas.length || 
+    !formData.horaFin.length || 
+    !formData.horaInicio.length || 
+    !formData.maestros.length || 
+    !formData.materias.length || 
+    !formData.nrcs.length) {
+
     return {
       isValid: false,
       dialog: {
@@ -64,7 +78,7 @@ export const firstValidations = ({formData, selectedDevices}: FirstValidationsPr
 }
 
 // Validaciones complejas relacionadas con dispositivos
-export const secondValidations = ({formData, selectedDevices, devices}: SecondValidationsProps) => {
+export const secondValidations = (formData: any, selectedDevices: any, devices: any) => {
   // saber si el salón seleccionado tiene un control
   const isThereAControl = devices.filter((device: any) => {
     const deviceName = device.nombre.split(" ")[1];

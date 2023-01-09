@@ -152,6 +152,7 @@ export default function TeacherSelector(props: SelectorProps) {
         }
       }}
       listInput={{
+        isLoading: props.isLoading,
         name: 'maestros',
         placeholder: 'Maestro',
         size: 70,

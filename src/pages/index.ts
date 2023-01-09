@@ -1,2 +1,2 @@
 export {Main} from './Main';
-export {Login} from './Login';
+export {default as Login} from './login/Login';

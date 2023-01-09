@@ -1,0 +1,33 @@
+.main-item {
+  background-color: #fff;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.static-background {
+  background-color: #e8eaed;
+}
+
+/*
+* Animated css
+*/
+@keyframes placeHolderShimmer {
+  0% {
+    background-position: -600px 0
+  }
+  100% {
+    background-position: 600px 0
+  }
+}
+
+.animated-background {
+  animation-duration: 2s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: placeHolderShimmer;
+  animation-timing-function: linear;
+  background-color: #f6f7f8;
+  background: linear-gradient(to right, #eeeeee 8%, #bbbbbb 18%, #eeeeee 33%);
+  background-size: 600px 104px;
+  position: relative;
+}

@@ -7,7 +7,7 @@
 
 .bottomPane {
   display: grid;
-  grid-template-columns: 27% 30% 25% 1fr;
+  grid-template-columns: 28% 1fr;
   grid-gap: .7rem;
   padding: .2rem 0 .3rem 0;
   width: 100%;

@@ -25,6 +25,7 @@ export default function HoursSelector(props: SelectorProps) {
             width: "5.5vw",
           }}>
           <ListInput 
+            isLoading={props.isLoading}
             name="horaInicio" 
             placeholder="Inicio"
             optionList={[
@@ -48,6 +49,7 @@ export default function HoursSelector(props: SelectorProps) {
             width: "5.5vw",
           }}>
           <ListInput 
+            isLoading={props.isLoading}
             name="horaFin" 
             placeholder="Fin"
             optionList={[

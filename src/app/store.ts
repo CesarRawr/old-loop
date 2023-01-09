@@ -4,6 +4,7 @@ import counterReducer from '../features/counter/counterSlice';
 import devicesReducer from '../features/devices/deviceSlice';
 import coursesReducer from '../features/courses/courseSlice';
 import dialogReducer from '../features/dialog/dialogSlice';
+import createLoanReducer from '../features/loan/create-loan-form/createLoanFormSlice';
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
     devices: devicesReducer,
     courses: coursesReducer,
     dialog: dialogReducer,
+    createLoan: createLoanReducer,
   },
 });
 

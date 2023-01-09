@@ -4,6 +4,7 @@ import React from 'react';
 // @Interfaces
 ////////////////////////////////////
 export interface SelectorProps {
+  isLoading?: boolean;
   setValue: any;
 }
 

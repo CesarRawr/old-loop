@@ -30,10 +30,10 @@ export const fetchDevices = createAsyncThunk('devices/fetchDevices', async () =>
       isDisabled: false,
       localPrestado: 0,
       get label() {
-        return `${this.value} (${this.stock-this.prestado})`;
+        return `${this.value} (${this.stock-this.prestado-this.localPrestado})`;
       },
       get labelPrestado() {
-        return `${this.value} (${this.prestado})`;
+        return `${this.value} (${this.localPrestado})`;
       },
     }
   });
@@ -51,13 +51,15 @@ export const deviceSlice = createSlice({
     updateSelected: (state, action: PayloadAction<Item>) => {
       const [lastItem] = state.devices.filter((device: Item) => device._id === action.payload._id);
       const selectedDevices = state.selectedDevices.map((device: Item) => ({...device}));
+      // Verificar si existe el ultimo item en el array value
       const [result] = selectedDevices.filter((device: Item) => device._id === lastItem._id);
 
+      // Si existe el tag, modifica la cantidad, si no, agrega el nuevo item
       const tags = !!result ? (
         state.selectedDevices.map((device: Item) => {
           return (device.value !== lastItem.value) ? {...device}: {
             ...device,
-            // Falta actualizar el atributo prestado
+            localPrestado: device.localPrestado+1,
             value: device.value,
             label: lastItem.labelPrestado,
           };
@@ -73,14 +75,16 @@ export const deviceSlice = createSlice({
     updateDeviceAmount: (state, action: PayloadAction<Item>) => {
       const devices = state.devices.map((device) => {
         if (device._id === action.payload._id) {
-          device.prestado++;
-          if ((device.stock-device.prestado) === 0) device.isDisabled = true;
+          // Aumentar en 1 la cantidad local prestada
+          device.localPrestado++;
+          // Deshabilitar si el dispositivo llega a 0 de stock
+          if ((device.stock-device.prestado-device.localPrestado) === 0) device.isDisabled = true;
         }
 
         return {
           ...device,
-          label: `${device.value} (${device.stock-device.prestado})`,
-          labelPrestado: `${device.value} (${device.prestado})`,
+          label: `${device.value} (${device.stock-device.prestado-device.localPrestado})`,
+          labelPrestado: `${device.value} (${device.localPrestado})`,
         };
       });
 
@@ -96,16 +100,19 @@ export const deviceSlice = createSlice({
       // Actualizar la opción eliminada
       const devicesUpdated = state.devices.map((option: Item) => {
         return option.value !== itemDeleted.value ? ({...option}): (
-          option.prestado = 0,
+          option.localPrestado = 0,
           option.isDisabled = false,
-          option.label = `${option.value} (${option.stock-option.prestado})`,
-          option.labelPrestado = `${option.value} (${option.prestado})`,
+          option.label = `${option.value} (${option.stock-option.prestado-option.localPrestado})`,
+          option.labelPrestado = `${option.value} (${option.localPrestado})`,
           {...option}
         );
       });
 
       state.devices = devicesUpdated;
       state.selectedDevices = selected;
+    },
+    clearDevices: (state) => {
+      state.selectedDevices = [];
     },
     setSelectedDevices: (state, action: PayloadAction<Item[]>) => {
       state.selectedDevices = action.payload;
@@ -135,7 +142,8 @@ export const {
   setSelectedDevices, 
   setDevices,
   updateSelected,
-  removeSelected
+  removeSelected,
+  clearDevices,
 } = deviceSlice.actions;
 
 ///////////////////////////

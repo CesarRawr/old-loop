@@ -1,7 +1,9 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../../app/store';
-import { prestamos } from '../../../datatest/data';
 import type { Prestamo } from '../../../datatest/models';
+import { prestamos } from '../../../datatest/data';
+import {urlBase} from '../../../variables';
+import axios from 'axios';
 
 ///////////////////////////
 // State
@@ -31,8 +33,8 @@ const initialState: LoanState = {
       nickname: '',
     },
     timelog: {
-      inicio: new Date(),
-      fin: new Date(),
+      inicio: new Date().toString(),
+      fin: new Date().toString(),
     },
     alumno: {
       _id: '',
@@ -40,7 +42,8 @@ const initialState: LoanState = {
       nombre: '',
     },
   },
-  status: 'idle',
+  isLoading: false,
+  error: false,
 }
 
 ///////////////////////////
@@ -49,29 +52,55 @@ const initialState: LoanState = {
 
 // Function to upload loan
 export const uploadLoan = createAsyncThunk('loan/uploadLoan', async (prestamo: Prestamo) => {
-  prestamos.push(prestamo);
+  const token = localStorage.getItem('token');
+  const config = {
+    headers: { Authorization: `Bearer ${token}` }
+  };
+
+  const {data, status} = await axios.post(`${urlBase}/v1/loan`, prestamo, config);
+  return {
+    data,
+    status,
+  };
 });
 
 ///////////////////////////
 // Slice
 ///////////////////////////
-export const courseSlice = createSlice({
+export const createLoanSlice = createSlice({
   name: 'devices',
   initialState,
-  reducers: {},
+  reducers: {
+    setIsLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(uploadLoan.pending, (state) => {
-        state.status = 'loading';
+        state.isLoading = true;
       })
       .addCase(uploadLoan.fulfilled, (state, action) => {
-        state.status = 'idle';
+        state.isLoading = false;
       })
       .addCase(uploadLoan.rejected, (state) => {
-        state.status = 'failed';
+        state.isLoading = false;
+        state.error = true;
       });
   },
 });
+
+export default createLoanSlice.reducer;
+
+///////////////////////////
+// Actions
+///////////////////////////
+export const {setIsLoading} = createLoanSlice.actions;
+
+///////////////////////////
+// Selectors
+///////////////////////////
+export const selectLoanIsLoading = (state: RootState) => state.createLoan.isLoading;
 
 ///////////////////////////
 // Interfaces
@@ -91,6 +120,7 @@ interface Horario {
 
 export interface LoanState {
   prestamo: Prestamo;
-  status: 'idle' | 'loading' | 'failed';
+  isLoading: boolean;
+  error: boolean;
 }
 

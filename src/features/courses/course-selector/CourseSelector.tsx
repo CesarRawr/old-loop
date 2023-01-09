@@ -152,6 +152,7 @@ export default function CourseSelector(props: SelectorProps) {
         }
       }}
       listInput={{
+        isLoading: props.isLoading,
         name: 'materias',
         placeholder: 'Materia',
         size: 70,

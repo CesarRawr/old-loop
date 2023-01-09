@@ -14,7 +14,7 @@ import {
   removeSelected
 } from '../deviceSlice';
 
-export default function DeviceSelector() {
+export default function DeviceSelector({isLoading}: {isLoading: any}) {
   const dispatch = useAppDispatch();
   const values = useAppSelector(selectSelectedDevices);
   const devices = useAppSelector(selectDevices);
@@ -47,6 +47,7 @@ export default function DeviceSelector() {
       name="dispositivos" 
       placeholder="Dispositivos"
       onChange={onChange} 
-      values={values} />
+      values={values}
+      isLoading={isLoading} />
   );
 }

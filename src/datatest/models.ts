@@ -64,15 +64,16 @@ export interface Prestamo {
   dispositivos: {
     _id: string;
     nombre: string;
-    cantidadPrestada: number;
+    prestado: number;
+    stock: number;
   }[];
   usuario: {
     _id: string;
     nickname: string;
   };
   timelog: {
-    inicio: Date;
-    fin?: Date;
+    inicio: string;
+    fin?: string;
   };
   alumno?: Alumno;
 }

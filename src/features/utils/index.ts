@@ -1,3 +1,5 @@
+import jwtDecode from "jwt-decode";
+
 //////////////////////////////
 // Time Utils
 /////////////////////////////
@@ -43,6 +45,14 @@ export const serializeFunction = (func: (data: any) => void) => (func.toString()
 export const deserializeFunction = (funcString: string) => (new Function(`return ${funcString}`)());
 
 type Semana = "lunes" | "martes" | "miercoles" | "jueves" | "viernes" | "sabado" | "domingo";
+
+//////////////////////////////
+// JWT Utils
+/////////////////////////////
+export const decodeToken = (): any => {
+  const token: string | null = localStorage.getItem('token');
+  return !!token ? jwtDecode(token): null;
+}
 
 export {
   getDate,

@@ -76,6 +76,7 @@ export default function NrcSelector(props: SelectorProps) {
         }
       }}
       listInput={{
+        isLoading: props.isLoading,
         name: 'nrcs',
         placeholder: 'Nrc',
         size: 5,

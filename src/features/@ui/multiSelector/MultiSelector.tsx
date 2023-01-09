@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import Select, {MultiValue, ActionMeta} from 'react-select';
+import InputLoading from '../inputLoading/InputLoading';
 
 const customStyles = {
   control: (provided: any, state: any) => ({
@@ -31,34 +32,54 @@ const customStyles = {
 };
 
 export default function MultiSelector(props: MultiSelectorProps) {
+  const [height, setHeight] = useState<number>(0);
+  const [width, setWidth] = useState<number>(0);
+  const ref = useRef<any>(null);
+
+  useEffect(() => {
+    if (!!ref) {
+      setWidth(ref.current.clientWidth);
+      setHeight(ref.current.offsetHeight);
+    }
+  }, [ref]);
+
   return (
-    <div>
-      <Select 
-        styles={customStyles}
-        options={props.options} 
-        name={props.name} 
-        placeholder={props.placeholder}
-        onChange={props.onChange}
-        value={props.values}
-        hideSelectedOptions={false}
-        isOptionSelected={() => false}
-        theme={(theme: any) => ({
-          ...theme,
-          borderRadius: 0,
-          colors: {
-            ...theme.colors,
-            primary25: '#f1f1f1',
-            primary50: '#f1f1f1',
-          },
-        })} 
-        isMulti />
-    </div>
+    <>
+      {
+        !!props.isLoading ? (
+          <InputLoading height={height} />
+        ):(
+          <div ref={ref}>
+            <Select 
+              styles={customStyles}
+              options={props.options} 
+              name={props.name} 
+              placeholder={props.placeholder}
+              onChange={props.onChange}
+              value={props.values}
+              hideSelectedOptions={false}
+              isOptionSelected={() => false}
+              theme={(theme: any) => ({
+                ...theme,
+                borderRadius: 0,
+                colors: {
+                  ...theme.colors,
+                  primary25: '#f1f1f1',
+                  primary50: '#f1f1f1',
+                },
+              })} 
+              isMulti />
+          </div>
+        )
+      }
+    </>
   );
 }
 
 type onChangeFunction = (selected: MultiValue<any>, action: ActionMeta<any>) => void;
 
 export interface MultiSelectorProps {
+  isLoading?: boolean;
   options: any[];
   name: string;
   placeholder: string;

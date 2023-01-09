@@ -29,6 +29,7 @@ export default function ClassroomSelector(props: SelectorProps) {
         }
       }}
       listInput={{
+        isLoading: props.isLoading,
         name: 'aulas',
         placeholder: 'Aula',
         size: 5,
