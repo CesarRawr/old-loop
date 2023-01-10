@@ -87,14 +87,41 @@ export const fetchStudents = createAsyncThunk('courses/fetchStudents', async () 
 });
 
 // Function to get all teachers
-export const fetchTeachers = createAsyncThunk('courses/fetchTeachers', async () => {
-  return maestros.map((maestro: Maestro) => {
+export const fetchTeachers = createAsyncThunk('courses/fetchTeachers', async (arg, { getState }) => {
+  const state: any = getState();
+  const nrcs: NrcTag[] = state.courses.nrcs;
+
+  // Obtener la lista total de maestros en el sistema
+  const teachers: TeacherTag[] = maestros.map((maestro: Maestro) => {
     return {
       ...maestro,
       label: maestro.nombre,
       value: maestro._id,
     }
   });
+
+  // Obtener maestros que coinciden con los nrcs de las materias que tienen clase hoy
+  const teachersWithCourses: TeacherTag[] = nrcs.map((nrc: NrcTag) => {
+    const data = teachers.filter((teacher: Maestro) => nrc.maestro !== undefined && teacher._id === nrc.maestro._id);
+    return data;
+  }).flat();
+
+  // Eliminar a los maestros que tienen clase hoy
+  const teachersWithOutCourses: (TeacherTag | undefined)[] = teachers.map((teacher: TeacherTag) => {
+    let isTeacherWithCourses = false;
+    for (let teacherWithCourses of teachersWithCourses) {
+      if (teacherWithCourses._id === teacher._id) {
+        isTeacherWithCourses = true;
+      }
+    }
+    
+    return !isTeacherWithCourses ? teacher: undefined;
+  }).filter((teacher: TeacherTag | undefined) => teacher !== undefined);
+
+  // Poner los profesores con cursos hasta el principio de la lista
+  const orderedTeachers: any = [...teachersWithCourses, ...teachersWithOutCourses];
+
+  return orderedTeachers;
 });
 
 ///////////////////////////

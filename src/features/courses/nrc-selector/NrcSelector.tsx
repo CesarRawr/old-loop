@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {FormListGroup} from '../../@ui';
 import {SelectorProps} from '../../../types';
-import {getDecimalHour, getDayName} from '../../utils';
+import {getDayName} from '../../utils';
 import {useAppSelector, useAppDispatch} from '../../../app/hooks';
 
 import {fetchNrcs, selectNrcs, selectCourses} from '../courseSlice';
@@ -17,8 +17,6 @@ export default function NrcSelector(props: SelectorProps) {
 
   const onChange = (selectedItem: any) => {
     props.setValue('nrcs', selectedItem);
-
-    const decimalHour = getDecimalHour();
 
     // Setteando maestro
     props.setValue('maestros', selectedItem.maestro ? {
