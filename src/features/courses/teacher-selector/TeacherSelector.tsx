@@ -22,10 +22,17 @@ export default function TeacherSelector(props: SelectorProps) {
     props.setValue('maestros', selectedItem);
 
     const decimalHour: number = getDecimalHour();
-    console.log(nrcs);
-    console.log(selectedItem);
-
     const teacherCourses = nrcs.filter((nrc: any) => nrc.maestro._id === selectedItem._id);
+    console.log(teacherCourses);
+
+    // Si el maestro no tiene cursos hoy
+    if (!teacherCourses.length) {
+      return;
+    }
+
+    const horariosActuales = teacherCourses.map((course: any) => {
+      return course.horarios.filter((horario: any) => );
+    });
   }
 
   return (

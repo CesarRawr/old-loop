@@ -20,12 +20,14 @@ export default function NrcSelector(props: SelectorProps) {
 
     // Setteando maestro
     props.setValue('maestros', selectedItem.maestro ? {
+      ...selectedItem.maestro,
       label: selectedItem.maestro.nombre,
       value: selectedItem.maestro._id,
     }: '');
 
     // Setteando materia
     props.setValue('materias', {
+      ...selectedItem.materia,
       label: selectedItem.materia.nombre,
       value: selectedItem.materia._id,
     });

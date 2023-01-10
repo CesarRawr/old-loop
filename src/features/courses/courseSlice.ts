@@ -100,12 +100,13 @@ export const fetchTeachers = createAsyncThunk('courses/fetchTeachers', async (ar
     }
   });
 
-  // Obtener maestros que coinciden con los nrcs de las materias que tienen clase hoy
+  // Obtener maestros que coinciden con los nrcs de las materias que tienen clase hoy pero con duplicados
   const teachersWithCoursesDup: TeacherTag[] = nrcs.map((nrc: NrcTag) => {
     const data = teachers.filter((teacher: Maestro) => nrc.maestro !== undefined && teacher._id === nrc.maestro._id);
     return data;
   }).flat();
 
+  // Eliminando duplicados en los maestros con materias
   const teachersWithCourses: TeacherTag[] = teachersWithCoursesDup.filter((value, index, self) =>
     index === self.findIndex((t: TeacherTag) => (
       t._id === value._id && t.nombre === value.nombre
