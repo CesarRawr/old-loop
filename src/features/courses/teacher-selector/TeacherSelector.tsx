@@ -21,9 +21,11 @@ export default function TeacherSelector(props: SelectorProps) {
   const onChange = (selectedItem: any) => {
     props.setValue('maestros', selectedItem);
 
-    const decimalHour = getDecimalHour();
+    const decimalHour: number = getDecimalHour();
     console.log(nrcs);
     console.log(selectedItem);
+
+    const teacherCourses = nrcs.filter((nrc: any) => nrc.maestro._id === selectedItem._id);
   }
 
   return (

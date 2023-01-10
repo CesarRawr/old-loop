@@ -124,10 +124,10 @@ export const materias: Materia[] = [
         },
         horarios: [
           {
-            aula: "F104",
+            aula: "F102",
             horaInicio: 13,
             horaFin: 15,
-            dia: "miercoles",
+            dia: "lunes",
           },
           {
             aula: "F105",
