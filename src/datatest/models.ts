@@ -13,10 +13,10 @@ export interface Usuario {
 }
 
 export interface Horario {
-  readonly aula: string;
-  readonly horaInicio: number;
-  readonly horaFin: number;
-  readonly dia: "lunes" | "martes" | "miercoles" | "jueves" | "viernes";
+  aula: string;
+  horaInicio: number;
+  horaFin: number;
+  dia: "lunes" | "martes" | "miercoles" | "jueves" | "viernes";
 }
 
 ///////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ export interface Maestro {
 export interface Asignacion {
   nrc?: string;
   maestro?: Maestro;
-  readonly horarios: Horario[];
+  horarios: Horario[];
 }
 
 export interface Materia {

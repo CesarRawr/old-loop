@@ -33,14 +33,48 @@ export const fetchClassrooms = createAsyncThunk('courses/fetchClassrooms', async
 });
 
 // Function to get all courses
-export const fetchCourses = createAsyncThunk('courses/fetchCourseNames', async () => {
-  return materias.map((materia: Materia) => {
+export const fetchCourses = createAsyncThunk('courses/fetchCourseNames', async (arg, { getState }) => {
+  const state: any = getState();
+  const nrcs: NrcTag[] = state.courses.nrcs;
+
+  // Obtener la lista total de materias en el sistema
+  const courses: CourseTag[] = materias.map((materia: Materia) => {
     return {
       ...materia,
       label: materia.nombre,
       value: materia._id,
     }
   });
+
+  // Obtener materias que coinciden con los nrcs de las materias que tienen clase hoy pero con duplicados
+  const coursesWithDup: CourseTag[] = nrcs.map((nrc: NrcTag) => {
+    const data = courses.filter((materia: Materia) => nrc.materia !== undefined && materia._id === nrc.materia._id);
+    return data;
+  }).flat();
+
+  // Eliminando duplicados en los maestros con materias
+  const todayCourses: CourseTag[] = coursesWithDup.filter((value, index, self) =>
+    index === self.findIndex((t: CourseTag) => (
+      t._id === value._id && t.nombre === value.nombre
+    ))
+  );
+ 
+  // Eliminar a los maestros que tienen clase hoy
+  const notTodayCourses: (CourseTag | undefined)[] = courses.filter((course: CourseTag) => {
+    let isCourse = false;
+    for (let todayCourse of todayCourses) {
+      if (todayCourse._id === course._id) {
+        isCourse = true;
+      }
+    }
+    
+    return !isCourse;
+  });
+
+  // Poner los los cursos de hoy hasta el principio de la lista
+  let orderedCourses: any = [...todayCourses, ...notTodayCourses];
+
+  return orderedCourses;
 });
 
 // Function to get all nrc
@@ -178,14 +212,16 @@ interface Tag {
 }
 
 interface NrcMeta {
-  readonly _id: string;
-  readonly nombre: string;
+  materia: {
+    readonly _id: string;
+    readonly nombre: string;
+  };
 }
 
 type StudentTag = Tag & Alumno;
 type TeacherTag = Tag & Maestro;
 type CourseTag = Tag & Materia;
-type NrcTag = Tag & Asignacion & NrcMeta;
+export type NrcTag = Tag & Asignacion & NrcMeta;
 
 export interface CourseState {
   classrooms: Tag[];

@@ -5,7 +5,7 @@ import type {Horario} from '../../../datatest/models';
 import {getDecimalHour, getDayName, getDecimalMinutes, getMDYDateString} from '../../utils';
 import {useAppSelector, useAppDispatch} from '../../../app/hooks';
 
-import {fetchTeachers, selectTeachers, selectNrcs} from '../courseSlice';
+import {fetchTeachers, selectTeachers, selectNrcs, NrcTag} from '../courseSlice';
 
 export default function TeacherSelector(props: SelectorProps) {
   const dispatch = useAppDispatch();
@@ -23,7 +23,7 @@ export default function TeacherSelector(props: SelectorProps) {
     props.setValue('maestros', selectedItem);
 
     const decimalHour: number = getDecimalHour();
-    const teacherCourses = nrcs.filter((nrc: any) => nrc.maestro._id === selectedItem._id);
+    const teacherCourses: any = nrcs.filter((nrc: any) => nrc.maestro._id === selectedItem._id);
 
     // Si el maestro no tiene cursos hoy
     if (!teacherCourses.length) {
@@ -31,25 +31,29 @@ export default function TeacherSelector(props: SelectorProps) {
     }
 
     const dayName = getDayName();
-    const horariosDesordenados = teacherCourses.map((course: any) => {
-      const horarios = course.horarios.map((horario: Horario) => {
+    // Obtener los maestros y sus horarios de hoy si es que tienen
+    const horariosDesordenados: any = teacherCourses.map((course: NrcTag) => {
+      const horarios: any = course.horarios.filter((horario: Horario) => {
+        let isToday = false;
         if (horario.dia === dayName) {
-          return horario;
+          isToday = true;
         }
-      }).filter((horario: Horario) => horario !== undefined);
+
+        return isToday;
+      });
 
       return !!horarios.length ? {
         ...course,
         horarios,
       }: undefined;
-    }).filter((course: any) => course !== undefined);
+    }).filter((item: any) => item !== undefined);
 
     if (!horariosDesordenados.length) {
       return;
     }
 
     // Ordenar los horarios de mas temprano a mas tarde
-    const horariosActuales = horariosDesordenados.sort((a, b) => {
+    const horariosActuales: any = horariosDesordenados.sort((a: any, b: any) => {
       return a.horarios[0].horaInicio - b.horarios[0].horaInicio;
     });
 
@@ -68,7 +72,7 @@ export default function TeacherSelector(props: SelectorProps) {
     const actualDate = getMDYDateString(new Date());
     const actualTime = new Date(`${actualDate} ${actualHour}:${actualMinutes}`);
     // Conseguir el horario mas cercano a la hora mas cercana
-    const nearest = horariosActuales.map((course: any, index: number) => {
+    const nearest: any = horariosActuales.filter((course: any) => {
       let isNear = false;
       for (let horario of course.horarios) {
         // Si existen consecutivos
@@ -100,8 +104,8 @@ export default function TeacherSelector(props: SelectorProps) {
         }
       }
 
-      return isNear ? course: undefined;
-    }).filter((course: any) => course !== undefined);
+      return isNear;
+    });
 
     if (!nearest.length) {
       return;
