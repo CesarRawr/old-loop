@@ -13,36 +13,42 @@ export const dispositivos: Dispositivo[] = [
     nombre: "control F102",
     stock: 1,
     prestado: 0,
+    localPrestado: 0,
   },
   {
     _id: "F103",
     nombre: "control F103",
     stock: 1,
     prestado: 0,
+    localPrestado: 0,
   },
   {
     _id: "F104",
     nombre: "control F104",
     stock: 1,
     prestado: 0,
+    localPrestado: 0,
   },
   {
     _id: "6367f74c77d7840b6ca36737",
     nombre: "adapt. HDMI",
     stock: 5,
     prestado: 0,
+    localPrestado: 0,
   },
   {
     _id: "6367f79413a5dd9fb9fffe4a",
     nombre: "adapt. Mac",
     stock: 3,
     prestado: 0,
+    localPrestado: 0,
   },
   {
     _id: "6367f7fe1b666864aaf18f00",
     nombre: "cable RGB",
     stock: 3,
     prestado: 0,
+    localPrestado: 0,
   },
 ];
 

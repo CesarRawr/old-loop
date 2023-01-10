@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
 import {getDate} from '../../utils';
 import {Form} from 'react-final-form';
-import {serializeFunction} from '../../utils';
+import {Prestamo, Dispositivo} from '../../../datatest/models';
+import {serializeFunction, getDayName} from '../../utils';
 import {firstValidations, secondValidations} from './createLoanValidations';
 
 import DeviceSelector from '../../devices/device-selector/DeviceSelector';
@@ -41,9 +42,44 @@ export default function CreateLoanForm() {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const sendLoan = ({devices}: { devices: any; }) => {
-    console.log(devices);
-    console.log("hi");
+  const sendLoan = ({selectedDevices, formData}: { selectedDevices: any; formData: any; }) => {
+    const loan: Prestamo = {
+      observaciones: formData.hasOwnProperty('observaciones') ? formData.observaciones: '',
+      status: "activo",
+      maestro: {
+        _id: formData.maestros.value,
+        nombre: formData.maestros.label,
+      },
+      materia: {
+        _id: formData.materias.value,
+        nombre: formData.materias.label,
+        nrc: formData.nrcs.value,
+        horario: {
+          aula: formData.aulas.value,
+          horaInicio: formData.horaInicio.value,
+          horaFin: formData.horaFin.value,
+          dia: getDayName(),
+        }
+      },
+      dispositivos: selectedDevices.map((dispositivo: Dispositivo) => {
+        return {
+          id: dispositivo._id,
+          nombre: dispositivo.nombre,
+          prestado: dispositivo.prestado + dispositivo.localPrestado,
+          stock: dispositivo.stock,
+        }
+      }),
+      usuario: {
+        _id: "",
+        nickname: "",
+      },
+      timelog: {
+        inicio: new Date(),
+      },
+      alumno: formData.hasOwnProperty('alumnos') ? formData.alumnos: undefined,
+    }
+
+    console.log(loan);
   }
 
   const onSubmit = (formData: any) => {
@@ -76,7 +112,7 @@ export default function CreateLoanForm() {
       return;
     }
 
-    sendLoan({devices});
+    sendLoan({selectedDevices, formData});
   }
 
   const openDialog = (title: string, descripcion: string) => {

@@ -28,6 +28,7 @@ export const fetchDevices = createAsyncThunk('devices/fetchDevices', async () =>
       prestado: device.prestado,
       value: device.nombre,
       isDisabled: false,
+      localPrestado: 0,
       get label() {
         return `${this.value} (${this.stock-this.prestado})`;
       },

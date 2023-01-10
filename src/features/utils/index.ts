@@ -18,8 +18,8 @@ const getDecimalMinutes = (): number => new Date().getMinutes();
 // Obtener el número decimal de la hora actual
 const getDecimalHour = (): number => new Date().getHours();
 // Obtener nombre del dia
-const getDayName = (): string => {
-  const days = [
+const getDayName = (): Semana => {
+  const days: Semana[] = [
       "domingo",
       "lunes",
       "martes",
@@ -41,6 +41,8 @@ export const serializeFunction = (func: (data: any) => void) => (func.toString()
 
 // Transforma un string a una función
 export const deserializeFunction = (funcString: string) => (new Function(`return ${funcString}`)());
+
+type Semana = "lunes" | "martes" | "miercoles" | "jueves" | "viernes" | "sabado" | "domingo";
 
 export {
   getDate,

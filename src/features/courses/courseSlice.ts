@@ -158,9 +158,7 @@ export const fetchTeachers = createAsyncThunk('courses/fetchTeachers', async (ar
     
     return !isTeacherWithCourses;
   });
-
-  console.log(teachersWithCourses);
-  console.log(teachersWithOutCourses);
+  
   // Poner los profesores con cursos hasta el principio de la lista
   let orderedTeachers: any = [...teachersWithCourses, ...teachersWithOutCourses];
 

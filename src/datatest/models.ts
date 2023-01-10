@@ -3,6 +3,7 @@ export interface Dispositivo {
   readonly nombre: string; 
   readonly stock: number;
   prestado: number;
+  localPrestado: number;
 }
 
 export interface Usuario {
@@ -16,7 +17,7 @@ export interface Horario {
   aula: string;
   horaInicio: number;
   horaFin: number;
-  dia: "lunes" | "martes" | "miercoles" | "jueves" | "viernes";
+  dia: "lunes" | "martes" | "miercoles" | "jueves" | "viernes" | "sabado" | "domingo";
 }
 
 ///////////////////////////////////////////////////////
@@ -71,7 +72,7 @@ export interface Prestamo {
   };
   timelog: {
     inicio: Date;
-    fin: Date;
+    fin?: Date;
   };
   alumno?: Alumno;
 }
