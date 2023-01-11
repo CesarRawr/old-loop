@@ -4,6 +4,13 @@ const getDate = (date: Date): string => {
   return formatedDate;
 }
 
+const getMDYDateString = (date: Date): string => {
+  const formatedDate: string = `${date.getMonth()+1}/${date.getDate()}/${date.getFullYear()}`;
+  return formatedDate;
+}
+
+// Obtener minutos
+const getDecimalMinutes = (): number => new Date().getMinutes();
 // Obtener el número decimal de la hora actual
 const getDecimalHour = (): number => new Date().getHours();
 // Obtener nombre del dia
@@ -25,4 +32,6 @@ export {
   getDate,
   getDecimalHour,
   getDayName,
+  getDecimalMinutes,
+  getMDYDateString,
 }

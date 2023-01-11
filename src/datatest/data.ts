@@ -164,6 +164,27 @@ export const materias: Materia[] = [
           }
         ],
       },
+      {
+        nrc: "85560",
+        maestro: {
+          _id: "63680b250db472af2566baf5",
+          nombre: "RAÚL DE LA FUENTE IZAGUIRRE",
+        },
+        horarios: [
+          {
+            aula: "F102",
+            horaInicio: 11,
+            horaFin: 13,
+            dia: "martes",
+          },
+          {
+            aula: "F104",
+            horaInicio: 11,
+            horaFin: 13,
+            dia: "miercoles",
+          }
+        ],
+      }
     ],
   }, 
   {
@@ -196,6 +217,48 @@ export const materias: Materia[] = [
             dia: "lunes",
           }
         ]
+      },
+      {
+        nrc: "85556",
+        maestro: {
+          _id: "63680b250db472af2566baf5",
+          nombre: "RAÚL DE LA FUENTE IZAGUIRRE",
+        },
+        horarios: [
+          {
+            aula: "F102",
+            horaInicio: 19,
+            horaFin: 21,
+            dia: "martes",
+          },
+          {
+            aula: "F104",
+            horaInicio: 19,
+            horaFin: 21,
+            dia: "miercoles",
+          }
+        ],
+      },
+      {
+        nrc: "85557",
+        maestro: {
+          _id: "63680b250db472af2566baf5",
+          nombre: "RAÚL DE LA FUENTE IZAGUIRRE",
+        },
+        horarios: [
+          {
+            aula: "F102",
+            horaInicio: 17,
+            horaFin: 19,
+            dia: "martes",
+          },
+          {
+            aula: "F104",
+            horaInicio: 17,
+            horaFin: 19,
+            dia: "miercoles",
+          }
+        ],
       }
     ],
   }

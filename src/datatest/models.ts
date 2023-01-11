@@ -12,7 +12,7 @@ export interface Usuario {
   readonly rol: "common" | "admin";
 }
 
-interface Horario {
+export interface Horario {
   readonly aula: string;
   readonly horaInicio: number;
   readonly horaFin: number;
