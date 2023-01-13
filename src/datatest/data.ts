@@ -283,4 +283,4 @@ export const alumnos: Alumno[] = [
   },
 ];
 
-export const prestamos: Prestamo[] = [];
+export let prestamos: Prestamo[] = [];

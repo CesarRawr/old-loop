@@ -28,8 +28,24 @@ export default function CreateLoanForm() {
   const devices = useAppSelector(selectSelectedDevices);
 
   const onSubmit = (formData: any) => {
+    const formDataProperties: string[] = [
+      "aulas",
+      "horaFin",
+      "horaInicio",
+      "maestros",
+      "materias",
+      "nrcs"
+    ];
+
     console.log(formData);
     console.log(devices);
+
+    let isEmpty = false;
+    for (let property of formDataProperties) {
+      isEmpty = !formData.hasOwnProperty(property);
+    }
+
+    console.log(isEmpty);
   }
 
   return (

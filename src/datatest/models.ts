@@ -47,7 +47,7 @@ export interface Alumno {
 }
 
 export interface Prestamo {
-  _id: string;
+  _id?: string;
   observaciones?: string;
   status: "entrante" | "activo" | "deuda" | "terminado";
   maestro: {

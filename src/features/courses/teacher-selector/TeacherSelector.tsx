@@ -23,7 +23,7 @@ export default function TeacherSelector(props: SelectorProps) {
     props.setValue('maestros', selectedItem);
 
     const decimalHour: number = getDecimalHour();
-    const teacherCourses: any = nrcs.filter((nrc: any) => nrc.maestro._id === selectedItem._id);
+    const teacherCourses: NrcTag[] = nrcs.filter((nrc: NrcTag) => nrc.maestro !== undefined && nrc.maestro._id === selectedItem._id);
 
     // Si el maestro no tiene cursos hoy
     if (!teacherCourses.length) {
