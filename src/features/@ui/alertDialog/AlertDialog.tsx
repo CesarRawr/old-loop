@@ -30,6 +30,13 @@ export default function AlertDialog(props: DialogProps) {
         <Button onClick={props.handleClose} autoFocus>
           Cerrar
         </Button>
+        {
+          !!props.isOptionEnabled && (
+            <Button onClick={props.acceptHandler}>
+              Aceptar
+            </Button>
+          )
+        }
       </DialogActions>
     </Dialog>
   );
@@ -40,4 +47,6 @@ interface DialogProps {
   title: string;
   description: string;
   handleClose: () => void;
+  isOptionEnabled: boolean;
+  acceptHandler: () => void;
 }

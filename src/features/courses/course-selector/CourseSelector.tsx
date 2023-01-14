@@ -13,8 +13,11 @@ export default function CourseSelector(props: SelectorProps) {
   const courses = useAppSelector(selectCourses);
 
   useEffect(() => {
-    dispatch(fetchCourses());
-  }, [dispatch]);
+    // Dejar que carguen los nrc primero
+    if (!!nrcs.length) {
+      dispatch(fetchCourses());
+    }
+  }, [dispatch, nrcs]);
 
   const onChange = (selectedItem: any) => {
     props.setValue('materias', selectedItem);

@@ -1,6 +1,8 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {getDate} from '../../utils';
 import {Form} from 'react-final-form';
+import {serializeFunction} from '../../utils';
+import {firstValidations, secondValidations} from './createLoanValidations';
 
 import DeviceSelector from '../../devices/device-selector/DeviceSelector';
 import {
@@ -12,8 +14,16 @@ import {
   TeacherSelector
 } from '../../courses';
 
-import {useAppSelector} from '../../../app/hooks';
-import {selectSelectedDevices} from '../../devices/deviceSlice';
+import {useAppSelector, useAppDispatch} from '../../../app/hooks';
+import {selectDevices, selectSelectedDevices} from '../../devices/deviceSlice';
+
+// Dialog controllers
+import {
+  open, 
+  setTitle, 
+  setDescription, 
+  setAcceptOptions
+} from '../../dialog/dialogSlice';
 
 import {
   Label,
@@ -25,27 +35,54 @@ import styles from './CreateLoanForm.module.css';
 
 // Formulario para crear un prestamo
 export default function CreateLoanForm() {
-  const devices = useAppSelector(selectSelectedDevices);
+  const dispatch = useAppDispatch();
+  const devices = useAppSelector(selectDevices);
+  const selectedDevices = useAppSelector(selectSelectedDevices);
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const sendLoan = ({devices}: { devices: any; }) => {
+    console.log(devices);
+    console.log("hi");
+  }
 
   const onSubmit = (formData: any) => {
-    const formDataProperties: string[] = [
-      "aulas",
-      "horaFin",
-      "horaInicio",
-      "maestros",
-      "materias",
-      "nrcs"
-    ];
-
-    console.log(formData);
-    console.log(devices);
-
-    let isEmpty = false;
-    for (let property of formDataProperties) {
-      isEmpty = !formData.hasOwnProperty(property);
+    // Validaciones de campos sencillas
+    let validationsResult: any = firstValidations({formData, selectedDevices});
+    if (!validationsResult.isValid) {
+      setIsLoading(validationsResult.isValid);
+      openDialog(validationsResult.dialog.title, validationsResult.dialog.description);
+      return;
     }
 
-    console.log(isEmpty);
+    // Validaciones complejas relacionadas con dispositivos
+    validationsResult = secondValidations({formData, selectedDevices, devices});
+    if (!validationsResult.isValid) {
+      setIsLoading(validationsResult.isValid);
+
+      // En caso de requerir la opcion de aceptar, se carga la opción con
+      // sus variables y callback
+      if (validationsResult.requireAcceptOption) {
+        dispatch(setAcceptOptions({
+          isOptionEnabled: true,
+          callbackData: {
+            devices: devices,
+          },
+          callback: serializeFunction(sendLoan),
+        }));
+      }
+
+      openDialog(validationsResult.dialog.title, validationsResult.dialog.description);
+      return;
+    }
+
+    sendLoan({devices});
+  }
+
+  const openDialog = (title: string, descripcion: string) => {
+    dispatch(setTitle(title));
+    dispatch(setDescription(descripcion));
+    dispatch(open());
   }
 
   return (

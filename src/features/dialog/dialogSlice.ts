@@ -8,6 +8,11 @@ const initialState: DialogState = {
   isOpen: false,
   title: '',
   description: '',
+  acceptOptions: {
+    isOptionEnabled: false,
+    callbackData: {},
+    callback: '() => {}',
+  },
 }
 
 ///////////////////////////
@@ -29,13 +34,16 @@ export const dialogSlice = createSlice({
     setDescription: (state, action: PayloadAction<string>) => {
       state.description = action.payload;
     },
-  },
+    setAcceptOptions: (state, action: PayloadAction<AcceptOption>) => {
+      state.acceptOptions = action.payload;
+    }
+  }
 });
 
 ///////////////////////////
 // Actions
 ///////////////////////////
-export const {close, open, setTitle, setDescription} = dialogSlice.actions;
+export const {close, open, setTitle, setDescription, setAcceptOptions} = dialogSlice.actions;
 
 ///////////////////////////
 // Selectors
@@ -43,6 +51,7 @@ export const {close, open, setTitle, setDescription} = dialogSlice.actions;
 export const selectIsOpen = (state: RootState) => state.dialog.isOpen;
 export const selectTitle = (state: RootState) => state.dialog.title;
 export const selectDescription = (state: RootState) => state.dialog.description;
+export const selectAcceptOptions = (state: RootState) => state.dialog.acceptOptions;
 
 ///////////////////////////
 // Reducer
@@ -52,8 +61,15 @@ export default dialogSlice.reducer;
 ///////////////////////////
 // Interfaces
 ///////////////////////////
+export interface AcceptOption {
+  isOptionEnabled: boolean;
+  callbackData: any;
+  callback: string;
+}
+
 export interface DialogState {
   isOpen: boolean;
   title: string;
-  description: string
+  description: string;
+  acceptOptions: AcceptOption;
 }

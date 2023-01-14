@@ -148,7 +148,7 @@ export const fetchTeachers = createAsyncThunk('courses/fetchTeachers', async (ar
   );
 
   // Eliminar a los maestros que tienen clase hoy
-  const teachersWithOutCourses: (TeacherTag | undefined)[] = teachers.map((teacher: TeacherTag) => {
+  const teachersWithOutCourses: (TeacherTag | undefined)[] = teachers.filter((teacher: TeacherTag) => {
     let isTeacherWithCourses = false;
     for (let teacherWithCourses of teachersWithCourses) {
       if (teacherWithCourses._id === teacher._id) {
@@ -156,9 +156,11 @@ export const fetchTeachers = createAsyncThunk('courses/fetchTeachers', async (ar
       }
     }
     
-    return !isTeacherWithCourses ? teacher: undefined;
-  }).filter((teacher: TeacherTag | undefined) => teacher !== undefined);
+    return !isTeacherWithCourses;
+  });
 
+  console.log(teachersWithCourses);
+  console.log(teachersWithOutCourses);
   // Poner los profesores con cursos hasta el principio de la lista
   let orderedTeachers: any = [...teachersWithCourses, ...teachersWithOutCourses];
 
