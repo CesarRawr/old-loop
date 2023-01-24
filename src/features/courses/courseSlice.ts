@@ -1,13 +1,10 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
+import { urlBase } from '../../variables';
+import axios from 'axios';
 
 import {Alumno, Maestro, Materia, Asignacion} from '../../datatest/models';
-import {aulas, maestros, alumnos, materias} from '../../datatest/data'
 import {getDayName} from '../utils';
-
-/*
-  Nota: Agregar sockets para refrescar las listas en caso de cambios en el backend
-*/
 
 ///////////////////////////
 // State
@@ -26,9 +23,15 @@ const initialState: CourseState = {
 
 // Function to get all classrooms
 export const fetchClassrooms = createAsyncThunk('courses/fetchClassrooms', async () => {
-  return aulas.map((aula: string) => ({
-    label: aula,
-    value: aula,
+  const token = localStorage.getItem('token');
+  const config = {
+    headers: { Authorization: `Bearer ${token}` }
+  };
+
+  const response: any = await axios.get<any>(`${urlBase}/v1/classrooms`, config);
+  return response.data.data.map((aula: any) => ({
+    label: aula.nombre,
+    value: aula.nombre,
   }));
 });
 
@@ -36,50 +39,37 @@ export const fetchClassrooms = createAsyncThunk('courses/fetchClassrooms', async
 export const fetchCourses = createAsyncThunk('courses/fetchCourseNames', async (arg, { getState }) => {
   const state: any = getState();
   const nrcs: NrcTag[] = state.courses.nrcs;
+  const token = localStorage.getItem('token');
+  const config = {
+    headers: { Authorization: `Bearer ${token}` }
+  };
 
-  // Obtener la lista total de materias en el sistema
-  const courses: CourseTag[] = materias.map((materia: Materia) => {
-    return {
-      ...materia,
-      label: materia.nombre,
-      value: materia._id,
-    }
-  });
-
-  // Obtener materias que coinciden con los nrcs de las materias que tienen clase hoy pero con duplicados
-  const coursesWithDup: CourseTag[] = nrcs.map((nrc: NrcTag) => {
-    const data = courses.filter((materia: Materia) => nrc.materia !== undefined && materia._id === nrc.materia._id);
-    return data;
-  }).flat();
-
-  // Eliminando duplicados en los maestros con materias
-  const todayCourses: CourseTag[] = coursesWithDup.filter((value, index, self) =>
-    index === self.findIndex((t: CourseTag) => (
-      t._id === value._id && t.nombre === value.nombre
-    ))
-  );
- 
-  // Eliminar a los maestros que tienen clase hoy
-  const notTodayCourses: (CourseTag | undefined)[] = courses.filter((course: CourseTag) => {
-    let isCourse = false;
-    for (let todayCourse of todayCourses) {
-      if (todayCourse._id === course._id) {
-        isCourse = true;
+  const response: any = await axios.get<any>(`${urlBase}/v1/courses`, config);
+  // Settear label y value a las materias que tienen clases hoy
+  const courses: CourseTag[] = response.data.data.map((materia: Materia) => {
+    if (!!materia.asignaciones.length) {
+      return {
+        ...materia,
+        label: materia.nombre,
+        value: materia._id,
       }
     }
-    
-    return !isCourse;
-  });
 
-  // Poner los los cursos de hoy hasta el principio de la lista
-  let orderedCourses: any = [...todayCourses, ...notTodayCourses];
-
-  return orderedCourses;
+    return undefined;
+  }).filter((item: any) => item !== undefined);
+  
+  return courses;
 });
 
 // Function to get all nrc
 export const fetchNrcs = createAsyncThunk('courses/fetchNrcs', async () => {
-  const nrcs: any[] = materias.map((materia: Materia) => {
+  const token = localStorage.getItem('token');
+  const config = {
+    headers: { Authorization: `Bearer ${token}` }
+  };
+
+  const response: any = await axios.get<any>(`${urlBase}/v1/courses`, config);
+  const nrcs: any[] = response.data.data.map((materia: Materia) => {
     return materia.asignaciones.map((asignacion: Asignacion) => {
       return {
         ...asignacion,
@@ -94,24 +84,18 @@ export const fetchNrcs = createAsyncThunk('courses/fetchNrcs', async () => {
   });
 
   const data: NrcTag[] = [].concat(...nrcs);
-  // Filtrando los nrcs que dan clase el dia de hoy
-  const dailyData: any = data.map((nrc) => {
-    const dayName = getDayName();
-    for (let horario of nrc.horarios) {
-      if (horario.dia === dayName) {
-        return nrc;
-      }
-    }
-
-    return;
-  }).filter((nrc) => nrc !== undefined);
-
-  return dailyData;
+  return data;
 });
 
 // Function to get all students
 export const fetchStudents = createAsyncThunk('courses/fetchStudents', async () => {
-  return alumnos.map((alumno: Alumno) => {
+  const token = localStorage.getItem('token');
+  const config = {
+    headers: { Authorization: `Bearer ${token}` }
+  };
+
+  const response: any = await axios.get<any>(`${urlBase}/v1/students`, config);
+  return response.data.data.map((alumno: Alumno) => {
     return {
       ...alumno,
       label: alumno.nombre,
@@ -122,11 +106,18 @@ export const fetchStudents = createAsyncThunk('courses/fetchStudents', async () 
 
 // Function to get all teachers
 export const fetchTeachers = createAsyncThunk('courses/fetchTeachers', async (arg, { getState }) => {
+  const token = localStorage.getItem('token');
+  const config = {
+    headers: { Authorization: `Bearer ${token}` }
+  };
+
+  const response: any = await axios.get<any>(`${urlBase}/v1/teachers`, config);
+
   const state: any = getState();
   const nrcs: NrcTag[] = state.courses.nrcs;
 
   // Obtener la lista total de maestros en el sistema
-  const teachers: TeacherTag[] = maestros.map((maestro: Maestro) => {
+  const teachers: TeacherTag[] = response.data.data.map((maestro: Maestro) => {
     return {
       ...maestro,
       label: maestro.nombre,
@@ -136,12 +127,12 @@ export const fetchTeachers = createAsyncThunk('courses/fetchTeachers', async (ar
 
   // Obtener maestros que coinciden con los nrcs de las materias que tienen clase hoy pero con duplicados
   const teachersWithCoursesDup: TeacherTag[] = nrcs.map((nrc: NrcTag) => {
-    const data = teachers.filter((teacher: Maestro) => nrc.maestro !== undefined && teacher._id === nrc.maestro._id);
+    const data = teachers.filter((teacher: Maestro) => !!nrc.maestro && teacher._id === nrc.maestro._id);
     return data;
   }).flat();
 
   // Eliminando duplicados en los maestros con materias
-  const teachersWithCourses: TeacherTag[] = teachersWithCoursesDup.filter((value, index, self) =>
+  const teachersWithCourses: TeacherTag[] = teachersWithCoursesDup.filter((value: any, index: any, self: any) =>
     index === self.findIndex((t: TeacherTag) => (
       t._id === value._id && t.nombre === value.nombre
     ))
@@ -161,7 +152,6 @@ export const fetchTeachers = createAsyncThunk('courses/fetchTeachers', async (ar
   
   // Poner los profesores con cursos hasta el principio de la lista
   let orderedTeachers: any = [...teachersWithCourses, ...teachersWithOutCourses];
-
   return orderedTeachers;
 });
 

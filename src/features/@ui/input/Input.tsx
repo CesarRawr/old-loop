@@ -13,12 +13,10 @@ function InputAdapter({ input, ...rest }: any) {
 export default function Input(props: InputProps) {
   const handleClick = (event: any) => event.target.select();
   const [height, setHeight] = useState<number>(0);
-  const [width, setWidth] = useState<number>(0);
   const ref = useRef<any>(null);
 
   useEffect(() => {
     if (!!ref) {
-      setWidth(ref.current.clientWidth);
       setHeight(ref.current.offsetHeight);
     }
   }, [ref]);
@@ -27,7 +25,7 @@ export default function Input(props: InputProps) {
     <>
       {
         !!props.isLoading ? (
-          <InputLoading height={height} />
+          <InputLoading height={`${height}px`} />
         ):(
           <div ref={ref} className={styles.inputContainer}>
             <Field 

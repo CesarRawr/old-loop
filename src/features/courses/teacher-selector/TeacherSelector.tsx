@@ -12,18 +12,20 @@ export default function TeacherSelector(props: SelectorProps) {
   const nrcs = useAppSelector(selectNrcs);
   const teachers = useAppSelector(selectTeachers);
 
+  const {isLoading} = props;
   useEffect(() => {
     // Dejar que carguen los nrc primero
-    if (!!nrcs.length) {
+    if (!isLoading) {
       dispatch(fetchTeachers());
     }
-  }, [dispatch, nrcs]);
+  }, [dispatch, nrcs, isLoading]);
+
 
   const onChange = (selectedItem: any) => {
     props.setValue('maestros', selectedItem);
 
     const decimalHour: number = getDecimalHour();
-    const teacherCourses: NrcTag[] = nrcs.filter((nrc: NrcTag) => nrc.maestro !== undefined && nrc.maestro._id === selectedItem._id);
+    const teacherCourses: NrcTag[] = nrcs.filter((nrc: NrcTag) => !!nrc.maestro && nrc.maestro._id === selectedItem._id);
 
     // Si el maestro no tiene cursos hoy
     if (!teacherCourses.length) {
@@ -142,9 +144,6 @@ export default function TeacherSelector(props: SelectorProps) {
 
   return (
     <FormListGroup 
-      styles={{
-        width: "20vw"
-      }}
       label={{
         text: 'Maestro',
         styles: {
@@ -152,7 +151,7 @@ export default function TeacherSelector(props: SelectorProps) {
         }
       }}
       listInput={{
-        isLoading: props.isLoading,
+        isLoading: isLoading,
         name: 'maestros',
         placeholder: 'Maestro',
         size: 70,

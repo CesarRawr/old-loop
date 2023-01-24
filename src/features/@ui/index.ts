@@ -8,3 +8,5 @@ export {default as AlertDialog} from './alertDialog/AlertDialog';
 export {default as InputLoading} from './inputLoading/InputLoading';
 export {default as FormListGroup} from './formListGroup/FormListGroup';
 export {default as MultiSelector} from './multiSelector/MultiSelector';
+export {default as LoadingTableBody} from './loadingTableBody/LoadingTableBody';
+export {default as TableMessage} from './tableMessage/TableMessage';

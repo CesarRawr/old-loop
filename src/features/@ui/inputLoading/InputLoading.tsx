@@ -11,6 +11,6 @@ export default function InputLoading(props: InputLoadingProps) {
 }
 
 interface InputLoadingProps {
-  width?: number;
-  height: number;
+  width?: string;
+  height: string;
 }

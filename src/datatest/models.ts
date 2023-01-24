@@ -50,7 +50,7 @@ export interface Alumno {
 export interface Prestamo {
   _id?: string;
   observaciones?: string;
-  status: "entrante" | "activo" | "deuda" | "terminado";
+  status: "entrante" | "activo" | "deuda" | "inactivo";
   maestro: {
     _id: string;
     nombre: string;
@@ -64,8 +64,7 @@ export interface Prestamo {
   dispositivos: {
     _id: string;
     nombre: string;
-    prestado: number;
-    stock: number;
+    localPrestado: number;
   }[];
   usuario: {
     _id: string;

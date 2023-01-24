@@ -14,14 +14,16 @@ import {
   removeSelected
 } from '../deviceSlice';
 
-export default function DeviceSelector({isLoading}: {isLoading: any}) {
+export default function DeviceSelector({isLoading}: {isLoading?: any}) {
   const dispatch = useAppDispatch();
   const values = useAppSelector(selectSelectedDevices);
   const devices = useAppSelector(selectDevices);
 
   useEffect(() => {
-    dispatch(fetchDevices());
-  }, [dispatch]);
+    if (!isLoading) {
+      dispatch(fetchDevices());
+    }
+  }, [dispatch, isLoading]);
 
   const selectOption = (itemSelected: Item) => {
     dispatch(updateDeviceAmount(itemSelected));

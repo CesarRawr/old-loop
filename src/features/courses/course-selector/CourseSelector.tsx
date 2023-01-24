@@ -12,12 +12,13 @@ export default function CourseSelector(props: SelectorProps) {
   const nrcs = useAppSelector(selectNrcs);
   const courses = useAppSelector(selectCourses);
 
+  const {isLoading} = props;
   useEffect(() => {
     // Dejar que carguen los nrc primero
-    if (!!nrcs.length) {
+    if (!isLoading) {
       dispatch(fetchCourses());
     }
-  }, [dispatch, nrcs]);
+  }, [dispatch, nrcs, isLoading]);
 
   const onChange = (selectedItem: any) => {
     props.setValue('materias', selectedItem);
@@ -142,9 +143,6 @@ export default function CourseSelector(props: SelectorProps) {
 
   return (
     <FormListGroup 
-      styles={{
-        width: "20vw"
-      }}
       label={{
         text: 'Materia',
         styles: {
@@ -152,7 +150,7 @@ export default function CourseSelector(props: SelectorProps) {
         }
       }}
       listInput={{
-        isLoading: props.isLoading,
+        isLoading: isLoading,
         name: 'materias',
         placeholder: 'Materia',
         size: 70,

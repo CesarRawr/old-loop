@@ -6,6 +6,8 @@ import {Prestamo, Dispositivo} from '../../../datatest/models';
 import {firstValidations, secondValidations} from './createLoanValidations';
 import {uploadLoan, selectLoanIsLoading, setIsLoading} from './createLoanFormSlice';
 
+import {fetchActiveLoans} from '../active-loans-list/activeLoansListSlice';
+
 import {
   deserializeFunction,
   serializeFunction, 
@@ -80,7 +82,7 @@ export default function CreateLoanForm() {
       return;
     }
 
-    //const {_id, nickname} = userData;
+    const {_id, nickname} = userData;
     const loan: Prestamo = {
       observaciones: formData.hasOwnProperty('observaciones') ? formData.observaciones: '',
       status: "activo",
@@ -103,18 +105,17 @@ export default function CreateLoanForm() {
         return {
           _id: dispositivo._id,
           nombre: dispositivo.nombre,
-          prestado: dispositivo.prestado + dispositivo.localPrestado,
-          stock: dispositivo.stock,
+          localPrestado: dispositivo.localPrestado,
         }
       }),
       usuario: {
-        _id: '',
-        nickname: '',
+        _id,
+        nickname,
       },
       timelog: {
         inicio: new Date().toString(),
       },
-      alumno: formData.hasOwnProperty('alumnos') ? formData.alumnos: undefined,
+      alumno: formData.hasOwnProperty('alumnos') ? formData.alumnos: null,
     }
 
     // Enviar préstamo
@@ -122,27 +123,28 @@ export default function CreateLoanForm() {
     .unwrap()
     .then((result) => {
       if (result.status === 200) {
+        dispatch(fetchActiveLoans());
+
         clearAll();
         closeSend();
-        openDialog('Mensaje', result.data.msg);
+        dispatch(setIsLoading(false));
         return;
       }
 
       closeSend();
       openDialog('Mensaje', result.data.msg);
+      dispatch(setIsLoading(false));
       return;
     })
     .catch((e) => {
-      closeSend();
       console.log(e);
-      openDialog('Error', 'Algo salió mal');
+      closeSend();
+      openDialog('Error', 'Algo salió mal al intentar realizar un préstamo');
+      dispatch(setIsLoading(false));
     });
   }
 
   const onSubmit = (data: any, form: any) => {
-    dispatch(setIsLoading(true));
-    return;
-
     // Validaciones de campos sencillas
     let validationsResult: any = firstValidations(data, selectedDevices);
     if (!validationsResult.isValid) {
@@ -210,7 +212,7 @@ export default function CreateLoanForm() {
   }
 
   return (
-    <>
+    <>      
       <div className={styles.createLoan}>
         <Form
           onSubmit={onSubmit}
@@ -223,7 +225,7 @@ export default function CreateLoanForm() {
           render={({ handleSubmit, form: { mutators: { setValue } } }) => (
             <form onSubmit={handleSubmit} className={styles.form}>
               {/* Top pane */}
-              <div className={styles.f}>
+              <div className={styles.topPane}>
 
                 {/* Fecha */}
                 <div className={styles.formGroup}>
@@ -250,7 +252,7 @@ export default function CreateLoanForm() {
               {/* Bottom pane */}
               <div className={styles.bottomPane}>
                 {/* Selector de devices */}
-                <DeviceSelector isLoading={isLoading}/>
+                <DeviceSelector isLoading={isLoading} />
                 
                 <div 
                   style={{
@@ -280,7 +282,8 @@ export default function CreateLoanForm() {
                     <Button 
                       type="submit"
                       text="Prestar" 
-                      style={{flexGrow: 1}}/>
+                      style={{flexGrow: 1}}
+                      disabled={isLoading} />
                   </div>
                 </div>
               </div>

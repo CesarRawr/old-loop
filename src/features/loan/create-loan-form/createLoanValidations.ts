@@ -23,13 +23,13 @@ export const firstValidations = (formData: any, selectedDevices: any) => {
   }
 
   // Revisar si no hay campos vacios
-  if (!formData.aulas.length || 
-    !formData.horaFin.length || 
-    !formData.horaInicio.length || 
-    !formData.maestros.length || 
-    !formData.materias.length || 
-    !formData.nrcs.length) {
-
+  if (typeof formData.aulas === 'string' ||
+    typeof formData.horaFin === 'string' || 
+    typeof formData.horaInicio === 'string' || 
+    typeof formData.maestros === 'string' || 
+    typeof formData.materias === 'string' || 
+    typeof formData.nrcs === 'string') {
+    
     return {
       isValid: false,
       dialog: {
@@ -146,17 +146,4 @@ export const secondValidations = (formData: any, selectedDevices: any, devices: 
   return {
     isValid: true,
   }
-}
-
-///////////////////////////
-// Interfaces
-///////////////////////////
-
-interface FirstValidationsProps {
-  formData: any;
-  selectedDevices: any;
-}
-
-interface SecondValidationsProps extends FirstValidationsProps {
-  devices: any;
 }

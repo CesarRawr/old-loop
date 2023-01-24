@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { dispositivos } from '../../datatest/data';
+import { urlBase } from '../../variables';
+import axios from 'axios';
 
 import type { Item } from './device-selector/deviceSelectorController';
 import type { Dispositivo } from '../../datatest/models';
@@ -19,15 +20,29 @@ const initialState: DevicesState = {
 ///////////////////////////
 
 // Function to get all devices
-export const fetchDevices = createAsyncThunk('devices/fetchDevices', async () => {
-  const devices: Item[] = dispositivos.map((device: Dispositivo) => {
+export const fetchDevices = createAsyncThunk('devices/fetchDevices', async (arg, {dispatch}) => {
+  // Limpiar selected devices para evitar bugs en la lista de dispositivos 
+  // al momento de refrescarla
+  try {
+    dispatch(setSelectedDevices([]));
+  } catch (e) {
+    console.log(e);
+  }
+
+  const token = localStorage.getItem('token');
+  const config = {
+      headers: { Authorization: `Bearer ${token}` }
+  };
+
+  const response: any = await axios.get<any>(`${urlBase}/v1/devices`, config);
+  const devices: Item[] = response.data.data.map((device: Dispositivo) => {
     return {
       _id: device._id,
       nombre: device.nombre,
       stock: device.stock,
       prestado: device.prestado,
       value: device.nombre,
-      isDisabled: false,
+      isDisabled: !(device.stock-device.prestado) ? true: false,
       localPrestado: 0,
       get label() {
         return `${this.value} (${this.stock-this.prestado-this.localPrestado})`;

@@ -8,7 +8,8 @@ import axios from 'axios';
 // State
 ///////////////////////////
 const initialState: LoanState = {
-  prestamo: {
+  activeLoans: [],
+  selectedLoan: {
     observaciones: '',
     status: 'activo',
     maestro: {
@@ -41,75 +42,70 @@ const initialState: LoanState = {
       nombre: '',
     },
   },
-  isLoading: false,
-  error: false,
+  status: 'loading'
 }
 
 ///////////////////////////
 // Async functions
 ///////////////////////////
 
-// Function to upload loan
-export const uploadLoan = createAsyncThunk('loan/uploadLoan', async (prestamo: Prestamo) => {
+// Function to getActiveLoans
+export const fetchActiveLoans = createAsyncThunk('loan/getActiveLoans', async () => {
   const token = localStorage.getItem('token');
   const config = {
     headers: { Authorization: `Bearer ${token}` }
   };
 
-  const {data, status} = await axios.post(`${urlBase}/v1/loan`, prestamo, config);
-  return {
-    data,
-    status,
-  };
+  const {data, status} = await axios.get(`${urlBase}/v1/loans/active`, config);
+  return data.data;
 });
 
 ///////////////////////////
 // Slice
 ///////////////////////////
-export const createLoanSlice = createSlice({
-  name: 'createLoan',
+export const activeLoansListSlice = createSlice({
+  name: 'activeLoansList',
   initialState,
   reducers: {
-    setIsLoading: (state, action: PayloadAction<boolean>) => {
-      state.isLoading = action.payload;
+    setStatus: (state, action: PayloadAction<StatusType>) => {
+      state.status = action.payload;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(uploadLoan.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(uploadLoan.rejected, (state) => {
-        state.isLoading = false;
-        state.error = true;
-      });
+    .addCase(fetchActiveLoans.pending, (state) => {
+      state.status = 'loading';
+    })
+    .addCase(fetchActiveLoans.fulfilled, (state, action) => {
+      state.status = 'idle';
+      state.activeLoans = action.payload;
+    })
+    .addCase(fetchActiveLoans.rejected, (state) => {
+      state.status = 'failed';
+    });
   },
 });
 
-export default createLoanSlice.reducer;
+export default activeLoansListSlice.reducer;
 
 ///////////////////////////
 // Actions
 ///////////////////////////
-export const {setIsLoading} = createLoanSlice.actions;
+export const {setStatus} = activeLoansListSlice.actions;
 
 ///////////////////////////
 // Selectors
 ///////////////////////////
-export const selectLoanIsLoading = (state: RootState) => state.createLoan.isLoading;
+export const selectStatus = (state: RootState) => state.activeLoans.status;
+export const selectActiveLoans = (state: RootState) => state.activeLoans.activeLoans;
 
 ///////////////////////////
 // Interfaces
 ///////////////////////////
-export interface Alumno {
-  _id?: string;
-  matricula: string;
-  nombre: string;
-}
-
+type StatusType = 'loading' | 'idle' | 'failed';
 export interface LoanState {
-  prestamo: Prestamo;
-  isLoading: boolean;
-  error: boolean;
+  activeLoans: Prestamo[];
+  selectedLoan: Prestamo;
+  status: StatusType;
 }
 

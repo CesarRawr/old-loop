@@ -18,7 +18,6 @@ const CreatableAdapter = ({ input, innerRef, ...rest}: any) => {
 
 export default function ListInput(props: ListInputProps) {
   const [height, setHeight] = useState<number>(0);
-  const [width, setWidth] = useState<number>(0);
   const ref = useRef<any>(null);
   const customStyles = {
     container: (provided: any, state: any) => ({
@@ -27,9 +26,9 @@ export default function ListInput(props: ListInputProps) {
     control: (provided: any, state: any) => ({
       ...provided,
       background: '#fafafa',
-      borderColor: '#d1d1d1',
+      borderColor: '#dcdcdc',
       minHeight: '4.5vh',
-      border: "1px solid #d1d1d1",
+      border: "1px solid #dcdcdc",
       borderRadius: "4px",
       boxShadow: state.isFocused ? null : null,
     }),
@@ -49,7 +48,6 @@ export default function ListInput(props: ListInputProps) {
 
   useEffect(() => {
     if (!!ref) {
-      setWidth(ref.current.clientWidth);
       setHeight(ref.current.clientHeight);
     }
   }, [ref]);
@@ -59,7 +57,7 @@ export default function ListInput(props: ListInputProps) {
       {
         !!props.isLoading ? (
           <div style={{...props.styles, flexGrow: 1}}>
-            <InputLoading height={height} />
+            <InputLoading height={`${height}px`} />
           </div>
         ):(
           <div ref={ref} style={{...props.styles, flexGrow: 1}}>

@@ -9,11 +9,14 @@ export default function StudentSelector(props: SelectorProps) {
   const dispatch = useAppDispatch();
   const students = useAppSelector(selectStudents);
 
+  const {isLoading} = props;
   useEffect(() => {
     // Solo en caso de contar con una base de datos de los alumnos
     // Eliminar si no es así
-    dispatch(fetchStudents());
-  }, [dispatch]);
+    if (!isLoading) {
+      dispatch(fetchStudents());
+    }
+  }, [dispatch, isLoading]);
 
   const onChange = (selectedItem: any) => {
     props.setValue('alumnos', selectedItem);
@@ -22,7 +25,7 @@ export default function StudentSelector(props: SelectorProps) {
   return (
     <div>
       <ListInput 
-        isLoading={props.isLoading}
+        isLoading={isLoading}
         name="alumnos" 
         placeholder="Alumno" 
         optionList={students}

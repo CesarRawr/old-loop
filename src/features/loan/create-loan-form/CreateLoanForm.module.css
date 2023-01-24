@@ -2,7 +2,7 @@
   padding: .2rem .8rem;
 
   border-radius: 8px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, .2);
 }
 
 .bottomPane {
@@ -24,11 +24,13 @@
   flex-flow: column;
 }
 
-/*/////////////////////////*/
-.f {
-  display: flex;
-  justify-content: center;
+.topPane {
+  display: grid;
+  grid-template-columns: 1fr 7vw repeat(2, 20vw) 7vw 11vw;
 }
+
+/*/////////////////////////*/
+
 
 .marginBottom {
   margin-bottom: .5rem;

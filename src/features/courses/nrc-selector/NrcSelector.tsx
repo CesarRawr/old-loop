@@ -11,9 +11,12 @@ export default function NrcSelector(props: SelectorProps) {
   const nrcs = useAppSelector(selectNrcs);
   const courses = useAppSelector(selectCourses);
 
+  const {isLoading} = props;
   useEffect(() => {
-    dispatch(fetchNrcs());
-  }, [dispatch]);
+    if (!isLoading) {
+      dispatch(fetchNrcs());
+    }
+  }, [dispatch, isLoading]);
 
   const onChange = (selectedItem: any) => {
     props.setValue('nrcs', selectedItem);
@@ -66,9 +69,6 @@ export default function NrcSelector(props: SelectorProps) {
 
   return (
     <FormListGroup 
-      styles={{
-        width: "6.5vw"
-      }}
       label={{
         text: 'Nrc',
         styles: {
@@ -76,7 +76,7 @@ export default function NrcSelector(props: SelectorProps) {
         }
       }}
       listInput={{
-        isLoading: props.isLoading,
+        isLoading: isLoading,
         name: 'nrcs',
         placeholder: 'Nrc',
         size: 5,

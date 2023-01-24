@@ -47,6 +47,6 @@ interface DialogProps {
   title: string;
   description: string;
   handleClose: () => void;
-  isOptionEnabled: boolean;
-  acceptHandler: () => void;
+  isOptionEnabled?: boolean;
+  acceptHandler?: () => void;
 }

@@ -9,9 +9,12 @@ export default function ClassroomSelector(props: SelectorProps) {
   const dispatch = useAppDispatch();
   const classrooms = useAppSelector(selectClassrooms);
 
+  const {isLoading} = props;
   useEffect(() => {
-    dispatch(fetchClassrooms());
-  }, [dispatch]);
+    if (!isLoading) {
+      dispatch(fetchClassrooms());
+    }
+  }, [dispatch, isLoading]);
 
   const onChange = (selectedItem: any) => {
     props.setValue('aulas', selectedItem);
@@ -19,9 +22,6 @@ export default function ClassroomSelector(props: SelectorProps) {
 
   return (
     <FormListGroup 
-      styles={{
-        width: "6.5vw"
-      }}
       label={{
         text: 'Aula',
         styles: {
@@ -29,7 +29,7 @@ export default function ClassroomSelector(props: SelectorProps) {
         }
       }}
       listInput={{
-        isLoading: props.isLoading,
+        isLoading: isLoading,
         name: 'aulas',
         placeholder: 'Aula',
         size: 5,

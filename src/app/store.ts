@@ -5,6 +5,7 @@ import devicesReducer from '../features/devices/deviceSlice';
 import coursesReducer from '../features/courses/courseSlice';
 import dialogReducer from '../features/dialog/dialogSlice';
 import createLoanReducer from '../features/loan/create-loan-form/createLoanFormSlice';
+import activeLoansListReducer from '../features/loan/active-loans-list/activeLoansListSlice';
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
     courses: coursesReducer,
     dialog: dialogReducer,
     createLoan: createLoanReducer,
+    activeLoans: activeLoansListReducer
   },
 });
 

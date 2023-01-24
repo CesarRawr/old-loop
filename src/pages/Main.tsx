@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 import UserLayout from './layouts/UserLayout';
-import {CreateLoanForm} from '../features/loan';
+import {CreateLoanForm, ActiveLoansList} from '../features/loan';
 
 import {decodeToken} from '../features/utils';
 
@@ -26,6 +26,7 @@ export function Main() {
         alignItems: "center",
       }}>
         <CreateLoanForm />
+        <ActiveLoansList />
       </div>
     </UserLayout>
   );

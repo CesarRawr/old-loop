@@ -47,7 +47,7 @@ export default function MultiSelector(props: MultiSelectorProps) {
     <>
       {
         !!props.isLoading ? (
-          <InputLoading height={height} />
+          <InputLoading height={`${height}px`} />
         ):(
           <div ref={ref}>
             <Select 
