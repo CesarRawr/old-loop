@@ -41,7 +41,8 @@ export default function HoursSelector(props: SelectorProps) {
             styles={{
               marginLeft: ".5rem",
             }} 
-            onChange={onChangeInicio} />
+            onChange={onChangeInicio}
+            disabled={props.disabled} />
         </div>
 
         <div 
@@ -65,7 +66,8 @@ export default function HoursSelector(props: SelectorProps) {
             styles={{
               marginLeft: ".7rem",
             }}
-            onChange={onChangeFin} />
+            onChange={onChangeFin}
+            disabled={props.disabled} />
         </div>
       </div>
     </div>

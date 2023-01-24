@@ -70,6 +70,7 @@ export default function ListInput(props: ListInputProps) {
               placeholder={props.placeholder ? props.placeholder: ""} 
               maxLength={props.size} 
               onChange={props.onChange}
+              isDisabled={props.disabled}
               components={{ DropdownIndicator:() => null, IndicatorSeparator:() => null }} />
           </div>
         )

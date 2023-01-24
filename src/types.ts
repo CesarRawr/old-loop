@@ -5,6 +5,7 @@ import React from 'react';
 ////////////////////////////////////
 export interface SelectorProps {
   isLoading?: boolean;
+  disabled?: boolean;
   setValue: any;
 }
 

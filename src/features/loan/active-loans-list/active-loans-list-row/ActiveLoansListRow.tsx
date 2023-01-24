@@ -3,23 +3,42 @@ import '../ActiveLoansList.css';
 import {getDate} from '../../../utils';
 import {Prestamo} from '../../../../datatest/models';
 import ReturnLoanButton from '../../return-loan/ReturnLoanButton';
+import {useAppDispatch, useAppSelector} from '../../../../app/hooks';
+import {setSelectedLoanIndex, selectSelectedLoanIndex} from '../activeLoansListSlice';
+import {setSelectedLoan} from '../../slices';
 
-export default function ActiveLoansListRow({prestamo}: ActiveLoansListRowProps) {
-  const [isActive, setIsActive] = useState<boolean>(false);
+export default function ActiveLoansListRow({id, prestamo}: ActiveLoansListRowProps) {
+  const dispatch = useAppDispatch();
+  const selectedLoanIndex = useAppSelector(selectSelectedLoanIndex);
+  const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    // Si el préstamo seleccionado cambia, se desactiva la activacion local
+    if (selectedLoanIndex !== id) {
+      setIsActive(false);
+    }
+  }, [selectedLoanIndex]);
 
   const onClick = () => {
-    if (!isActive) {
-      console.log(prestamo);
+    // Si el préstamo ya se encuentra activo y se selecciona otra vez
+    // Se deselecciona
+    if (isActive && selectedLoanIndex === id) {
+      setIsActive(false);
+      dispatch(setSelectedLoanIndex(-1));
+      dispatch(setSelectedLoan(undefined));
+      return;
     }
 
-    setIsActive(current => !current);
+    setIsActive(true);
+    dispatch(setSelectedLoanIndex(id));
+    dispatch(setSelectedLoan(prestamo));
   }
 
   return (
     <tr 
       onClick={onClick} 
       style={{
-        backgroundColor: isActive ? 'rgba(0, 0, 0, 0.07)': '',
+        backgroundColor: selectedLoanIndex === id ? 'rgba(0, 0, 0, 0.07)': '',
       }}>
       {/* Fecha */}
       <td className="f-center">
@@ -69,5 +88,6 @@ export default function ActiveLoansListRow({prestamo}: ActiveLoansListRowProps) 
 }
 
 interface ActiveLoansListRowProps {
+  id: number;
   prestamo: Prestamo;
 }

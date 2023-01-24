@@ -9,39 +9,7 @@ import axios from 'axios';
 ///////////////////////////
 const initialState: LoanState = {
   activeLoans: [],
-  selectedLoan: {
-    observaciones: '',
-    status: 'activo',
-    maestro: {
-      _id: '',
-      nombre: '',
-    },
-    materia: {
-      _id: '',
-      nombre: '',
-      nrc: '',
-      horario: {
-        aula: '',
-        horaInicio: 0,
-        horaFin: 0,
-        dia: 'lunes',
-      },
-    },
-    dispositivos: [],
-    usuario: {
-      _id: '',
-      nickname: '',
-    },
-    timelog: {
-      inicio: new Date().toString(),
-      fin: new Date().toString(),
-    },
-    alumno: {
-      _id: '',
-      matricula: '',
-      nombre: '',
-    },
-  },
+  selectedLoanIndex: -1,
   status: 'loading'
 }
 
@@ -70,6 +38,9 @@ export const activeLoansListSlice = createSlice({
     setStatus: (state, action: PayloadAction<StatusType>) => {
       state.status = action.payload;
     },
+    setSelectedLoanIndex: (state, action: PayloadAction<number>) => {
+      state.selectedLoanIndex = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -91,13 +62,14 @@ export default activeLoansListSlice.reducer;
 ///////////////////////////
 // Actions
 ///////////////////////////
-export const {setStatus} = activeLoansListSlice.actions;
+export const {setStatus, setSelectedLoanIndex} = activeLoansListSlice.actions;
 
 ///////////////////////////
 // Selectors
 ///////////////////////////
 export const selectStatus = (state: RootState) => state.activeLoans.status;
 export const selectActiveLoans = (state: RootState) => state.activeLoans.activeLoans;
+export const selectSelectedLoanIndex = (state: RootState) => state.activeLoans.selectedLoanIndex;
 
 ///////////////////////////
 // Interfaces
@@ -105,7 +77,7 @@ export const selectActiveLoans = (state: RootState) => state.activeLoans.activeL
 type StatusType = 'loading' | 'idle' | 'failed';
 export interface LoanState {
   activeLoans: Prestamo[];
-  selectedLoan: Prestamo;
+  selectedLoanIndex: number;
   status: StatusType;
 }
 

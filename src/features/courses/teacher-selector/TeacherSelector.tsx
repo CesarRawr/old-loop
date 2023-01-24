@@ -12,10 +12,10 @@ export default function TeacherSelector(props: SelectorProps) {
   const nrcs = useAppSelector(selectNrcs);
   const teachers = useAppSelector(selectTeachers);
 
-  const {isLoading} = props;
+  const {isLoading, disabled} = props;
   useEffect(() => {
     // Dejar que carguen los nrc primero
-    if (!isLoading) {
+    if (!isLoading && !disabled) {
       dispatch(fetchTeachers());
     }
   }, [dispatch, nrcs, isLoading]);
@@ -161,6 +161,7 @@ export default function TeacherSelector(props: SelectorProps) {
         },
         select: true,
         onChange,
+        disabled,
       }} />
   );
 }

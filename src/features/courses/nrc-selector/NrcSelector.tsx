@@ -11,9 +11,9 @@ export default function NrcSelector(props: SelectorProps) {
   const nrcs = useAppSelector(selectNrcs);
   const courses = useAppSelector(selectCourses);
 
-  const {isLoading} = props;
+  const {isLoading, disabled} = props;
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && !disabled) {
       dispatch(fetchNrcs());
     }
   }, [dispatch, isLoading]);
@@ -86,6 +86,7 @@ export default function NrcSelector(props: SelectorProps) {
         },
         select: true,
         onChange,
+        disabled
       }} />
   );
 }

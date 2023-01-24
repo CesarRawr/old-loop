@@ -9,11 +9,11 @@ export default function StudentSelector(props: SelectorProps) {
   const dispatch = useAppDispatch();
   const students = useAppSelector(selectStudents);
 
-  const {isLoading} = props;
+  const {isLoading, disabled} = props;
   useEffect(() => {
     // Solo en caso de contar con una base de datos de los alumnos
     // Eliminar si no es así
-    if (!isLoading) {
+    if (!isLoading && !disabled) {
       dispatch(fetchStudents());
     }
   }, [dispatch, isLoading]);
@@ -30,7 +30,8 @@ export default function StudentSelector(props: SelectorProps) {
         placeholder="Alumno" 
         optionList={students}
         onChange={onChange} 
-        clearable />
+        clearable
+        disabled={disabled} />
     </div>
   );
 }

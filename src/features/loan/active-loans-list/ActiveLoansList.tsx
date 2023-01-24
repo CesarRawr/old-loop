@@ -27,7 +27,7 @@ export default function ActiveLoansList() {
       failed: () => <TableMessage msg="Error al obtener la lista de préstamos del servidor" />,
       idle: () => {
         return !!activeLoans.length ? (
-          activeLoans.map((loan, index) => (<ActiveLoansListRow key={index} prestamo={loan} />))
+          activeLoans.map((loan, index) => (<ActiveLoansListRow id={index} key={index} prestamo={loan} />))
         ):(
           <TableMessage msg="No hay préstamos que mostrar" />
         )

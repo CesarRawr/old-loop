@@ -9,9 +9,9 @@ export default function ClassroomSelector(props: SelectorProps) {
   const dispatch = useAppDispatch();
   const classrooms = useAppSelector(selectClassrooms);
 
-  const {isLoading} = props;
+  const {isLoading, disabled} = props;
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && !disabled) {
       dispatch(fetchClassrooms());
     }
   }, [dispatch, isLoading]);
@@ -39,6 +39,7 @@ export default function ClassroomSelector(props: SelectorProps) {
         },
         select: true,
         onChange,
+        disabled,
       }} />
   );
 }
