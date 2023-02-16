@@ -1,9 +1,11 @@
 import React from 'react';
+import {Prestamo} from './datatest/models';
 
 ////////////////////////////////////
 // @Interfaces
 ////////////////////////////////////
 export interface SelectorProps {
+  initialValue?: Prestamo;
   isLoading?: boolean;
   disabled?: boolean;
   setValue: any;

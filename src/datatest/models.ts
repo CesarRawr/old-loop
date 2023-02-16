@@ -1,11 +1,3 @@
-export interface Dispositivo {
-  readonly _id: string; 
-  readonly nombre: string; 
-  readonly stock: number;
-  prestado: number;
-  localPrestado: number;
-}
-
 export interface Usuario {
   readonly _id: string;
   readonly nickname: string;
@@ -47,6 +39,17 @@ export interface Alumno {
   nombre: string;
 }
 
+export interface MetaDispositivo {
+  _id: string;
+  nombre: string;
+  localPrestado: number;
+}
+
+export interface Dispositivo extends MetaDispositivo {
+  stock: number;
+  prestado: number;
+}
+
 export interface Prestamo {
   _id?: string;
   observaciones?: string;
@@ -61,11 +64,7 @@ export interface Prestamo {
     nrc: string;
     horario: Horario;
   };
-  dispositivos: {
-    _id: string;
-    nombre: string;
-    localPrestado: number;
-  }[];
+  dispositivos: MetaDispositivo[];
   usuario: {
     _id: string;
     nickname: string;

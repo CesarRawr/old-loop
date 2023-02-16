@@ -69,7 +69,7 @@ export const {setStatus, setSelectedLoan} = slice.actions;
 // Selectors
 ///////////////////////////
 export const selectStatus = (state: RootState) => state.modifyLoan.status;
-export const selectedLoan = (state: RootState) => state.modifyLoan.selectedLoan;
+export const selectSelectedLoan = (state: RootState) => state.modifyLoan.selectedLoan;
 
 ///////////////////////////
 // Interfaces

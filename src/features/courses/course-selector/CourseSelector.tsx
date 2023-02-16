@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {FormListGroup} from '../../@ui';
 import {SelectorProps} from '../../../types';
 import type {Horario} from '../../../datatest/models';
@@ -11,6 +11,16 @@ export default function CourseSelector(props: SelectorProps) {
   const dispatch = useAppDispatch();
   const nrcs = useAppSelector(selectNrcs);
   const courses = useAppSelector(selectCourses);
+
+  // En caso de haber un valor inicial, se crea una función
+  // estática para enviar el valor en su respectivo objeto.
+  const {initialValue} = props;
+  const defaultValue: any = useMemo(() => {
+    return !initialValue ? undefined: {
+      label: initialValue.materia.nombre,
+      value: initialValue.materia._id,
+    }
+  }, [initialValue]);
 
   const {isLoading, disabled} = props;
   useEffect(() => {
@@ -160,6 +170,7 @@ export default function CourseSelector(props: SelectorProps) {
         },
         select: true,
         onChange,
+        initialValue: defaultValue,
         disabled,
       }} />
   );

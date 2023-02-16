@@ -1,15 +1,26 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {FormListGroup} from '../../@ui';
 import {SelectorProps} from '../../../types';
 import {getDayName} from '../../utils';
 import {useAppSelector, useAppDispatch} from '../../../app/hooks';
 
+import {selectSelectedLoan} from '../../loan/modify-loan-form/modifyLoanFormSlice';
 import {fetchNrcs, selectNrcs, selectCourses} from '../courseSlice';
 
 export default function NrcSelector(props: SelectorProps) {
   const dispatch = useAppDispatch();
   const nrcs = useAppSelector(selectNrcs);
   const courses = useAppSelector(selectCourses);
+
+  // En caso de haber un valor inicial, se crea una función
+  // estática para enviar el valor en su respectivo objeto.
+  const {initialValue} = props;
+  const defaultValue: any = useMemo(() => {
+    return !initialValue ? undefined: {
+      label: initialValue.materia.nrc,
+      value: initialValue.materia.nrc,
+    }
+  }, [initialValue]);
 
   const {isLoading, disabled} = props;
   useEffect(() => {
@@ -86,7 +97,8 @@ export default function NrcSelector(props: SelectorProps) {
         },
         select: true,
         onChange,
-        disabled
+        initialValue: defaultValue,
+        disabled,
       }} />
   );
 }

@@ -4,7 +4,7 @@ import { urlBase } from '../../variables';
 import axios from 'axios';
 
 import type { Item } from './device-selector/deviceSelectorController';
-import type { Dispositivo } from '../../datatest/models';
+import type { MetaDispositivo, Dispositivo } from '../../datatest/models';
 
 ///////////////////////////
 // State
@@ -88,6 +88,7 @@ export const deviceSlice = createSlice({
       state.selectedDevices = tags.map((device: Item) => ({...device}));
     },
     updateDeviceAmount: (state, action: PayloadAction<Item>) => {
+      console.log('Amount updated');
       const devices = state.devices.map((device) => {
         if (device._id === action.payload._id) {
           // Aumentar en 1 la cantidad local prestada
@@ -134,6 +135,22 @@ export const deviceSlice = createSlice({
     },
     setDevices: (state, action: PayloadAction<Item[]>) => {
       state.devices = action.payload;
+    },
+    setDeviceAmount: (state, {payload}: PayloadAction<Item>) => {
+      const devices: Item[] = state.devices.map((device: Item) => {
+        if (device._id === payload._id) {
+          // Aumentar la cantidad local prestada en la cantidad obtenida
+          device.prestado -= payload.localPrestado;
+        }
+
+        return {
+          ...device,
+          label: `${device.value} (${device.stock-device.prestado-device.localPrestado})`,
+          labelPrestado: `${device.value} (${device.localPrestado})`,
+        };
+      });
+
+      state.devices = devices;
     }
   },
   extraReducers: (builder) => {
@@ -159,6 +176,7 @@ export const {
   updateSelected,
   removeSelected,
   clearDevices,
+  setDeviceAmount,
 } = deviceSlice.actions;
 
 ///////////////////////////

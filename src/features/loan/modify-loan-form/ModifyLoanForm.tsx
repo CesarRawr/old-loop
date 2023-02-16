@@ -1,16 +1,24 @@
+/*
+* Tablero para modificar el préstamo. 
+* Se activa al seleccionar un préstamo activo.
+**/
+
 import React, {useState, useEffect} from 'react';
 import {getDate} from '../../utils';
 import {Form} from 'react-final-form';
 import {useNavigate} from 'react-router-dom';
-import {Prestamo, Dispositivo} from '../../../datatest/models';
+import {Prestamo, Dispositivo, MetaDispositivo} from '../../../datatest/models';
 import {firstValidations, secondValidations} from '../create-loan-form/createLoanValidations';
-import {modifyLoan, selectStatus, setStatus} from './modifyLoanFormSlice';
-
 import {fetchActiveLoans} from '../active-loans-list/activeLoansListSlice';
 
 import {
-  deserializeFunction,
-  serializeFunction, 
+  modifyLoan, 
+  selectStatus, 
+  setStatus, 
+  selectSelectedLoan
+} from './modifyLoanFormSlice';
+
+import {
   getDayName, 
   decodeToken
 } from '../../utils';
@@ -28,13 +36,17 @@ import {
 import {
   selectDevices, 
   selectSelectedDevices, 
-  clearDevices
+  clearDevices,
+  setDeviceAmount,
+  updateDeviceAmount,
+  updateSelected
 } from '../../devices/deviceSlice';
 
 import {useAppSelector, useAppDispatch} from '../../../app/hooks';
 import {Label, Button, Input, AlertDialog} from '../../@ui';
 
 import styles from '../create-loan-form/CreateLoanForm.module.css';
+import { Item } from '../../devices/device-selector/deviceSelectorController';
 
 // Formulario para crear un prestamo
 export default function ModifyLoanForm() {
@@ -43,6 +55,44 @@ export default function ModifyLoanForm() {
   const devices = useAppSelector(selectDevices);
   const selectedDevices = useAppSelector(selectSelectedDevices);
   const status = useAppSelector(selectStatus);
+
+  // Préstamo seleccionado
+  const selectedLoan: Prestamo | undefined = useAppSelector(selectSelectedLoan);
+  useEffect(() => {
+    if (!selectedLoan) return;
+    dispatch(clearDevices());
+    // Agregar los dispositivos selecionados al device selector
+    const devicesToSelect: (Item | undefined)[] = devices.map((device: Item) => {
+      const match: MetaDispositivo | undefined = selectedLoan.dispositivos.reduce((acc: any, activeDevice: MetaDispositivo) => {
+        if (activeDevice._id === device._id) {
+          acc = activeDevice;
+        }
+        return acc;
+      }, undefined);
+    
+      return match ? {
+        ...device,
+        localPrestado: match.localPrestado
+      } : undefined;
+    }).filter((item: any) => !!item);
+
+    for (let device of devicesToSelect) {
+      dispatch(setDeviceAmount(device as Item));
+    }
+
+    for (let device of devicesToSelect) {
+      const {localPrestado} = device as Item;
+      for (let i = 0; i < localPrestado; i++) {
+        dispatch(updateDeviceAmount(device as Item));
+        dispatch(updateSelected(device as Item));
+      }
+    }
+  }, [selectedLoan]);
+
+  useEffect(() => {
+    console.log(devices);
+    console.log(selectedDevices);
+  }, [devices, selectedDevices])
 
   // Dialog variables
   const [title, setTitle] = useState<string>('');
@@ -56,7 +106,6 @@ export default function ModifyLoanForm() {
 
   // Send Flag
   const [send, setSend] = useState<boolean>(false);
-
   useEffect(() => {
     // Para enviar el préstamo es necesario que formData y form tengan datos, 
     // Y que la bandera send sea activada
@@ -142,6 +191,7 @@ export default function ModifyLoanForm() {
   }
 
   const onSubmit = (data: any, form: any) => {
+    return;
     // Validaciones de campos sencillas
     let validationsResult: any = firstValidations(data, selectedDevices);
     if (!validationsResult.isValid) {
@@ -213,13 +263,14 @@ export default function ModifyLoanForm() {
       <div className={styles.createLoan}>
         <Form
           onSubmit={onSubmit}
+          initialValues={selectedLoan}
           mutators={{
             // expect (field, value) args from the mutator
             setValue: ([field, value], state, { changeValue }) => {
               changeValue(state, field, () => value)
             }
           }}
-          render={({ handleSubmit, form: { mutators: { setValue } } }) => (
+          render={({ handleSubmit, form: { mutators: { setValue } }, values }) => (
             <form onSubmit={handleSubmit} className={styles.form}>
               {/* Top pane */}
               <div className={styles.topPane}>
@@ -232,30 +283,35 @@ export default function ModifyLoanForm() {
 
                 {/* Nrc */}
                 <NrcSelector 
+                  initialValue={values}
                   setValue={setValue} 
                   isLoading={status === 'loading'} 
                   disabled />
 
                 {/* Maestro */}
                 <TeacherSelector 
+                  initialValue={values}
                   setValue={setValue} 
                   isLoading={status === 'loading'} 
                   disabled />
 
                 {/* Materia */}
                 <CourseSelector 
+                  initialValue={values}
                   setValue={setValue} 
                   isLoading={status === 'loading'}
                   disabled />
 
                 {/* Aula */}
                 <ClassroomSelector 
+                  initialValue={values}
                   setValue={setValue} 
                   isLoading={status === 'loading'}
                   disabled />
 
                 {/* Horario */}
                 <HoursSelector 
+                  initialValue={values}
                   setValue={setValue} 
                   isLoading={status === 'loading'}
                   disabled />
@@ -274,6 +330,7 @@ export default function ModifyLoanForm() {
                   }} >
                   {/* Estudiantes */}
                   <StudentSelector 
+                    initialValue={values}
                     setValue={setValue} 
                     isLoading={status === 'loading'}
                     disabled />
@@ -286,6 +343,7 @@ export default function ModifyLoanForm() {
                       alignItems: "stretch",
                     }}>
                     <Input 
+                      value={values.observaciones}
                       isLoading={status === 'loading'}
                       name="observaciones"
                       placeholder="Observaciones" 
@@ -293,11 +351,11 @@ export default function ModifyLoanForm() {
                       disabled />
                   </div>
 
-                  {/* Botón de prestar */}
+                  {/* Botón de modificar */}
                   <div className={styles.btnContainer}>
                     <Button 
                       type="submit"
-                      text="Prestar" 
+                      text="Modificar" 
                       style={{flexGrow: 1}}
                       disabled={status === 'loading'} />
                   </div>

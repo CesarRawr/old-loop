@@ -1,6 +1,5 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 
-import counterReducer from '../features/counter/counterSlice';
 import devicesReducer from '../features/devices/deviceSlice';
 import coursesReducer from '../features/courses/courseSlice';
 import dialogReducer from '../features/dialog/dialogSlice';
@@ -10,7 +9,6 @@ import modifyLoanReducer from '../features/loan/modify-loan-form/modifyLoanFormS
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
     devices: devicesReducer,
     courses: coursesReducer,
     dialog: dialogReducer,

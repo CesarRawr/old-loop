@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 import UserLayout from './layouts/UserLayout';
-import {selectedLoan} from '../features/loan/slices';
+import {selectSelectedLoan} from '../features/loan/slices';
 import {useAppSelector, useAppDispatch} from '../app/hooks';
 
 import {
@@ -14,7 +14,7 @@ import {decodeToken} from '../features/utils';
 
 export function Main() {
   const navigate = useNavigate();
-  const loan = useAppSelector(selectedLoan);
+  const loan = useAppSelector(selectSelectedLoan);
 
   useEffect(() => {
     const userData: any = decodeToken();

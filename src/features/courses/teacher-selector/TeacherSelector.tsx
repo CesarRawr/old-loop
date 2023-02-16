@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {FormListGroup} from '../../@ui';
 import {SelectorProps} from '../../../types';
 import type {Horario} from '../../../datatest/models';
@@ -12,6 +12,16 @@ export default function TeacherSelector(props: SelectorProps) {
   const nrcs = useAppSelector(selectNrcs);
   const teachers = useAppSelector(selectTeachers);
 
+  // En caso de haber un valor inicial, se crea una función
+  // estática para enviar el valor en su respectivo objeto.
+  const {initialValue} = props;
+  const defaultValue: any = useMemo(() => {
+    return !initialValue ? undefined: {
+      label: initialValue.maestro.nombre,
+      value: initialValue.materia._id,
+    }
+  }, [initialValue]);
+
   const {isLoading, disabled} = props;
   useEffect(() => {
     // Dejar que carguen los nrc primero
@@ -19,7 +29,6 @@ export default function TeacherSelector(props: SelectorProps) {
       dispatch(fetchTeachers());
     }
   }, [dispatch, nrcs, isLoading]);
-
 
   const onChange = (selectedItem: any) => {
     props.setValue('maestros', selectedItem);
@@ -161,6 +170,7 @@ export default function TeacherSelector(props: SelectorProps) {
         },
         select: true,
         onChange,
+        initialValue: defaultValue,
         disabled,
       }} />
   );

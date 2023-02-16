@@ -1,9 +1,25 @@
-import React from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {Label, ListInput} from '../../@ui';
 import {SelectorProps} from '../../../types';
 import styles from './HoursSelector.module.css';
 
 export default function HoursSelector(props: SelectorProps) {
+  // En caso de haber un valor inicial, se crea una función
+  // estática para enviar el valor en su respectivo objeto.
+  const {initialValue} = props;
+  const defaultValueHoraInicio: any = useMemo(() => {
+    return !initialValue ? undefined: {
+      label: `${initialValue.materia.horario.horaInicio}:00`,
+      value: initialValue.materia.horario.horaInicio,
+    }
+  }, [initialValue]);
+
+  const defaultValueHoraFin: any = useMemo(() => {
+    return !initialValue ? undefined: {
+      label: `${initialValue.materia.horario.horaFin}:00`,
+      value: initialValue.materia.horario.horaFin,
+    }
+  }, [initialValue]);
 
   const onChangeInicio = (selectedItem: any) => {
     props.setValue('horaInicio', selectedItem);
@@ -20,10 +36,8 @@ export default function HoursSelector(props: SelectorProps) {
       </div>
 
       <div className={styles.f}>
-        <div
-          style={{
-            width: "5.5vw",
-          }}>
+        {/* Hora de Inicio */}
+        <div style={{ width: "5.5vw" }}>
           <ListInput 
             isLoading={props.isLoading}
             name="horaInicio" 
@@ -42,13 +56,12 @@ export default function HoursSelector(props: SelectorProps) {
               marginLeft: ".5rem",
             }} 
             onChange={onChangeInicio}
-            disabled={props.disabled} />
+            disabled={props.disabled}
+            initialValue={defaultValueHoraInicio} />
         </div>
 
-        <div 
-          style={{
-            width: "5.5vw",
-          }}>
+        {/* Hora de Fin */}
+        <div style={{ width: "5.5vw" }}>
           <ListInput 
             isLoading={props.isLoading}
             name="horaFin" 
@@ -67,7 +80,8 @@ export default function HoursSelector(props: SelectorProps) {
               marginLeft: ".7rem",
             }}
             onChange={onChangeFin}
-            disabled={props.disabled} />
+            disabled={props.disabled}
+            initialValue={defaultValueHoraFin} />
         </div>
       </div>
     </div>

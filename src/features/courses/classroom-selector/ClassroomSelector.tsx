@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {FormListGroup} from '../../@ui';
 import {SelectorProps} from '../../../types';
 import {useAppSelector, useAppDispatch} from '../../../app/hooks';
@@ -8,6 +8,17 @@ import {fetchClassrooms, selectClassrooms} from '../courseSlice';
 export default function ClassroomSelector(props: SelectorProps) {
   const dispatch = useAppDispatch();
   const classrooms = useAppSelector(selectClassrooms);
+
+  // En caso de haber un valor inicial, se crea una función
+  // estática para enviar el valor en su respectivo objeto.
+  const {initialValue} = props;
+  const defaultValue: any = useMemo(() => {
+    return !initialValue ? undefined: {
+      label: initialValue.materia.horario.aula,
+      value: initialValue.materia.horario.aula,
+    }
+  }, [initialValue]);
+
 
   const {isLoading, disabled} = props;
   useEffect(() => {
@@ -39,6 +50,7 @@ export default function ClassroomSelector(props: SelectorProps) {
         },
         select: true,
         onChange,
+        initialValue: defaultValue,
         disabled,
       }} />
   );

@@ -11,6 +11,10 @@
   outline: none;
 }
 
+.input:disabled {
+  color: #999;
+}
+
 .inputContainer {
   display: flex;
   flex-grow: 1;

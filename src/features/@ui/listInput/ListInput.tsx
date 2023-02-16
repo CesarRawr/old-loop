@@ -1,4 +1,4 @@
-import React, {useRef, useEffect, useState} from 'react';
+import React, {useRef, useEffect, useState, useMemo} from 'react';
 import { Field } from 'react-final-form';
 import CreatableSelect from 'react-select/creatable';
 
@@ -46,6 +46,14 @@ export default function ListInput(props: ListInputProps) {
     }),
   };
 
+  const {initialValue} = props;
+  const defaultValue: any = useMemo(() => {
+    return !initialValue ? undefined: {
+      label: initialValue.label, 
+      value: initialValue.value
+    }
+  }, [initialValue]);
+
   useEffect(() => {
     if (!!ref) {
       setHeight(ref.current.clientHeight);
@@ -62,6 +70,7 @@ export default function ListInput(props: ListInputProps) {
         ):(
           <div ref={ref} style={{...props.styles, flexGrow: 1}}>
             <Field 
+              defaultValue={!!defaultValue ? defaultValue: ''}
               name={props.name}
               styles={customStyles} 
               isClearable={props.clearable}
@@ -90,5 +99,6 @@ export interface ListInputProps {
   autocomplete?: "on" | "off";
   clearable?: boolean;
   isLoading?: boolean;
+  initialValue?: any;
   onChange?: (selectedItem: any) => void;
 }

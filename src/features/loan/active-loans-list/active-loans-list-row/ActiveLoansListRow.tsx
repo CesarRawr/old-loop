@@ -4,6 +4,7 @@ import {getDate} from '../../../utils';
 import {Prestamo} from '../../../../datatest/models';
 import ReturnLoanButton from '../../return-loan/ReturnLoanButton';
 import {useAppDispatch, useAppSelector} from '../../../../app/hooks';
+import DevicesDropdown from '../../../devices/devices-dropdown/DevicesDropdown';
 import {setSelectedLoanIndex, selectSelectedLoanIndex} from '../activeLoansListSlice';
 import {setSelectedLoan} from '../../slices';
 
@@ -13,7 +14,7 @@ export default function ActiveLoansListRow({id, prestamo}: ActiveLoansListRowPro
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
-    // Si el préstamo seleccionado cambia, se desactiva la activacion local
+    // Si el préstamo seleccionado cambia, se desactiva la selección local
     if (selectedLoanIndex !== id) {
       setIsActive(false);
     }
@@ -70,7 +71,9 @@ export default function ActiveLoansListRow({id, prestamo}: ActiveLoansListRowPro
       <td className="f-center">{ `${prestamo.materia.horario.horaFin}:00` }</td>
 
       {/* Dispositivos */}
-      <td className="f-center">2.1</td>
+      <td className="f-center">
+        <DevicesDropdown devicesList={prestamo.dispositivos} />
+      </td>
 
       {/* Tipo de solicitante */}
       <td className="f-center">
