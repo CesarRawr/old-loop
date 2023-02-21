@@ -85,26 +85,31 @@ export const deviceSlice = createSlice({
         label: lastItem.value,
       }]);
 
-      state.selectedDevices = tags.map((device: Item) => ({...device}));
+      const newTags: any = tags.map((device: Item) => ({...device}));
+      return {
+        ...state,
+        selectedDevices: newTags,
+      };
     },
     updateDeviceAmount: (state, action: PayloadAction<Item>) => {
-      console.log('Amount updated');
       const devices = state.devices.map((device) => {
-        if (device._id === action.payload._id) {
-          // Aumentar en 1 la cantidad local prestada
-          device.localPrestado++;
-          // Deshabilitar si el dispositivo llega a 0 de stock
-          if ((device.stock-device.prestado-device.localPrestado) === 0) device.isDisabled = true;
-        }
-
+        const { _id, value, stock, prestado, localPrestado, isDisabled } = device;
+        const newLocalPrestado = _id === action.payload._id ? localPrestado + 1 : localPrestado;
+        const newIsDisabled = (stock - prestado - newLocalPrestado === 0) ? true : isDisabled;
+      
         return {
           ...device,
-          label: `${device.value} (${device.stock-device.prestado-device.localPrestado})`,
-          labelPrestado: `${device.value} (${device.localPrestado})`,
+          localPrestado: newLocalPrestado,
+          isDisabled: newIsDisabled,
+          label: `${value} (${stock - prestado - newLocalPrestado})`,
+          labelPrestado: `${value} (${newLocalPrestado})`,
         };
       });
 
-      state.devices = devices;
+      return {
+        ...state,
+        devices
+      };
     },
     removeSelected: (state, action: PayloadAction<Item[]>) => {
       const values = state.selectedDevices.map((device: Item) => ({...device}));
@@ -113,45 +118,74 @@ export const deviceSlice = createSlice({
       // Encontrar item eliminado
       const [itemDeleted]: Item[] = values.filter((value: Item) => !selected.some((item: Item) => value.value === item.value));
       
+      console.warn('item eliminado');
+      console.log(itemDeleted);
+
+      console.log('Dispositivos antes de actualizar el dispositivo a eliminar');
+      const dispositivos: any = state.devices.map((item: any) => ({...item}));
+      console.log(dispositivos);
+
       // Actualizar la opción eliminada
       const devicesUpdated = state.devices.map((option: Item) => {
-        return option.value !== itemDeleted.value ? ({...option}): (
-          option.localPrestado = 0,
-          option.isDisabled = false,
-          option.label = `${option.value} (${option.stock-option.prestado-option.localPrestado})`,
-          option.labelPrestado = `${option.value} (${option.localPrestado})`,
-          {...option}
-        );
+        if (option.value === itemDeleted.value) {
+          return {
+            ...option,
+            localPrestado: 0,
+            isDisabled: false,
+            label: `${option.value} (${option.stock-option.prestado})`,
+            labelPrestado: `${option.value} (0)`,
+          };
+        }
+        return option;
       });
 
-      state.devices = devicesUpdated;
-      state.selectedDevices = selected;
+      console.log('Dispositivos actuaizados despues de eliminar');
+      console.log(devicesUpdated);
+      console.log(selected);
+
+      return {
+        ...state,
+        devices: devicesUpdated,
+        selectedDevices: selected,
+      }
     },
     clearDevices: (state) => {
-      state.selectedDevices = [];
+      return {...state, selectedDevices: []};
     },
     setSelectedDevices: (state, action: PayloadAction<Item[]>) => {
-      state.selectedDevices = action.payload;
+      return {...state, selectedDevices: action.payload};
     },
     setDevices: (state, action: PayloadAction<Item[]>) => {
-      state.devices = action.payload;
+      return {...state, devices: action.payload};
     },
     setDeviceAmount: (state, {payload}: PayloadAction<Item>) => {
-      const devices: Item[] = state.devices.map((device: Item) => {
-        if (device._id === payload._id) {
-          // Aumentar la cantidad local prestada en la cantidad obtenida
-          device.prestado -= payload.localPrestado;
-        }
+      const devices: Item[] = [...state.devices];
+      const updatedDevices: Item[] = devices.map((device: Item) => 
+        device._id === payload._id
+        ? (({prestado, value, stock}) => {
+          const newPrestado = prestado - payload.localPrestado;
+          return {
+            ...device,
+            prestado: newPrestado,
+            label: `${value} (${stock - prestado - payload.localPrestado})`,
+            labelPrestado: `${value} (${payload.localPrestado})`,
+          }
+        })(device): device
+      );
 
-        return {
-          ...device,
-          label: `${device.value} (${device.stock-device.prestado-device.localPrestado})`,
-          labelPrestado: `${device.value} (${device.localPrestado})`,
-        };
-      });
-
-      state.devices = devices;
-    }
+      return {
+        ...state,
+        devices: updatedDevices
+      };
+    },
+    watchSelectedDevices: (state) => {
+      const watch = state.selectedDevices.map((item: any) => ({...item}));
+      console.log(watch);
+    },
+    watchDevices: (state) => {
+      const watch = state.devices.map((item: any) => ({...item}));
+      console.log(watch);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -177,6 +211,8 @@ export const {
   removeSelected,
   clearDevices,
   setDeviceAmount,
+  watchDevices,
+  watchSelectedDevices
 } = deviceSlice.actions;
 
 ///////////////////////////

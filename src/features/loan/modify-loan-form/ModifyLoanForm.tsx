@@ -35,11 +35,14 @@ import {
 
 import {
   selectDevices, 
+  selectStatus as selectDevicesStatus,
   selectSelectedDevices, 
   clearDevices,
   setDeviceAmount,
   updateDeviceAmount,
-  updateSelected
+  updateSelected,
+  watchDevices,
+  watchSelectedDevices
 } from '../../devices/deviceSlice';
 
 import {useAppSelector, useAppDispatch} from '../../../app/hooks';
@@ -58,12 +61,13 @@ export default function ModifyLoanForm() {
 
   // Préstamo seleccionado
   const selectedLoan: Prestamo | undefined = useAppSelector(selectSelectedLoan);
+  const devicesListStatus: 'idle' | 'loading' | 'failed' = useAppSelector(selectDevicesStatus);
   useEffect(() => {
-    if (!selectedLoan) return;
+    if (!selectedLoan && devicesListStatus !== 'idle') return;
     dispatch(clearDevices());
     // Agregar los dispositivos selecionados al device selector
     const devicesToSelect: (Item | undefined)[] = devices.map((device: Item) => {
-      const match: MetaDispositivo | undefined = selectedLoan.dispositivos.reduce((acc: any, activeDevice: MetaDispositivo) => {
+      const match: MetaDispositivo | undefined = selectedLoan?.dispositivos.reduce((acc: any, activeDevice: MetaDispositivo) => {
         if (activeDevice._id === device._id) {
           acc = activeDevice;
         }
@@ -87,12 +91,7 @@ export default function ModifyLoanForm() {
         dispatch(updateSelected(device as Item));
       }
     }
-  }, [selectedLoan]);
-
-  useEffect(() => {
-    console.log(devices);
-    console.log(selectedDevices);
-  }, [devices, selectedDevices])
+  }, [selectedLoan, devicesListStatus]);
 
   // Dialog variables
   const [title, setTitle] = useState<string>('');

@@ -1,4 +1,5 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
+import { composeWithDevTools } from 'redux-devtools-extension';
 
 import devicesReducer from '../features/devices/deviceSlice';
 import coursesReducer from '../features/courses/courseSlice';

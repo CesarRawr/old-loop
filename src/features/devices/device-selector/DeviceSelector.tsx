@@ -9,21 +9,22 @@ import {
   selectDevices,
   updateSelected,
   updateDeviceAmount,
-  setSelectedDevices, 
   selectSelectedDevices, 
   removeSelected
 } from '../deviceSlice';
+import { selectSelectedLoanIndex } from '../../loan/active-loans-list/activeLoansListSlice';
 
 export default function DeviceSelector({isLoading}: {isLoading?: any}) {
   const dispatch = useAppDispatch();
   const values = useAppSelector(selectSelectedDevices);
   const devices = useAppSelector(selectDevices);
 
+  const selectedLoanIndex = useAppSelector(selectSelectedLoanIndex);
   useEffect(() => {
     if (!isLoading) {
       dispatch(fetchDevices());
     }
-  }, [dispatch, isLoading]);
+  }, [dispatch, isLoading, selectedLoanIndex]);
 
   const selectOption = (itemSelected: Item) => {
     dispatch(updateDeviceAmount(itemSelected));

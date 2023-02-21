@@ -5,7 +5,11 @@ import type {MouseElementEvent} from '../../../types';
 import {useAppDispatch} from '../../../app/hooks';
 import {returnLoan} from './returnLoanSlice';
 import {setTitle, setDescription, open} from '../../dialog/dialogSlice';
-import {fetchActiveLoans, setStatus} from '../active-loans-list/activeLoansListSlice';
+import {
+  fetchActiveLoans, 
+  setStatus, 
+  setSelectedLoanIndex
+} from '../active-loans-list/activeLoansListSlice';
 
 import {
   fetchClassrooms,
@@ -16,6 +20,7 @@ import {
 } from '../../courses/courseSlice';
 
 import {fetchDevices} from '../../devices/deviceSlice';
+import { setSelectedLoan } from '../modify-loan-form/modifyLoanFormSlice';
 
 export default function ReturnLoanButton({loanID}: ReturnLoanButton) {
   const dispatch = useAppDispatch();
@@ -31,6 +36,10 @@ export default function ReturnLoanButton({loanID}: ReturnLoanButton) {
 
   const onClick = (e: MouseElementEvent) => {
     e.stopPropagation();
+
+    // Eliminar el dispositivo seleccionado en caso de que sea devuelto
+    dispatch(setSelectedLoanIndex(-1));
+    dispatch(setSelectedLoan(undefined));
 
     // Poner en loading la lista de préstamos activos
     dispatch(setStatus('loading'));
