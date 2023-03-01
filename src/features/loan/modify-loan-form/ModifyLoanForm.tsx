@@ -7,21 +7,25 @@ import React, {useState, useEffect} from 'react';
 import {getDate} from '../../utils';
 import {Form} from 'react-final-form';
 import {useNavigate} from 'react-router-dom';
-import {Prestamo, Dispositivo, MetaDispositivo} from '../../../datatest/models';
+import {Prestamo} from '../../../datatest/models';
 import {firstValidations, secondValidations} from '../create-loan-form/createLoanValidations';
-import {fetchActiveLoans} from '../active-loans-list/activeLoansListSlice';
+import {fetchActiveLoans, setSelectedLoanIsDisabled} from '../active-loans-list/activeLoansListSlice';
 
 import {
-  modifyLoan, 
-  selectStatus, 
-  setStatus, 
-  selectSelectedLoan
+  modifyLoan,
+  selectStatus,
+  setStatus,
+  selectSelectedLoan,
+  setSelectedLoan,
+  ModifyData,
 } from './modifyLoanFormSlice';
 
+import {decodeToken} from '../../utils';
 import {
-  getDayName, 
-  decodeToken
-} from '../../utils';
+  getDevicesToSelect, 
+  getDataToSend, 
+  getDeletedDevices
+} from './ModifyLoanFormHelpers';
 
 import DeviceSelector from '../../devices/device-selector/DeviceSelector';
 import {
@@ -41,8 +45,6 @@ import {
   setDeviceAmount,
   updateDeviceAmount,
   updateSelected,
-  watchDevices,
-  watchSelectedDevices
 } from '../../devices/deviceSlice';
 
 import {useAppSelector, useAppDispatch} from '../../../app/hooks';
@@ -55,35 +57,25 @@ import { Item } from '../../devices/device-selector/deviceSelectorController';
 export default function ModifyLoanForm() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const devices = useAppSelector(selectDevices);
-  const selectedDevices = useAppSelector(selectSelectedDevices);
+  const devices: Item[] = useAppSelector(selectDevices);
+  const selectedDevices: Item[] = useAppSelector(selectSelectedDevices);
   const status = useAppSelector(selectStatus);
 
-  // Préstamo seleccionado
+  // Préstamo seleccionado, agrega los dispositivos seleccionados 
+  // al input de los dispositivos.
   const selectedLoan: Prestamo | undefined = useAppSelector(selectSelectedLoan);
   const devicesListStatus: 'idle' | 'loading' | 'failed' = useAppSelector(selectDevicesStatus);
   useEffect(() => {
     if (!selectedLoan && devicesListStatus !== 'idle') return;
     dispatch(clearDevices());
-    // Agregar los dispositivos selecionados al device selector
-    const devicesToSelect: (Item | undefined)[] = devices.map((device: Item) => {
-      const match: MetaDispositivo | undefined = selectedLoan?.dispositivos.reduce((acc: any, activeDevice: MetaDispositivo) => {
-        if (activeDevice._id === device._id) {
-          acc = activeDevice;
-        }
-        return acc;
-      }, undefined);
-    
-      return match ? {
-        ...device,
-        localPrestado: match.localPrestado
-      } : undefined;
-    }).filter((item: any) => !!item);
+    const devicesToSelect: (Item | undefined)[] = getDevicesToSelect(devices, selectedLoan);
 
+    // Resta la cantidad de prèstamo al dispositivo en la lista de dispositivos
     for (let device of devicesToSelect) {
       dispatch(setDeviceAmount(device as Item));
     }
 
+    // Selecciona cada dispositivo y lo coloca en el input de dispositivos.
     for (let device of devicesToSelect) {
       const {localPrestado} = device as Item;
       for (let i = 0; i < localPrestado; i++) {
@@ -91,7 +83,7 @@ export default function ModifyLoanForm() {
         dispatch(updateSelected(device as Item));
       }
     }
-  }, [selectedLoan, devicesListStatus]);
+  }, [selectedLoan, devicesListStatus, dispatch]);
 
   // Dialog variables
   const [title, setTitle] = useState<string>('');
@@ -100,7 +92,9 @@ export default function ModifyLoanForm() {
   const [isOptionEnabled, setIsOptionEnabled] = useState<boolean>(false);
 
   // Submit form
+  // Form contiene la informacion de los mutators del formulario.
   const [form, setForm] = useState<any>();
+  // Form data contiene la información de los inputs en el formulario.
   const [formData, setFormData] = useState<any>();
 
   // Send Flag
@@ -109,17 +103,12 @@ export default function ModifyLoanForm() {
     // Para enviar el préstamo es necesario que formData y form tengan datos, 
     // Y que la bandera send sea activada
     if (!!formData && !!form && send) {
-      sendLoan();
+      setSend(false);
+      updateLoan();
     }
   }, [formData, form, send]);
 
-  const sendLoan = () => {
-    const closeSend = () => {
-      setForm(null);
-      setFormData(null);
-      setSend(false);
-    }
-
+  const updateLoan = () => {
     const userData: any = decodeToken();
 
     // Si el usuario es null, significa que no hay token
@@ -130,67 +119,45 @@ export default function ModifyLoanForm() {
       return;
     }
 
-    const {_id, nickname} = userData;
-    const loan: Prestamo = {
-      observaciones: formData.hasOwnProperty('observaciones') ? formData.observaciones: '',
-      status: "activo",
-      maestro: {
-        _id: formData.maestros.value,
-        nombre: formData.maestros.label,
-      },
-      materia: {
-        _id: formData.materias.value,
-        nombre: formData.materias.label,
-        nrc: formData.nrcs.value,
-        horario: {
-          aula: formData.aulas.value,
-          horaInicio: formData.horaInicio.value,
-          horaFin: formData.horaFin.value,
-          dia: getDayName(),
-        }
-      },
-      dispositivos: selectedDevices.map((dispositivo: Dispositivo) => {
-        return {
-          _id: dispositivo._id,
-          nombre: dispositivo.nombre,
-          localPrestado: dispositivo.localPrestado,
-        }
-      }),
-      usuario: {
-        _id,
-        nickname,
-      },
-      timelog: {
-        inicio: new Date().toString(),
-      },
-      alumno: formData.hasOwnProperty('alumnos') ? formData.alumnos: null,
+    // Obtener la informacion que se va a enviár
+    const dataToSend: ModifyData[] = getDataToSend(selectedDevices, selectedLoan);
+
+    // La función dataToSend no recupera los dispositivos eliminados.
+    // Recuperar los dispositivos eliminados.
+    const deletedDevices: (ModifyData | undefined)[] | undefined = getDeletedDevices(selectedDevices, selectedLoan);
+
+    // Obtener los dispositivos que tengan cambios
+    const changedDevices: ModifyData[] = dataToSend.filter((device: any) => device.operation !== "idle");
+    // Si no hay dispositivos modificados o eliminados
+    if (!changedDevices.length && !deletedDevices?.length) {
+      openDialog('Mensaje', 'No se han hecho cambios en los dispositivos seleccionados');
+      return;
     }
 
-    // Enviar préstamo
-    dispatch(modifyLoan(loan))
-    .unwrap()
-    .then((result) => {
-      if (result.status === 200) {
+    // Desactivar lista para que no interfiera con el envio de la informacion
+    dispatch(setSelectedLoanIsDisabled(true));
+    // Enviar datos
+    dispatch(modifyLoan({
+      loanID: selectedLoan?._id as string,
+      changedDevices, 
+      deletedDevices
+    })).unwrap()
+    .then((result: any) => {
+      if (!result.error) {
         dispatch(fetchActiveLoans());
-
-        clearAll();
-        closeSend();
-        return;
+        dispatch(setSelectedLoan(undefined));
       }
 
-      closeSend();
-      openDialog('Mensaje', result.data.msg);
-      return;
+      dispatch(setSelectedLoanIsDisabled(false));
+      openDialog('Mensaje', result.msg);
     })
     .catch((e) => {
-      console.log(e);
-      closeSend();
-      openDialog('Error', 'Algo salió mal al intentar realizar un préstamo');
+      dispatch(setSelectedLoanIsDisabled(false));
+      openDialog('Mensaje', 'Error al conectar con el servidor');
     });
   }
 
   const onSubmit = (data: any, form: any) => {
-    return;
     // Validaciones de campos sencillas
     let validationsResult: any = firstValidations(data, selectedDevices);
     if (!validationsResult.isValid) {
@@ -218,18 +185,6 @@ export default function ModifyLoanForm() {
     }
 
     setSend(true);
-  }
-
-  const clearAll = () => {
-    form.mutators.setValue('nrcs', '');
-    form.mutators.setValue('maestros', '');
-    form.mutators.setValue('materias', '');
-    form.mutators.setValue('aulas', '');
-    form.mutators.setValue('horaInicio', '');
-    form.mutators.setValue('horaFin', '');
-    form.mutators.setValue('alumnos', '');
-    form.mutators.setValue('observaciones', '');
-    dispatch(clearDevices());
   }
 
   // Abrir dialogo

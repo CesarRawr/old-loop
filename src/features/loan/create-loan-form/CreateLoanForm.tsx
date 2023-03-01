@@ -6,7 +6,7 @@ import {Prestamo, Dispositivo} from '../../../datatest/models';
 import {firstValidations, secondValidations} from './createLoanValidations';
 import {uploadLoan, selectLoanIsLoading, setIsLoading} from './createLoanFormSlice';
 
-import {fetchActiveLoans} from '../active-loans-list/activeLoansListSlice';
+import {fetchActiveLoans, setSelectedLoanIsDisabled} from '../active-loans-list/activeLoansListSlice';
 
 import {
   deserializeFunction,
@@ -118,11 +118,14 @@ export default function CreateLoanForm() {
       alumno: formData.hasOwnProperty('alumnos') ? formData.alumnos: null,
     }
 
+    // Desactivar lista para que no interfiera con el envio
+    dispatch(setSelectedLoanIsDisabled(true));
     // Enviar préstamo
     dispatch(uploadLoan(loan))
     .unwrap()
     .then((result) => {
       if (result.status === 200) {
+        dispatch(setSelectedLoanIsDisabled(false));
         dispatch(fetchActiveLoans());
 
         clearAll();
@@ -131,6 +134,7 @@ export default function CreateLoanForm() {
         return;
       }
 
+      dispatch(setSelectedLoanIsDisabled(false));
       closeSend();
       openDialog('Mensaje', result.data.msg);
       dispatch(setIsLoading(false));
@@ -138,6 +142,7 @@ export default function CreateLoanForm() {
     })
     .catch((e) => {
       console.log(e);
+      dispatch(setSelectedLoanIsDisabled(false));
       closeSend();
       openDialog('Error', 'Algo salió mal al intentar realizar un préstamo');
       dispatch(setIsLoading(false));

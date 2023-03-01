@@ -2,7 +2,8 @@ import React, {useState} from 'react';
 import {Form} from 'react-final-form';
 import {useNavigate} from 'react-router-dom';
 import {useAppDispatch} from '../../../app/hooks';
-import {FormGroup, Button, Label} from '../../@ui';
+import {InputMui, Label} from '../../@ui';
+import Button from '@mui/material/Button';
 import {open, setTitle, setDescription} from '../../dialog/dialogSlice';
 import axios from 'axios';
 
@@ -77,38 +78,14 @@ export default function LoginForm() {
               <Label text="Login" size="28px" />
             </div>
 
-            <FormGroup 
-              label={{
-                text:"Nickname",
-              }}
-              input={{
-                name: 'nickname',
-                disabled: isLoading, 
-                placeholder: 'Nickname',
-              }} 
-              styles={{
-                marginBottom: "1.1rem",
-              }} />
+            <InputMui label="Usuario" name="nickname"/>
+            <InputMui label="Contraseña" type="password" name="password" />
 
-            <FormGroup 
-              label={{
-                text:"Contraseña"
-              }}
-              input={{
-                name: 'password',
-                type: 'password',
-                disabled: isLoading, 
-                placeholder: 'Contraseña',
-              }} 
-              styles={{
-                marginBottom: "1.1rem",
-              }} />
-
-            <div>
+            <div style={{marginTop: '.5rem'}}>
               <Button 
               type="submit"
-              text="Login"
-              disabled={isLoading} />
+              disabled={isLoading}
+              variant="contained">Login</Button>
             </div>
           </form>
         )} />

@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction, current } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { urlBase } from '../../variables';
 import axios from 'axios';
@@ -23,11 +23,7 @@ const initialState: DevicesState = {
 export const fetchDevices = createAsyncThunk('devices/fetchDevices', async (arg, {dispatch}) => {
   // Limpiar selected devices para evitar bugs en la lista de dispositivos 
   // al momento de refrescarla
-  try {
-    dispatch(setSelectedDevices([]));
-  } catch (e) {
-    console.log(e);
-  }
+  dispatch(setSelectedDevices([]));
 
   const token = localStorage.getItem('token');
   const config = {
@@ -54,6 +50,50 @@ export const fetchDevices = createAsyncThunk('devices/fetchDevices', async (arg,
   });
   
   return devices;
+});
+
+// Function to get all devices
+export const setControl = createAsyncThunk('devices/setControl', async (aula: string, {dispatch, getState}) => {
+  const unk: any = getState();
+  const state: any = unk.devices;
+  
+  const buscarDispositivo = (salon: string, controlesSeleccionados: any) => {
+    // Buscar dispositivo por el nombre del salón
+    const isDeviceSelected = controlesSeleccionados.filter((control: any) => {
+      const salonDelControl = control.nombre.split(" ")[1];
+      return salonDelControl === salon;
+    });
+
+    return !!isDeviceSelected.length;
+  }
+
+  // saber si el salón seleccionado tiene un control
+  const isThereAControl: any = state.devices.filter((device: any) => {
+    const deviceName = device.nombre.split(" ")[1];
+    return deviceName === aula;
+  });
+
+  console.log('asd');
+  if (!isThereAControl.length) return;
+
+  // Obtener los controles seleccionados en el device selector
+  const controlesSeleccionados = state.selectedDevices.filter((device: any) => {
+    const deviceType = device.nombre.split(" ")[0];
+    return deviceType.includes("control");
+  });
+
+console.log('asdd');
+  if (!!controlesSeleccionados.length) {
+    // Interrumpir el seteo del control si es que ya existe en la lista de dispositivos
+    const isDeviceSelected: boolean = buscarDispositivo(aula, controlesSeleccionados);
+    if (isDeviceSelected) {
+      return;
+    }
+  }
+
+  console.log('asddd');
+  dispatch(updateDeviceAmount(isThereAControl[0]));
+  dispatch(updateSelected(isThereAControl[0]));
 });
 
 ///////////////////////////
@@ -117,13 +157,7 @@ export const deviceSlice = createSlice({
 
       // Encontrar item eliminado
       const [itemDeleted]: Item[] = values.filter((value: Item) => !selected.some((item: Item) => value.value === item.value));
-      
-      console.warn('item eliminado');
-      console.log(itemDeleted);
-
-      console.log('Dispositivos antes de actualizar el dispositivo a eliminar');
       const dispositivos: any = state.devices.map((item: any) => ({...item}));
-      console.log(dispositivos);
 
       // Actualizar la opción eliminada
       const devicesUpdated = state.devices.map((option: Item) => {
@@ -138,10 +172,6 @@ export const deviceSlice = createSlice({
         }
         return option;
       });
-
-      console.log('Dispositivos actuaizados despues de eliminar');
-      console.log(devicesUpdated);
-      console.log(selected);
 
       return {
         ...state,
@@ -178,14 +208,6 @@ export const deviceSlice = createSlice({
         devices: updatedDevices
       };
     },
-    watchSelectedDevices: (state) => {
-      const watch = state.selectedDevices.map((item: any) => ({...item}));
-      console.log(watch);
-    },
-    watchDevices: (state) => {
-      const watch = state.devices.map((item: any) => ({...item}));
-      console.log(watch);
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -211,8 +233,6 @@ export const {
   removeSelected,
   clearDevices,
   setDeviceAmount,
-  watchDevices,
-  watchSelectedDevices
 } = deviceSlice.actions;
 
 ///////////////////////////

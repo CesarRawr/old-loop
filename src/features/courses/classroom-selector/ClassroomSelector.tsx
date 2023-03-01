@@ -3,6 +3,7 @@ import {FormListGroup} from '../../@ui';
 import {SelectorProps} from '../../../types';
 import {useAppSelector, useAppDispatch} from '../../../app/hooks';
 
+import {setControl} from '../../devices/deviceSlice';
 import {fetchClassrooms, selectClassrooms} from '../courseSlice';
 
 export default function ClassroomSelector(props: SelectorProps) {
@@ -19,7 +20,6 @@ export default function ClassroomSelector(props: SelectorProps) {
     }
   }, [initialValue]);
 
-
   const {isLoading, disabled} = props;
   useEffect(() => {
     if (!isLoading && !disabled) {
@@ -29,6 +29,7 @@ export default function ClassroomSelector(props: SelectorProps) {
 
   const onChange = (selectedItem: any) => {
     props.setValue('aulas', selectedItem);
+    dispatch(setControl(selectedItem.value));
   }
 
   return (

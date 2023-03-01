@@ -127,7 +127,7 @@ export const secondValidations = (formData: any, selectedDevices: any, devices: 
     };
   }
 
-  // Si el salón tiene un control y se seleccionó 1 control
+  // Si el salón tiene un control y se seleccionó 1 control que no le pertenece
   if (!!isThereAControl.length && !!controlesSeleccionados.length) {
     // Detectar si el control seleccionado pertenece al aula seleccionada
     const salonDelControl = controlesSeleccionados[0].nombre.split(" ")[1];

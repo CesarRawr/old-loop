@@ -5,6 +5,7 @@ import type {Horario} from '../../../datatest/models';
 import {getDecimalHour, getDayName, getDecimalMinutes, getMDYDateString} from '../../utils';
 import {useAppSelector, useAppDispatch} from '../../../app/hooks';
 
+import {setControl} from '../../devices/deviceSlice';
 import {fetchTeachers, selectTeachers, selectNrcs, NrcTag} from '../courseSlice';
 
 export default function TeacherSelector(props: SelectorProps) {
@@ -149,6 +150,8 @@ export default function TeacherSelector(props: SelectorProps) {
       label: `${nearest[0].horarios[0].horaFin}:00`,
       value: nearest[0].horarios[0].horaFin,
     });
+
+    dispatch(setControl(nearest[0].horarios[0].aula));
   }
 
   return (

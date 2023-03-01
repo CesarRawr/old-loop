@@ -5,12 +5,18 @@ import {Prestamo} from '../../../../datatest/models';
 import ReturnLoanButton from '../../return-loan/ReturnLoanButton';
 import {useAppDispatch, useAppSelector} from '../../../../app/hooks';
 import DevicesDropdown from '../../../devices/devices-dropdown/DevicesDropdown';
-import {setSelectedLoanIndex, selectSelectedLoanIndex} from '../activeLoansListSlice';
 import {setSelectedLoan} from '../../slices';
+
+import {
+  setSelectedLoanIndex, 
+  selectSelectedLoanIndex, 
+  selectSelectedLoanIsDisabled
+} from '../activeLoansListSlice';
 
 export default function ActiveLoansListRow({id, prestamo}: ActiveLoansListRowProps) {
   const dispatch = useAppDispatch();
   const selectedLoanIndex = useAppSelector(selectSelectedLoanIndex);
+  const loanIsDisabled = useAppSelector(selectSelectedLoanIsDisabled);
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
@@ -37,9 +43,9 @@ export default function ActiveLoansListRow({id, prestamo}: ActiveLoansListRowPro
 
   return (
     <tr 
-      onClick={onClick} 
+      onClick={!loanIsDisabled ? onClick: () => {}} 
       style={{
-        backgroundColor: selectedLoanIndex === id ? 'rgba(0, 0, 0, 0.07)': '',
+        backgroundColor: selectedLoanIndex === id ? 'rgba(0, 0, 0, 0.07)': (prestamo.status === 'deuda' ? '#FF8A80': ''),
       }}>
       {/* Fecha */}
       <td className="f-center">

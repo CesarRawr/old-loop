@@ -6,6 +6,7 @@ import {useAppSelector, useAppDispatch} from '../../../app/hooks';
 
 import {selectSelectedLoan} from '../../loan/modify-loan-form/modifyLoanFormSlice';
 import {fetchNrcs, selectNrcs, selectCourses} from '../courseSlice';
+import {setControl} from '../../devices/deviceSlice';
 
 export default function NrcSelector(props: SelectorProps) {
   const dispatch = useAppDispatch();
@@ -58,6 +59,8 @@ export default function NrcSelector(props: SelectorProps) {
         return;
       }
 
+      console.log('nu');
+      dispatch(setControl(horario[0].aula));
       // Setteando aulas
       props.setValue('aulas', {
         label: horario[0].aula,
