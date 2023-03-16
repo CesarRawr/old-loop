@@ -51,10 +51,11 @@ export default function HoursSelector(props: SelectorProps) {
   }, [initialValue]);
 
   const defaultValueHoraFin: any = useMemo(() => {
+    const finalHour = actualHour+2 > 21 ? actualHour+1: actualHour+2;
     // Si no hay un initialValue, se asigna la hora actual+2horas al input final.
     return !initialValue ? {
-      label: `${actualHour+2}:00`,
-      value: actualHour+2,
+      label: `${finalHour}:00`,
+      value: finalHour,
     }:{
       label: `${initialValue.materia.horario.horaFin}:00`,
       value: initialValue.materia.horario.horaFin,

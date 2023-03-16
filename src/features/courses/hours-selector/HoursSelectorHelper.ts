@@ -10,6 +10,8 @@ export const getInitialHoursList = (hourNumber: number) => {
       label: `${i}:00`,
       value: i,
     });
+
+    if (i === 20) break;
   }
 
   return list;
@@ -27,6 +29,8 @@ export const getLastHoursList = (hourNumber: number) => {
       label: `${i}:00`,
       value: i,
     });
+
+    if (i === 21) break;
   }
 
   return list;
