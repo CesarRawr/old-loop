@@ -2,8 +2,9 @@ import React, {useState} from 'react';
 import {Form} from 'react-final-form';
 import {useNavigate} from 'react-router-dom';
 import {useAppDispatch} from '../../../app/hooks';
-import {FormGroup, Button, Label} from '../../@ui';
-import {open, setTitle, setDescription} from '../../dialog/dialogSlice';
+import {InputMui, Label} from '../../@ui';
+import {openDialog} from '../../utils';
+import Button from '@mui/material/Button';
 import axios from 'axios';
 
 import {urlBase} from '../../../variables';
@@ -13,12 +14,6 @@ export default function LoginForm() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(false);
-
-  const openDialog = (title: string, descripcion: string) => {
-    dispatch(setTitle(title));
-    dispatch(setDescription(descripcion));
-    dispatch(open());
-  }
 
   // Function to get values when submit form
   const onSubmit = (values: any) => {
@@ -77,38 +72,14 @@ export default function LoginForm() {
               <Label text="Login" size="28px" />
             </div>
 
-            <FormGroup 
-              label={{
-                text:"Nickname",
-              }}
-              input={{
-                name: 'nickname',
-                disabled: isLoading, 
-                placeholder: 'Nickname',
-              }} 
-              styles={{
-                marginBottom: "1.1rem",
-              }} />
+            <InputMui label="Usuario" name="nickname"/>
+            <InputMui label="Contraseña" type="password" name="password" />
 
-            <FormGroup 
-              label={{
-                text:"Contraseña"
-              }}
-              input={{
-                name: 'password',
-                type: 'password',
-                disabled: isLoading, 
-                placeholder: 'Contraseña',
-              }} 
-              styles={{
-                marginBottom: "1.1rem",
-              }} />
-
-            <div>
+            <div style={{marginTop: '.5rem'}}>
               <Button 
               type="submit"
-              text="Login"
-              disabled={isLoading} />
+              disabled={isLoading}
+              variant="contained">Login</Button>
             </div>
           </form>
         )} />

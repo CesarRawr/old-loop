@@ -1,5 +1,6 @@
 import React, {useRef, useEffect, useState, useMemo} from 'react';
 import { Field } from 'react-final-form';
+import { ActionMeta } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 
 import InputLoading from '../inputLoading/InputLoading';
@@ -10,7 +11,7 @@ const CreatableAdapter = ({ input, innerRef, ...rest}: any) => {
       {...input} 
       {...rest} 
       onInputChange={inputValue =>
-        (inputValue.length <= rest.maxLength ? inputValue : inputValue.substr(0, rest.maxLength))
+        (inputValue.length <= rest.maxLength ? inputValue.toUpperCase() : inputValue.substr(0, rest.maxLength).toUpperCase())
       } 
       searchable />
   );
@@ -73,7 +74,7 @@ export default function ListInput(props: ListInputProps) {
               defaultValue={!!defaultValue ? defaultValue: ''}
               name={props.name}
               styles={customStyles} 
-              isClearable={props.clearable}
+              isClearable={props.disableClearable ? false: true}
               component={CreatableAdapter} 
               options={props.optionList} 
               placeholder={props.placeholder ? props.placeholder: ""} 
@@ -97,8 +98,8 @@ export interface ListInputProps {
   optionList?: any[];
   select?: boolean;
   autocomplete?: "on" | "off";
-  clearable?: boolean;
   isLoading?: boolean;
   initialValue?: any;
-  onChange?: (selectedItem: any) => void;
+  disableClearable?: boolean;
+  onChange?: (selectedItem: any, actionMeta: ActionMeta<any>) => void;
 }

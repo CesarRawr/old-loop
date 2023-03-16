@@ -1,1 +1,0 @@
-- Al momento de regresar el préstamo, no se elimina de el componente para modificar el dispositivo.

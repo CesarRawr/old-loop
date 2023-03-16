@@ -1,52 +1,9 @@
-import * as React from 'react';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
-export default function AlertDialog(props: DialogProps) {
-  return (
-    <Dialog
-      open={props.isOpen}
-      onClose={props.handleClose}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogTitle id="alert-dialog-title">
-        {
-          props.title
-        }
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText id="alert-dialog-description">
-          {
-            props.description
-          }
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={props.handleClose} autoFocus>
-          Cerrar
-        </Button>
-        {
-          !!props.isOptionEnabled && (
-            <Button onClick={props.acceptHandler}>
-              Aceptar
-            </Button>
-          )
-        }
-      </DialogActions>
-    </Dialog>
-  );
-}
+import '@sweetalert2/theme-material-ui/material-ui.min.css';
+import './AlertDialog.css';
+import 'animate.css';
 
-interface DialogProps {
-  isOpen: boolean;
-  title: string;
-  description: string;
-  handleClose: () => void;
-  isOptionEnabled?: boolean;
-  acceptHandler?: () => void;
-}
+const AlertDialog = withReactContent(Swal);
+export default AlertDialog;

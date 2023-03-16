@@ -52,7 +52,7 @@ table {
   border-spacing: 0;
 }
 
-* {
+body, input, textarea, select, button {
   color: var(--base-font-color);
   font-family: 'Roboto', sans-serif;
   font-size: 16px;

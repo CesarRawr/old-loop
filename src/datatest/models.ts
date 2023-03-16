@@ -32,13 +32,6 @@ export interface Materia {
   readonly asignaciones: Asignacion[];
 }
 ///////////////////////////////////////////////////////
-
-export interface Alumno {
-  _id?: string;
-  matricula: string;
-  nombre: string;
-}
-
 export interface MetaDispositivo {
   _id: string;
   nombre: string;
@@ -70,8 +63,8 @@ export interface Prestamo {
     nickname: string;
   };
   timelog: {
+    inicioOriginal: string;
     inicio: string;
     fin?: string;
   };
-  alumno?: Alumno;
 }

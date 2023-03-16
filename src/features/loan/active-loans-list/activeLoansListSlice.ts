@@ -10,7 +10,8 @@ import axios from 'axios';
 const initialState: LoanState = {
   activeLoans: [],
   selectedLoanIndex: -1,
-  status: 'loading'
+  selectedLoanIsDisabled: false,
+  status: 'loading',
 }
 
 ///////////////////////////
@@ -18,7 +19,8 @@ const initialState: LoanState = {
 ///////////////////////////
 
 // Function to getActiveLoans
-export const fetchActiveLoans = createAsyncThunk('loan/getActiveLoans', async () => {
+export const fetchActiveLoans = createAsyncThunk('loan/getActiveLoans', async (arg, {dispatch}) => {
+  dispatch(setSelectedLoanIndex(-1));
   const token = localStorage.getItem('token');
   const config = {
     headers: { Authorization: `Bearer ${token}` }
@@ -38,9 +40,15 @@ export const activeLoansListSlice = createSlice({
     setStatus: (state, action: PayloadAction<StatusType>) => {
       state.status = action.payload;
     },
+    setActiveLoans: (state, action: PayloadAction<Prestamo[]>) => {
+      state.activeLoans = action.payload;
+    },
     setSelectedLoanIndex: (state, action: PayloadAction<number>) => {
       state.selectedLoanIndex = action.payload;
-    }
+    },
+    setSelectedLoanIsDisabled: (state, action: PayloadAction<boolean>) => {
+      state.selectedLoanIsDisabled = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -62,7 +70,12 @@ export default activeLoansListSlice.reducer;
 ///////////////////////////
 // Actions
 ///////////////////////////
-export const {setStatus, setSelectedLoanIndex} = activeLoansListSlice.actions;
+export const {
+  setStatus, 
+  setActiveLoans,
+  setSelectedLoanIndex, 
+  setSelectedLoanIsDisabled
+} = activeLoansListSlice.actions;
 
 ///////////////////////////
 // Selectors
@@ -70,14 +83,16 @@ export const {setStatus, setSelectedLoanIndex} = activeLoansListSlice.actions;
 export const selectStatus = (state: RootState) => state.activeLoans.status;
 export const selectActiveLoans = (state: RootState) => state.activeLoans.activeLoans;
 export const selectSelectedLoanIndex = (state: RootState) => state.activeLoans.selectedLoanIndex;
+export const selectSelectedLoanIsDisabled = (state: RootState) => state.activeLoans.selectedLoanIsDisabled;
 
 ///////////////////////////
 // Interfaces
 ///////////////////////////
-type StatusType = 'loading' | 'idle' | 'failed';
+export type StatusType = 'loading' | 'idle' | 'failed';
 export interface LoanState {
   activeLoans: Prestamo[];
   selectedLoanIndex: number;
+  selectedLoanIsDisabled: boolean;
   status: StatusType;
 }
 

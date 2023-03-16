@@ -1,10 +1,12 @@
 import React, {useEffect, useMemo} from 'react';
 import {FormListGroup} from '../../@ui';
+import {ActionMeta} from 'react-select';
 import {SelectorProps} from '../../../types';
 import type {Horario} from '../../../datatest/models';
 import {getDecimalHour, getDayName, getDecimalMinutes, getMDYDateString} from '../../utils';
 import {useAppSelector, useAppDispatch} from '../../../app/hooks';
 
+import {setControl} from '../../devices/deviceSlice';
 import {fetchTeachers, selectTeachers, selectNrcs, NrcTag} from '../courseSlice';
 
 export default function TeacherSelector(props: SelectorProps) {
@@ -30,7 +32,12 @@ export default function TeacherSelector(props: SelectorProps) {
     }
   }, [dispatch, nrcs, isLoading]);
 
-  const onChange = (selectedItem: any) => {
+  const onChange = (selectedItem: any, actionMeta: ActionMeta<any>) => {
+    if (actionMeta.action === 'clear') {
+      props.setValue('maestros', '');
+      return;
+    }
+
     props.setValue('maestros', selectedItem);
 
     const decimalHour: number = getDecimalHour();
@@ -149,6 +156,8 @@ export default function TeacherSelector(props: SelectorProps) {
       label: `${nearest[0].horarios[0].horaFin}:00`,
       value: nearest[0].horarios[0].horaFin,
     });
+
+    dispatch(setControl(nearest[0].horarios[0].aula));
   }
 
   return (

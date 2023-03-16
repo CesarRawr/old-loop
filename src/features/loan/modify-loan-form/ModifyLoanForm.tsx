@@ -7,21 +7,30 @@ import React, {useState, useEffect} from 'react';
 import {getDate} from '../../utils';
 import {Form} from 'react-final-form';
 import {useNavigate} from 'react-router-dom';
-import {Prestamo, Dispositivo, MetaDispositivo} from '../../../datatest/models';
+import {Prestamo} from '../../../datatest/models';
 import {firstValidations, secondValidations} from '../create-loan-form/createLoanValidations';
-import {fetchActiveLoans} from '../active-loans-list/activeLoansListSlice';
+import {fetchActiveLoans, setSelectedLoanIsDisabled} from '../active-loans-list/activeLoansListSlice';
 
 import {
-  modifyLoan, 
-  selectStatus, 
-  setStatus, 
-  selectSelectedLoan
+  modifyLoan,
+  selectStatus,
+  setStatus,
+  selectSelectedLoan,
+  setSelectedLoan,
+  ModifyData,
 } from './modifyLoanFormSlice';
 
 import {
-  getDayName, 
-  decodeToken
+  decodeToken,
+  openDialog, 
+  openAcceptDialog
 } from '../../utils';
+
+import {
+  getDevicesToSelect, 
+  getDataToSend, 
+  getDeletedDevices
+} from './ModifyLoanFormHelpers';
 
 import DeviceSelector from '../../devices/device-selector/DeviceSelector';
 import {
@@ -29,7 +38,6 @@ import {
   CourseSelector,
   HoursSelector,
   NrcSelector,
-  StudentSelector,
   TeacherSelector
 } from '../../courses';
 
@@ -41,8 +49,6 @@ import {
   setDeviceAmount,
   updateDeviceAmount,
   updateSelected,
-  watchDevices,
-  watchSelectedDevices
 } from '../../devices/deviceSlice';
 
 import {useAppSelector, useAppDispatch} from '../../../app/hooks';
@@ -55,35 +61,25 @@ import { Item } from '../../devices/device-selector/deviceSelectorController';
 export default function ModifyLoanForm() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const devices = useAppSelector(selectDevices);
-  const selectedDevices = useAppSelector(selectSelectedDevices);
+  const devices: Item[] = useAppSelector(selectDevices);
+  const selectedDevices: Item[] = useAppSelector(selectSelectedDevices);
   const status = useAppSelector(selectStatus);
 
-  // Préstamo seleccionado
+  // Préstamo seleccionado, agrega los dispositivos seleccionados 
+  // al input de los dispositivos.
   const selectedLoan: Prestamo | undefined = useAppSelector(selectSelectedLoan);
   const devicesListStatus: 'idle' | 'loading' | 'failed' = useAppSelector(selectDevicesStatus);
   useEffect(() => {
     if (!selectedLoan && devicesListStatus !== 'idle') return;
     dispatch(clearDevices());
-    // Agregar los dispositivos selecionados al device selector
-    const devicesToSelect: (Item | undefined)[] = devices.map((device: Item) => {
-      const match: MetaDispositivo | undefined = selectedLoan?.dispositivos.reduce((acc: any, activeDevice: MetaDispositivo) => {
-        if (activeDevice._id === device._id) {
-          acc = activeDevice;
-        }
-        return acc;
-      }, undefined);
-    
-      return match ? {
-        ...device,
-        localPrestado: match.localPrestado
-      } : undefined;
-    }).filter((item: any) => !!item);
+    const devicesToSelect: (Item | undefined)[] = getDevicesToSelect(devices, selectedLoan);
 
+    // Resta la cantidad de prèstamo al dispositivo en la lista de dispositivos
     for (let device of devicesToSelect) {
       dispatch(setDeviceAmount(device as Item));
     }
 
+    // Selecciona cada dispositivo y lo coloca en el input de dispositivos.
     for (let device of devicesToSelect) {
       const {localPrestado} = device as Item;
       for (let i = 0; i < localPrestado; i++) {
@@ -91,7 +87,7 @@ export default function ModifyLoanForm() {
         dispatch(updateSelected(device as Item));
       }
     }
-  }, [selectedLoan, devicesListStatus]);
+  }, [selectedLoan, devicesListStatus, dispatch]);
 
   // Dialog variables
   const [title, setTitle] = useState<string>('');
@@ -99,25 +95,10 @@ export default function ModifyLoanForm() {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [isOptionEnabled, setIsOptionEnabled] = useState<boolean>(false);
 
-  // Submit form
-  const [form, setForm] = useState<any>();
-  const [formData, setFormData] = useState<any>();
-
-  // Send Flag
-  const [send, setSend] = useState<boolean>(false);
-  useEffect(() => {
-    // Para enviar el préstamo es necesario que formData y form tengan datos, 
-    // Y que la bandera send sea activada
-    if (!!formData && !!form && send) {
-      sendLoan();
-    }
-  }, [formData, form, send]);
-
-  const sendLoan = () => {
-    const closeSend = () => {
-      setForm(null);
-      setFormData(null);
-      setSend(false);
+  const updateLoan = (args: UpdateLoanProps) => {
+    let aula = undefined;
+    if (args.formData.aulas.label !== selectedLoan?.materia.horario.aula) {
+      aula = args.formData.aulas.label;
     }
 
     const userData: any = decodeToken();
@@ -130,247 +111,187 @@ export default function ModifyLoanForm() {
       return;
     }
 
-    const {_id, nickname} = userData;
-    const loan: Prestamo = {
-      observaciones: formData.hasOwnProperty('observaciones') ? formData.observaciones: '',
-      status: "activo",
-      maestro: {
-        _id: formData.maestros.value,
-        nombre: formData.maestros.label,
-      },
-      materia: {
-        _id: formData.materias.value,
-        nombre: formData.materias.label,
-        nrc: formData.nrcs.value,
-        horario: {
-          aula: formData.aulas.value,
-          horaInicio: formData.horaInicio.value,
-          horaFin: formData.horaFin.value,
-          dia: getDayName(),
-        }
-      },
-      dispositivos: selectedDevices.map((dispositivo: Dispositivo) => {
-        return {
-          _id: dispositivo._id,
-          nombre: dispositivo.nombre,
-          localPrestado: dispositivo.localPrestado,
-        }
-      }),
-      usuario: {
-        _id,
-        nickname,
-      },
-      timelog: {
-        inicio: new Date().toString(),
-      },
-      alumno: formData.hasOwnProperty('alumnos') ? formData.alumnos: null,
+    // Obtener la informacion que se va a enviár
+    const dataToSend: ModifyData[] = getDataToSend(selectedDevices, selectedLoan);
+
+    // La función dataToSend no recupera los dispositivos eliminados.
+    // Recuperar los dispositivos eliminados.
+    const deletedDevices: (ModifyData | undefined)[] | undefined = getDeletedDevices(selectedDevices, selectedLoan);
+
+    // Obtener los dispositivos que tengan cambios
+    const changedDevices: ModifyData[] = dataToSend.filter((device: any) => device.operation !== "idle");
+    // Si no hay dispositivos modificados o eliminados
+    if (!changedDevices.length && !deletedDevices?.length && !aula) {
+      openDialog('Mensaje', 'No se han hecho cambios en el préstamo seleccionado');
+      return;
     }
 
-    // Enviar préstamo
-    dispatch(modifyLoan(loan))
-    .unwrap()
-    .then((result) => {
-      if (result.status === 200) {
+    // Desactivar lista para que no interfiera con el envio de la informacion
+    dispatch(setSelectedLoanIsDisabled(true));
+    // Enviar datos
+    dispatch(modifyLoan({
+      loanID: selectedLoan?._id as string,
+      changedDevices, 
+      deletedDevices,
+      aula
+    })).unwrap()
+    .then((result: any) => {
+      if (!result.data.error) {
         dispatch(fetchActiveLoans());
-
-        clearAll();
-        closeSend();
-        return;
+        dispatch(setSelectedLoan(undefined));
       }
-
-      closeSend();
+      
+      dispatch(setSelectedLoanIsDisabled(false));
       openDialog('Mensaje', result.data.msg);
-      return;
     })
     .catch((e) => {
-      console.log(e);
-      closeSend();
-      openDialog('Error', 'Algo salió mal al intentar realizar un préstamo');
+      dispatch(setSelectedLoanIsDisabled(false));
+      openDialog('Mensaje', 'Error al conectar con el servidor');
     });
   }
 
   const onSubmit = (data: any, form: any) => {
-    return;
     // Validaciones de campos sencillas
     let validationsResult: any = firstValidations(data, selectedDevices);
     if (!validationsResult.isValid) {
       dispatch(setStatus(validationsResult.isValid));
-      openDialog(validationsResult.dialog.title, validationsResult.dialog.description);
-      return;
+      return openDialog(
+        validationsResult.dialog.title, 
+        validationsResult.dialog.description
+      );
     }
 
-    setFormData(data);
-    setForm(form);
+    const args: UpdateLoanProps = {
+      form,
+      formData: data,
+    }
 
     // Validaciones complejas relacionadas con dispositivos
     validationsResult = secondValidations(data, selectedDevices, devices);
     if (!validationsResult.isValid) {
       dispatch(setStatus(validationsResult.isValid));
 
-      // En caso de requerir la opcion de aceptar, se carga la opción con
-      // sus variables y callback
       if (validationsResult.requireAcceptOption) {
-        setIsOptionEnabled(true);
+        return openAcceptDialog(
+          validationsResult.dialog.title, 
+          validationsResult.dialog.description, 
+          updateLoan,
+          args
+        );
       }
-
-      openDialog(validationsResult.dialog.title, validationsResult.dialog.description);
-      return;
+      
+      return openDialog(
+        validationsResult.dialog.title, 
+        validationsResult.dialog.description
+      );
     }
 
-    setSend(true);
-  }
-
-  const clearAll = () => {
-    form.mutators.setValue('nrcs', '');
-    form.mutators.setValue('maestros', '');
-    form.mutators.setValue('materias', '');
-    form.mutators.setValue('aulas', '');
-    form.mutators.setValue('horaInicio', '');
-    form.mutators.setValue('horaFin', '');
-    form.mutators.setValue('alumnos', '');
-    form.mutators.setValue('observaciones', '');
-    dispatch(clearDevices());
-  }
-
-  // Abrir dialogo
-  const openDialog = (title: string, descripcion: string) => {
-    setTitle(title)
-    setDescription(descripcion)
-    setIsDialogOpen(true);
-  }
-
-  // Cerrar dialogo
-  const handleClose = () => {
-    setIsDialogOpen(false);
-    if (isOptionEnabled) {
-      setIsOptionEnabled(false);
-    }
-  }
-
-  // Funcion del botón de aceptar para el dialogo
-  const acceptHandler = () => {
-    // Se cierra el dialogo actual
-    handleClose();
-    // Quitar la opcion del dialogo
-    setIsOptionEnabled(false);
-    // Abrir la bandera para enviar el préstamo
-    setSend(true);
+    updateLoan(args);
   }
 
   return (
-    <>      
-      <div className={styles.createLoan}>
-        <Form
-          onSubmit={onSubmit}
-          initialValues={selectedLoan}
-          mutators={{
-            // expect (field, value) args from the mutator
-            setValue: ([field, value], state, { changeValue }) => {
-              changeValue(state, field, () => value)
-            }
-          }}
-          render={({ handleSubmit, form: { mutators: { setValue } }, values }) => (
-            <form onSubmit={handleSubmit} className={styles.form}>
-              {/* Top pane */}
-              <div className={styles.topPane}>
+    <div className={styles.createLoan}>
+      <Form
+        onSubmit={onSubmit}
+        initialValues={selectedLoan}
+        mutators={{
+          // expect (field, value) args from the mutator
+          setValue: ([field, value], state, { changeValue }) => {
+            changeValue(state, field, () => value)
+          }
+        }}
+        render={({ handleSubmit, form: { mutators: { setValue } }, values }) => (
+          <form onSubmit={handleSubmit} className={styles.form}>
+            {/* Top pane */}
+            <div className={styles.topPane}>
 
-                {/* Fecha */}
-                <div className={styles.formGroup}>
-                  <Label className={styles.marginBottom} text="Fecha" size="16px" />
-                  <Label className={styles.marginLeft} text={getDate(new Date())} size="20px" />
-                </div>
-
-                {/* Nrc */}
-                <NrcSelector 
-                  initialValue={values}
-                  setValue={setValue} 
-                  isLoading={status === 'loading'} 
-                  disabled />
-
-                {/* Maestro */}
-                <TeacherSelector 
-                  initialValue={values}
-                  setValue={setValue} 
-                  isLoading={status === 'loading'} 
-                  disabled />
-
-                {/* Materia */}
-                <CourseSelector 
-                  initialValue={values}
-                  setValue={setValue} 
-                  isLoading={status === 'loading'}
-                  disabled />
-
-                {/* Aula */}
-                <ClassroomSelector 
-                  initialValue={values}
-                  setValue={setValue} 
-                  isLoading={status === 'loading'}
-                  disabled />
-
-                {/* Horario */}
-                <HoursSelector 
-                  initialValue={values}
-                  setValue={setValue} 
-                  isLoading={status === 'loading'}
-                  disabled />
+              {/* Fecha */}
+              <div className={styles.formGroup}>
+                <Label className={styles.marginBottom} text="Fecha" size="16px" />
+                <Label className={styles.marginLeft} text={getDate(new Date(selectedLoan?.timelog.inicio as string))} size="20px" />
               </div>
 
-              {/* Bottom pane */}
-              <div className={styles.bottomPane}>
-                {/* Selector de devices */}
-                <DeviceSelector isLoading={status === 'loading'} />
-                
+              {/* Nrc */}
+              <NrcSelector 
+                initialValue={values}
+                setValue={setValue} 
+                isLoading={status === 'loading'} 
+                disabled />
+
+              {/* Maestro */}
+              <TeacherSelector 
+                initialValue={values}
+                setValue={setValue} 
+                isLoading={status === 'loading'} 
+                disabled />
+
+              {/* Materia */}
+              <CourseSelector 
+                initialValue={values}
+                setValue={setValue} 
+                isLoading={status === 'loading'}
+                disabled />
+
+              {/* Aula */}
+              <ClassroomSelector 
+                initialValue={values}
+                setValue={setValue} 
+                isLoading={status === 'loading'} />
+
+              {/* Horario */}
+              <HoursSelector 
+                initialValue={values}
+                setValue={setValue} 
+                isLoading={status === 'loading'}
+                disabled />
+            </div>
+
+            {/* Bottom pane */}
+            <div className={styles.bottomPane}>
+              {/* Selector de devices */}
+              <DeviceSelector isLoading={status === 'loading'} />
+              
+              <div 
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '76.6% 1fr',
+                  gridGap: '1.6%',
+                }} >
+
+                {/* Input de observaciones */}
                 <div 
                   style={{
-                    display: 'grid',
-                    gridTemplateColumns: '38.3% 38.3% 1fr',
-                    gridGap: '1.6%',
-                  }} >
-                  {/* Estudiantes */}
-                  <StudentSelector 
-                    initialValue={values}
-                    setValue={setValue} 
+                    display: "flex",
+                    flexFlow: "column",
+                    alignItems: "stretch",
+                  }}>
+                  <Input 
+                    value={values.observaciones}
                     isLoading={status === 'loading'}
+                    name="observaciones"
+                    placeholder="Observaciones" 
+                    autocomplete="off"
                     disabled />
+                </div>
 
-                  {/* Input de observaciones */}
-                  <div 
-                    style={{
-                      display: "flex",
-                      flexFlow: "column",
-                      alignItems: "stretch",
-                    }}>
-                    <Input 
-                      value={values.observaciones}
-                      isLoading={status === 'loading'}
-                      name="observaciones"
-                      placeholder="Observaciones" 
-                      autocomplete="off"
-                      disabled />
-                  </div>
-
-                  {/* Botón de modificar */}
-                  <div className={styles.btnContainer}>
-                    <Button 
-                      type="submit"
-                      text="Modificar" 
-                      style={{flexGrow: 1}}
-                      disabled={status === 'loading'} />
-                  </div>
+                {/* Botón de modificar */}
+                <div className={styles.btnContainer}>
+                  <Button 
+                    type="submit"
+                    text="Modificar" 
+                    style={{flexGrow: 1}}
+                    disabled={status === 'loading'} />
                 </div>
               </div>
-            </form>
-          )}
-        />
-      </div>
-      <AlertDialog
-        isOpen={isDialogOpen}
-        title={title}
-        description={description}
-        handleClose={handleClose} 
-        isOptionEnabled={isOptionEnabled}
-        acceptHandler={acceptHandler} />
-    </>
+            </div>
+          </form>
+        )}
+      />
+    </div>
   );
+}
+
+interface UpdateLoanProps {
+  form: any;
+  formData: any;
 }

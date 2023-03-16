@@ -3,7 +3,7 @@ import { RootState } from '../../app/store';
 import { urlBase } from '../../variables';
 import axios from 'axios';
 
-import {Alumno, Maestro, Materia, Asignacion} from '../../datatest/models';
+import {Maestro, Materia, Asignacion} from '../../datatest/models';
 import {getDayName} from '../utils';
 
 ///////////////////////////
@@ -13,7 +13,6 @@ const initialState: CourseState = {
   classrooms: [],
   courses: [],
   nrcs: [],
-  students: [],
   teachers: [],
 };
 
@@ -87,23 +86,6 @@ export const fetchNrcs = createAsyncThunk('courses/fetchNrcs', async () => {
   return data;
 });
 
-// Function to get all students
-export const fetchStudents = createAsyncThunk('courses/fetchStudents', async () => {
-  const token = localStorage.getItem('token');
-  const config = {
-    headers: { Authorization: `Bearer ${token}` }
-  };
-
-  const response: any = await axios.get<any>(`${urlBase}/v1/students`, config);
-  return response.data.data.map((alumno: Alumno) => {
-    return {
-      ...alumno,
-      label: alumno.nombre,
-      value: alumno.matricula,
-    }
-  });
-});
-
 // Function to get all teachers
 export const fetchTeachers = createAsyncThunk('courses/fetchTeachers', async (arg, { getState }) => {
   const token = localStorage.getItem('token');
@@ -173,9 +155,6 @@ export const courseSlice = createSlice({
       .addCase(fetchNrcs.fulfilled, (state, action) => {
         state.nrcs = action.payload;
       })
-      .addCase(fetchStudents.fulfilled, (state, action) => {
-        state.students = action.payload;
-      })
       .addCase(fetchTeachers.fulfilled, (state, action) => {
         state.teachers = action.payload;
       });
@@ -190,7 +169,6 @@ export default courseSlice.reducer;
 export const selectClassrooms = (state: RootState) => state.courses.classrooms;
 export const selectCourses = (state: RootState) => state.courses.courses;
 export const selectNrcs = (state: RootState) => state.courses.nrcs;
-export const selectStudents = (state: RootState) => state.courses.students;
 export const selectTeachers = (state: RootState) => state.courses.teachers;
 
 ///////////////////////////
@@ -208,7 +186,6 @@ interface NrcMeta {
   };
 }
 
-type StudentTag = Tag & Alumno;
 type TeacherTag = Tag & Maestro;
 type CourseTag = Tag & Materia;
 export type NrcTag = Tag & Asignacion & NrcMeta;
@@ -217,6 +194,5 @@ export interface CourseState {
   classrooms: Tag[];
   courses: CourseTag[];
   nrcs: NrcTag[];
-  students: StudentTag[];
   teachers: TeacherTag[];
 };

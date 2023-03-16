@@ -17,13 +17,13 @@ const initialState: LoanState = {
 ///////////////////////////
 
 // Function to modify loan devices
-export const modifyLoan = createAsyncThunk('loan/modifyLoan', async (prestamo: Prestamo) => {
+export const modifyLoan = createAsyncThunk('loan/modifyLoan', async (modifyData: DataToSend) => {
   const token = localStorage.getItem('token');
   const config = {
     headers: { Authorization: `Bearer ${token}` }
   };
 
-  const {data, status} = await axios.post(`${urlBase}/v1/loan`, prestamo, config);
+  const {data, status} = await axios.patch(`${urlBase}/v1/loan/modify`, modifyData, config);
   return {
     data,
     status,
@@ -74,6 +74,21 @@ export const selectSelectedLoan = (state: RootState) => state.modifyLoan.selecte
 ///////////////////////////
 // Interfaces
 ///////////////////////////
+export interface ModifyData {
+  isNew?: boolean,
+  operation?: 'suma' | 'resta' | 'idle',
+  difference: number,
+  deviceID: string,
+  nombre: string,
+}
+
+export interface DataToSend {
+  loanID: string;
+  changedDevices: ModifyData[];
+  deletedDevices: (ModifyData | undefined)[] | undefined;
+  aula?: string;
+}
+
 export interface Alumno {
   _id?: string;
   matricula: string;

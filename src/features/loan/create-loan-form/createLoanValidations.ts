@@ -6,7 +6,6 @@ export const firstValidations = (formData: any, selectedDevices: any) => {
     "horaInicio",
     "maestros",
     "materias",
-    "nrcs"
   ];
 
   // Revisar si no hay campos vacios
@@ -27,8 +26,7 @@ export const firstValidations = (formData: any, selectedDevices: any) => {
     typeof formData.horaFin === 'string' || 
     typeof formData.horaInicio === 'string' || 
     typeof formData.maestros === 'string' || 
-    typeof formData.materias === 'string' || 
-    typeof formData.nrcs === 'string') {
+    typeof formData.materias === 'string') {
     
     return {
       isValid: false,
@@ -40,7 +38,7 @@ export const firstValidations = (formData: any, selectedDevices: any) => {
   }
 
   // Las horas no pueden ser iguales
-  if (formData.horaInicio === formData.horaFin) {
+  if (formData.horaInicio.value === formData.horaFin.value) {
     return {
       isValid: false,
       dialog: {
@@ -51,7 +49,7 @@ export const firstValidations = (formData: any, selectedDevices: any) => {
   }
 
   // La hora de inicio no puede ser mayor a la de fin
-  if (formData.horaInicio > formData.horaFin) {
+  if (formData.horaInicio.value > formData.horaFin.value) {
     return {
       isValid: false,
       dialog: {
@@ -68,6 +66,18 @@ export const firstValidations = (formData: any, selectedDevices: any) => {
       dialog: {
         title: 'Alerta',
         description: 'Selecciona al menos un dispositivo',
+      }
+    };
+  }
+
+  const isThereNew = checkNew(formData);
+  if (!!isThereNew.length) {
+    return {
+      isValid: false,
+      requireAcceptOption: true,
+      dialog: {
+        title: 'Alerta',
+        description: 'Hay información en el préstamo que no se encuentra en la base de datos. ¿Deseas continuar?',
       }
     };
   }
@@ -107,10 +117,10 @@ export const secondValidations = (formData: any, selectedDevices: any, devices: 
   if (controlesSeleccionados.length > 1) {
     return {
       isValid: false,
-      requireAcceptOption: false,
+      requireAcceptOption: true,
       dialog: {
         title: 'Alerta',
-        description: 'No puedes llevarte mas de un control de proyector',
+        description: 'Te estás llevando mas de un control de proyector. ¿Deseas continuar?',
       }
     };
   }
@@ -127,7 +137,7 @@ export const secondValidations = (formData: any, selectedDevices: any, devices: 
     };
   }
 
-  // Si el salón tiene un control y se seleccionó 1 control
+  // Si el salón tiene un control y se seleccionó 1 control que no le pertenece
   if (!!isThereAControl.length && !!controlesSeleccionados.length) {
     // Detectar si el control seleccionado pertenece al aula seleccionada
     const salonDelControl = controlesSeleccionados[0].nombre.split(" ")[1];
@@ -146,4 +156,22 @@ export const secondValidations = (formData: any, selectedDevices: any, devices: 
   return {
     isValid: true,
   }
+}
+
+const checkNew = (formData: any) => {
+  let newDataNames = [];
+
+  if (formData.aulas.hasOwnProperty('__isNew__')) {
+    newDataNames.push('aula');
+  }
+
+  if (formData.maestros.hasOwnProperty('__isNew__')) {
+    newDataNames.push('maestro');
+  }
+
+  if (formData.materias.hasOwnProperty('__isNew__')) {
+    newDataNames.push('materia');
+  }
+
+  return newDataNames;
 }

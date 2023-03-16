@@ -1,21 +1,29 @@
-import React from 'react';
+import {useRef, forwardRef, CSSProperties} from 'react';
 
-export default function Label({text, size="16px", className, styles}: LabelProps) {
+const Label = forwardRef<HTMLSpanElement, LabelProps>((props, ref) => {
+  const {text, size = "16px", className, styles, ...other} = props;
+  
   return (
-    <span className={className} style={{
+    <span 
+      ref={ref} 
+      className={className} 
+      style={{
         fontSize: size,
         ...styles,
-      }}>
-      {
-        text
-      }
+      }}
+      {...other} >
+      {text}
     </span>
   );
-}
+});
+
+export default Label;
 
 export interface LabelProps {
   text: string;
   size?: string;
-  className?: any;
-  styles?: any;
+  className?: string;
+  styles?: CSSProperties;
+  other?: any;
 }
+

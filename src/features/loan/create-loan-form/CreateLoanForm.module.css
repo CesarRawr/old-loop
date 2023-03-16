@@ -7,7 +7,7 @@
 
 .bottomPane {
   display: grid;
-  grid-template-columns: 28% 1fr;
+  grid-template-columns: 40% 1fr;
   grid-gap: .7rem;
   padding: .2rem 0 .3rem 0;
   width: 100%;
@@ -26,7 +26,7 @@
 
 .topPane {
   display: grid;
-  grid-template-columns: 1fr 7vw repeat(2, 20vw) 7vw 11vw;
+  grid-template-columns: 1fr 8.4vw repeat(2, 20vw) 8.4vw 11vw;
 }
 
 /*/////////////////////////*/

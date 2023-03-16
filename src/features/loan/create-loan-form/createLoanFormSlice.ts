@@ -32,13 +32,9 @@ const initialState: LoanState = {
       nickname: '',
     },
     timelog: {
+      inicioOriginal: new Date().toString(),
       inicio: new Date().toString(),
       fin: new Date().toString(),
-    },
-    alumno: {
-      _id: '',
-      matricula: '',
-      nombre: '',
     },
   },
   isLoading: false,

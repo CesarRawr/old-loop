@@ -1,11 +1,13 @@
 import React, {useEffect, useMemo} from 'react';
 import {FormListGroup} from '../../@ui';
+import {ActionMeta} from 'react-select';
 import {SelectorProps} from '../../../types';
 import type {Horario} from '../../../datatest/models';
 import {getDecimalHour, getDayName, getDecimalMinutes, getMDYDateString} from '../../utils';
 import {useAppSelector, useAppDispatch} from '../../../app/hooks';
 
 import {fetchCourses, selectCourses, selectNrcs, NrcTag} from '../courseSlice';
+import {setControl} from '../../devices/deviceSlice';
 
 export default function CourseSelector(props: SelectorProps) {
   const dispatch = useAppDispatch();
@@ -30,7 +32,12 @@ export default function CourseSelector(props: SelectorProps) {
     }
   }, [dispatch, nrcs, isLoading]);
 
-  const onChange = (selectedItem: any) => {
+  const onChange = (selectedItem: any, actionMeta: ActionMeta<any>) => {
+    if (actionMeta.action === 'clear') {
+      props.setValue('materias', '');
+      return;
+    }
+
     props.setValue('materias', selectedItem);
 
     // Obtener los nrc de la materia
@@ -149,6 +156,8 @@ export default function CourseSelector(props: SelectorProps) {
       label: `${nearest[0].horarios[0].horaFin}:00`,
       value: nearest[0].horarios[0].horaFin,
     });
+
+    dispatch(setControl(nearest[0].horarios[0].aula));
   }
 
   return (

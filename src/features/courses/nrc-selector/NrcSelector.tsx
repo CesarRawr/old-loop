@@ -2,10 +2,12 @@ import React, {useEffect, useMemo} from 'react';
 import {FormListGroup} from '../../@ui';
 import {SelectorProps} from '../../../types';
 import {getDayName} from '../../utils';
+import {ActionMeta} from 'react-select';
 import {useAppSelector, useAppDispatch} from '../../../app/hooks';
 
 import {selectSelectedLoan} from '../../loan/modify-loan-form/modifyLoanFormSlice';
 import {fetchNrcs, selectNrcs, selectCourses} from '../courseSlice';
+import {setControl} from '../../devices/deviceSlice';
 
 export default function NrcSelector(props: SelectorProps) {
   const dispatch = useAppDispatch();
@@ -29,7 +31,12 @@ export default function NrcSelector(props: SelectorProps) {
     }
   }, [dispatch, isLoading]);
 
-  const onChange = (selectedItem: any) => {
+  const onChange = (selectedItem: any, actionMeta: ActionMeta<any>) => {
+    if (actionMeta.action === 'clear') {
+      props.setValue('nrcs', '');
+      return;
+    }
+
     props.setValue('nrcs', selectedItem);
 
     // Setteando maestro
@@ -58,6 +65,7 @@ export default function NrcSelector(props: SelectorProps) {
         return;
       }
 
+      dispatch(setControl(horario[0].aula));
       // Setteando aulas
       props.setValue('aulas', {
         label: horario[0].aula,

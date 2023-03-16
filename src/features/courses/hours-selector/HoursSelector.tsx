@@ -1,33 +1,91 @@
-import React, {useEffect, useMemo} from 'react';
-import {Label, ListInput} from '../../@ui';
+import {useEffect, useMemo, useState} from 'react';
+import {getDecimalHour} from '../../utils';
 import {SelectorProps} from '../../../types';
 import styles from './HoursSelector.module.css';
+import {Label, ListInput} from '../../@ui';
+import HoursSelectorModal from './HoursSelectorModal/HoursSelectorModal';
+
+import {
+  getInitialHoursList, 
+  getLastHoursList,
+  ValueList
+} from './HoursSelectorHelper';
 
 export default function HoursSelector(props: SelectorProps) {
+  const [inputSelected, setInputSelected] = useState<"horaInicio" | "horaFin">('horaInicio');
+  const [actualHour] = useState<number>(getDecimalHour());
+  const [isOtherSelected, setIsOtherSelected] = useState<boolean>(false);
+
+  const handleCloseTimePicker = () => {setIsOtherSelected(false)};
+
+  // Setear la lista inicial del input hora inicio
+  const [initialHoursList, setInitialHoursList] = useState<ValueList[]>([]);
+  useEffect(() => {
+    if (!initialHoursList.length) {
+      const initList = getInitialHoursList(actualHour);
+      setInitialHoursList(initList);
+    }
+  }, [initialHoursList]);
+
+  // Setear la lista inicial del input de hora fin.
+  const [lastHoursList, setLastHoursList] = useState<ValueList[]>([]);
+  useEffect(() => {
+    if (!lastHoursList.length) {
+      const initList = getLastHoursList(actualHour);
+      setLastHoursList(initList);
+    }
+  }, [lastHoursList]);
+
   // En caso de haber un valor inicial, se crea una función
   // estática para enviar el valor en su respectivo objeto.
   const {initialValue} = props;
   const defaultValueHoraInicio: any = useMemo(() => {
-    return !initialValue ? undefined: {
+    // Si no hay un initialValue, se asigna la hora actual al input inicial
+    return !initialValue ? {
+      label: `${actualHour}:00`,
+      value: actualHour,
+    }: {
       label: `${initialValue.materia.horario.horaInicio}:00`,
       value: initialValue.materia.horario.horaInicio,
     }
   }, [initialValue]);
 
   const defaultValueHoraFin: any = useMemo(() => {
-    return !initialValue ? undefined: {
+    // Si no hay un initialValue, se asigna la hora actual+2horas al input final.
+    return !initialValue ? {
+      label: `${actualHour+2}:00`,
+      value: actualHour+2,
+    }:{
       label: `${initialValue.materia.horario.horaFin}:00`,
       value: initialValue.materia.horario.horaFin,
     }
   }, [initialValue]);
 
-  const onChangeInicio = (selectedItem: any) => {
+  // Handler del input de hora inicio
+  const onChangeInicio = (selectedItem: ValueList) => {
+    if (selectedItem.value === -1) {
+      setIsOtherSelected(true);
+      setInputSelected('horaInicio');
+      return;
+    }
+
     props.setValue('horaInicio', selectedItem);
   }
 
-  const onChangeFin = (selectedItem: any) => {
+  // Handler del input de hora fin
+  const onChangeFin = (selectedItem: ValueList) => {
+    if (selectedItem.value === -1) {
+      setIsOtherSelected(true);
+      setInputSelected('horaFin');
+      return;
+    }
+
     props.setValue('horaFin', selectedItem);
   }
+
+  const handleCustomTimeChange = (time: any) => {
+    console.log(time);
+  };
 
   return (
     <div className={styles.formGroup}>
@@ -42,22 +100,15 @@ export default function HoursSelector(props: SelectorProps) {
             isLoading={props.isLoading}
             name="horaInicio" 
             placeholder="Inicio"
-            optionList={[
-              {value: 7, label: "07:00"},
-              {value: 9, label: "09:00"},
-              {value: 11, label: "11:00"},
-              {value: 13, label: "13:00"},
-              {value: 15, label: "15:00"},
-              {value: 17, label: "17:00"},
-              {value: 19, label: "19:00"}
-            ]} 
+            optionList={initialHoursList} 
             size={5}
             styles={{
               marginLeft: ".5rem",
             }} 
             onChange={onChangeInicio}
             disabled={props.disabled}
-            initialValue={defaultValueHoraInicio} />
+            initialValue={defaultValueHoraInicio}
+            disableClearable />
         </div>
 
         {/* Hora de Fin */}
@@ -66,24 +117,23 @@ export default function HoursSelector(props: SelectorProps) {
             isLoading={props.isLoading}
             name="horaFin" 
             placeholder="Fin"
-            optionList={[
-              {value: 9, label: "09:00"},
-              {value: 11, label: "11:00"},
-              {value: 13, label: "13:00"},
-              {value: 15, label: "15:00"},
-              {value: 17, label: "17:00"},
-              {value: 19, label: "19:00"},
-              {value: 21, label: "21:00"}
-            ]} 
+            optionList={lastHoursList} 
             size={5}
             styles={{
               marginLeft: ".7rem",
             }}
             onChange={onChangeFin}
             disabled={props.disabled}
-            initialValue={defaultValueHoraFin} />
+            initialValue={defaultValueHoraFin}
+            disableClearable />
         </div>
       </div>
+
+      <HoursSelectorModal 
+        open={isOtherSelected} 
+        handleClose={handleCloseTimePicker}
+        setValue={props.setValue}
+        inputName={inputSelected} />
     </div>
   );
 }
