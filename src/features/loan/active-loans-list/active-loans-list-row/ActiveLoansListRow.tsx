@@ -14,6 +14,12 @@ import {
   selectSelectedLoanIsDisabled
 } from '../activeLoansListSlice';
 
+import {
+  setSelectedLoanIndex, 
+  selectSelectedLoanIndex, 
+  selectSelectedLoanIsDisabled
+} from '../activeLoansListSlice';
+
 export default function ActiveLoansListRow({id, prestamo}: ActiveLoansListRowProps) {
   const dispatch = useAppDispatch();
   const selectedLoanIndex = useAppSelector(selectSelectedLoanIndex);

@@ -64,7 +64,7 @@ export default function NrcSelector(props: SelectorProps) {
         props.setValue('horaFin', '');
         return;
       }
-
+      
       dispatch(setControl(horario[0].aula));
       // Setteando aulas
       props.setValue('aulas', {

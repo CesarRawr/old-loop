@@ -7,8 +7,8 @@ import {firstValidations, secondValidations} from './createLoanValidations';
 
 import {fetchActiveLoans, setSelectedLoanIsDisabled} from '../active-loans-list/activeLoansListSlice';
 
-import {
-  getDate, 
+
+import { 
   addDays, 
   openDialog, 
   openAcceptDialog

@@ -8,7 +8,6 @@ function InputAdapter({ input, meta: { error, touched }, ...rest }: any) {
   );
 }
 
-
 export default function InputMui(props: InputProps) {
   const handleClick = (event: any) => event.target.select();
 
