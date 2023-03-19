@@ -104,7 +104,7 @@ export default function CreateLoanForm() {
         nickname,
       },
       timelog: {
-        inicioOriginal: formData.fecha,
+        inicioOriginal: new Date().toString(),
         inicio: formData.fecha.toString(),
       },
     }

@@ -22,7 +22,6 @@ function DatePickerAdapter({
       dateFormat="dd/MM/yyyy"
       onChange={onChange}
       className="custom"
-      filterDate={filterWeekends}
       {...rest}
     />
   );

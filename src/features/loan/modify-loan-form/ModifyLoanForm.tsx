@@ -89,12 +89,6 @@ export default function ModifyLoanForm() {
     }
   }, [selectedLoan, devicesListStatus, dispatch]);
 
-  // Dialog variables
-  const [title, setTitle] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
-  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  const [isOptionEnabled, setIsOptionEnabled] = useState<boolean>(false);
-
   const updateLoan = (args: UpdateLoanProps) => {
     let aula = undefined;
     if (args.formData.aulas.label !== selectedLoan?.materia.horario.aula) {

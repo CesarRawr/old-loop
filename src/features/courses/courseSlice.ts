@@ -37,7 +37,6 @@ export const fetchClassrooms = createAsyncThunk('courses/fetchClassrooms', async
 // Function to get all courses
 export const fetchCourses = createAsyncThunk('courses/fetchCourseNames', async (arg, { getState }) => {
   const state: any = getState();
-  const nrcs: NrcTag[] = state.courses.nrcs;
   const token = localStorage.getItem('token');
   const config = {
     headers: { Authorization: `Bearer ${token}` }

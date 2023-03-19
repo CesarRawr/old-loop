@@ -57,7 +57,7 @@ export const setControl = createAsyncThunk('devices/setControl', async (aula: st
   const unk: any = getState();
   const state: any = unk.devices;
   
-  const buscarDispositivo = (salon: string, controlesSeleccionados: any) => {
+  const buscarDispositivo = (salon: string, controlesSeleccionados: Item[]) => {
     // Buscar dispositivo por el nombre del salón
     const isDeviceSelected = controlesSeleccionados.filter((control: any) => {
       const salonDelControl = control.nombre.split(" ")[1];
@@ -68,15 +68,22 @@ export const setControl = createAsyncThunk('devices/setControl', async (aula: st
   }
 
   // saber si el salón seleccionado tiene un control
-  const isThereAControl: any = state.devices.filter((device: any) => {
+  const isThereAControl: Item[] = state.devices.filter((device: Item) => {
     const deviceName = device.nombre.split(" ")[1];
     return deviceName === aula;
   });
 
+  // Si no hay un control.
   if (!isThereAControl.length) return;
 
+  // Si la cantidad total del dispositivo es 0, no agregarlo a la lista
+  const {stock, prestado} = isThereAControl[0];
+  if (!(stock-prestado)) {
+    return;
+  }
+
   // Obtener los controles seleccionados en el device selector
-  const controlesSeleccionados = state.selectedDevices.filter((device: any) => {
+  const controlesSeleccionados: Item[] = state.selectedDevices.filter((device: Item) => {
     const deviceType = device.nombre.split(" ")[0];
     return deviceType.includes("control");
   });
@@ -87,6 +94,17 @@ export const setControl = createAsyncThunk('devices/setControl', async (aula: st
     if (isDeviceSelected) {
       return;
     }
+
+    controlesSeleccionados.reduce((selectedDevices: Item[], control: Item) => {
+      const controlRemoved: Item[] = selectedDevices.filter((selectDevice: Item) => {
+        return selectDevice._id !== control._id;
+      });
+
+      dispatch(removeSelected(controlRemoved));
+      dispatch(setSelectedDevices(controlRemoved));
+
+      return controlRemoved;
+    }, [...state.selectedDevices]);
   }
 
   dispatch(updateDeviceAmount(isThereAControl[0]));
@@ -100,6 +118,8 @@ export const deviceSlice = createSlice({
   name: 'devices',
   initialState,
   reducers: {
+    // Agrega un dispositivo en la lista de seleccionados
+    // O aumenta la cantidad del dispositivo seleccionado si es que se encuentra ahí
     updateSelected: (state, action: PayloadAction<Item>) => {
       const [lastItem] = state.devices.filter((device: Item) => device._id === action.payload._id);
       const selectedDevices = state.selectedDevices.map((device: Item) => ({...device}));
@@ -128,6 +148,7 @@ export const deviceSlice = createSlice({
         selectedDevices: newTags,
       };
     },
+    // Aumenta la cantidad de préstamo local en la lista de dispositivos global.
     updateDeviceAmount: (state, action: PayloadAction<Item>) => {
       const devices = state.devices.map((device) => {
         const { _id, value, stock, prestado, localPrestado, isDisabled } = device;
@@ -148,6 +169,9 @@ export const deviceSlice = createSlice({
         devices
       };
     },
+    // Se le envía la lista de préstamos seleccionados, eliminando el dispositivo que
+    // no se quiere y actualiza la lista global de dispositivos aumentando la cantidad 
+    // del dispositivo eliminado en la misma.
     removeSelected: (state, action: PayloadAction<Item[]>) => {
       const values = state.selectedDevices.map((device: Item) => ({...device}));
       const selected = action.payload.map((device: Item) => ({...device}));
@@ -176,6 +200,7 @@ export const deviceSlice = createSlice({
         selectedDevices: selected,
       }
     },
+    // Elimina los selectedDevices
     clearDevices: (state) => {
       return {...state, selectedDevices: []};
     },
@@ -185,6 +210,7 @@ export const deviceSlice = createSlice({
     setDevices: (state, action: PayloadAction<Item[]>) => {
       return {...state, devices: action.payload};
     },
+    // Resta la cantidad local del dispositivo seleccionado en la lista global de dispositivos
     setDeviceAmount: (state, {payload}: PayloadAction<Item>) => {
       const devices: Item[] = [...state.devices];
       const updatedDevices: Item[] = devices.map((device: Item) => 
