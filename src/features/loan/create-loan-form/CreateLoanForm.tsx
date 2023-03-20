@@ -7,16 +7,13 @@ import {firstValidations, secondValidations} from './createLoanValidations';
 
 import {fetchActiveLoans, setSelectedLoanIsDisabled} from '../active-loans-list/activeLoansListSlice';
 
-
 import { 
   addDays, 
   openDialog, 
   openAcceptDialog
 } from '../../utils';
 
-import {
-  deserializeFunction,
-  serializeFunction, 
+import { 
   getDayName, 
   decodeToken
 } from '../../utils';

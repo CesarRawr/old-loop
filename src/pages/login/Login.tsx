@@ -17,7 +17,7 @@ export default function Login() {
     <div 
       className={styles.login}
       style={{
-        backgroundImage: `linear-gradient(0deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(${process.env.PUBLIC_URL}/login.jpg)`,
+        backgroundImage: `linear-gradient(0deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/login.jpg')`,
       }}>
       <LoginFeature />
     </div>

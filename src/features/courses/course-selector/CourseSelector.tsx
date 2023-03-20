@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo} from 'react';
-import {FormListGroup} from '../../@ui';
+import {FormListGroup} from '@ui';
 import {ActionMeta} from 'react-select';
 import {SelectorProps} from '../../../types';
 import type {Horario} from '../../../datatest/models';
@@ -34,7 +34,10 @@ export default function CourseSelector(props: SelectorProps) {
 
   const onChange = (selectedItem: any, actionMeta: ActionMeta<any>) => {
     if (actionMeta.action === 'clear') {
+      props.setValue('nrcs', '');
+      props.setValue('maestros', '');
       props.setValue('materias', '');
+      props.setValue('aulas', '');
       return;
     }
 

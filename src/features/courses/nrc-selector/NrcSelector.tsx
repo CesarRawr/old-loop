@@ -45,7 +45,6 @@ export default function NrcSelector(props: SelectorProps) {
     // Si no hay clases en el horario, dejar vacios los campos de aula, horainicio y hora fin
     const dayNumber = new Date().getDay();
     if (dayNumber > 0 && dayNumber < 6) {
-      // 
       setSecondLoanData(setValue, selectedItem, dispatch);
     }
   }

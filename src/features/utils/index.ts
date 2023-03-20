@@ -52,16 +52,6 @@ export const getDayjsFormatByHour = (hour?: number) => {
   return dayjs(time.toISOString());
 }
 
-//////////////////////////////
-// Serialize Utils
-/////////////////////////////
-
-// Transforma una función a un string
-export const serializeFunction = (func: (data: any) => void) => (func.toString());
-
-// Transforma un string a una función
-export const deserializeFunction = (funcString: string) => (new Function(`return ${funcString}`)());
-
 type Semana = "lunes" | "martes" | "miercoles" | "jueves" | "viernes" | "sabado" | "domingo";
 
 //////////////////////////////
@@ -117,6 +107,16 @@ export const openAcceptDialog = (
       callback(args);
     }
   })
+}
+
+//////////////////////////////
+// Form Utils
+/////////////////////////////
+type LoanInputName = "nrcs" | "maestros" | "materias" | "aulas" | "horaInicio" | "horaFin" | "observaciones";
+export const resetFormInputs = (setValue: any, inputs: LoanInputName[]) => {
+  inputs.forEach((inputName: LoanInputName) => {
+    setValue(inputName, '');
+  });
 }
 
 export {
