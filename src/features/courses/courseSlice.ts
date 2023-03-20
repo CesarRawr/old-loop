@@ -67,7 +67,8 @@ export const fetchNrcs = createAsyncThunk('courses/fetchNrcs', async () => {
   };
 
   const response: any = await axios.get<any>(`${urlBase}/v1/courses`, config);
-  const nrcs: any[] = response.data.data.map((materia: Materia) => {
+  const materias: Materia[] = response.data.data;
+  const nrcs: any[] = materias.map((materia: Materia) => {
     return materia.asignaciones.map((asignacion: Asignacion) => {
       return {
         ...asignacion,
@@ -185,8 +186,8 @@ interface NrcMeta {
   };
 }
 
-type TeacherTag = Tag & Maestro;
-type CourseTag = Tag & Materia;
+export type TeacherTag = Tag & Maestro;
+export type CourseTag = Tag & Materia;
 export type NrcTag = Tag & Asignacion & NrcMeta;
 
 export interface CourseState {
