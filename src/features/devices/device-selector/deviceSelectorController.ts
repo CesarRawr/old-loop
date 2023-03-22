@@ -1,6 +1,4 @@
-import {MultiValue} from 'react-select';
-import type { Dispositivo } from '../../../datatest/models';
-import {useAppDispatch} from '../../../app/hooks';
+import type { Item } from '@models/interfaces';
 
 // Adaptar controller para usar en deviceSlice
 export const selectOption = (selectedItems: any, value: any): any => {
@@ -64,14 +62,4 @@ export const clear = (options: Item[]) => {
   });
 
   return [];
-}
-
-////////////////////////
-// Interfaces
-////////////////////////
-export interface Item extends Dispositivo {
-  value: string;
-  isDisabled: boolean;
-  label: string;
-  labelPrestado: string;
 }

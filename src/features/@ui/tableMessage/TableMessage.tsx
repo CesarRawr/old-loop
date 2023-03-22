@@ -1,8 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import InputLoading from '../inputLoading/InputLoading';
+import type {TableMessageProps} from '@models/interfaces';
 
 // Mensaje en la tabla, para esto el tbody debe tener display flex
-export default function TableMessage(props: LoadingTableBodyProps) {
+export default function TableMessage(props: TableMessageProps) {
   return (
     <tr 
       className="f-center" 
@@ -16,8 +15,4 @@ export default function TableMessage(props: LoadingTableBodyProps) {
       </th>
     </tr>
   );
-}
-
-interface LoadingTableBodyProps {
-  msg: string;
 }

@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import styles from './HamburgerMenu.module.css';
 import {userOptions} from './HamburgerMenuOptions';
 
-import {MouseElementEvent, MouseElementFunction} from '../../../types';
+import type {MouseElementEvent, MouseElementFunction} from '@models/types';
 
 export default function HamburgerMenu() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);

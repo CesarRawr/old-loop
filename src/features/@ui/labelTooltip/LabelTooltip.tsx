@@ -1,6 +1,8 @@
-import {forwardRef, ForwardedRef} from 'react';
+import {forwardRef} from 'react';
 import Tooltip from '@mui/material/Tooltip';
-import Label, {LabelProps} from '../label/Label';
+import {Label} from '@ui/index';
+
+import type {LabelTooltipProps, LabelProps} from '@models/interfaces';
 
 export default function LabelTooltip(props: LabelTooltipProps) {
   const CustomComponent = forwardRef<HTMLSpanElement, LabelProps>(function MyComponent(props, ref) {
@@ -18,9 +20,4 @@ export default function LabelTooltip(props: LabelTooltipProps) {
       <CustomComponent text={!!props.text ? props.text.slice(0, props.visibleWords)+"...": ""} />
     </Tooltip>
   );
-}
-
-interface LabelTooltipProps {
-  visibleWords: number;
-  text?: string;
 }

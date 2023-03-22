@@ -1,6 +1,6 @@
-import React from 'react';
-import {Header} from '../../features/@ui';
+import {Header} from '@ui/index';
 import styles from './UserLayout.module.css';
+import type {UserLayoutProps} from '@models/interfaces';
 
 // This layout contains a header with not admin options
 export default function UserLayout({children}: UserLayoutProps) {
@@ -14,8 +14,4 @@ export default function UserLayout({children}: UserLayoutProps) {
       </main>
     </div>
   );
-}
-
-interface UserLayoutProps {
-  children: JSX.Element | JSX.Element[];
 }

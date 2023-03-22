@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
-import {Form} from 'react-final-form';
-import {useNavigate} from 'react-router-dom';
-import {useAppDispatch} from '../../../app/hooks';
-import {InputMui, Label} from '../../@ui';
-import {openDialog} from '../../utils';
-import Button from '@mui/material/Button';
 import axios from 'axios';
+import {useState} from 'react';
+import {Form} from 'react-final-form';
+import Button from '@mui/material/Button';
+import {useNavigate} from 'react-router-dom';
 
+import {openDialog} from '@utils/index';
+import {useAppDispatch} from '@app/hooks';
+import {InputMui, Label} from '@ui/index';
 import {urlBase} from '../../../variables';
 import styles from './LoginForm.module.css';
 

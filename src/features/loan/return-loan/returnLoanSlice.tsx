@@ -1,11 +1,18 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {urlBase} from '../../../variables';
 import axios from 'axios';
+import {urlBase} from '../../../variables';
+import type {StatusType} from '@models/types';
+import type {ReturnLoanState} from '@models/interfaces';
+
+import {
+  createAsyncThunk,
+  createSlice,
+  PayloadAction
+} from '@reduxjs/toolkit';
 
 ///////////////////////////
 // State
 ///////////////////////////
-const initialState: LoanState = {
+const initialState: ReturnLoanState = {
   status: 'idle'
 }
 
@@ -55,12 +62,3 @@ export default slice.reducer;
 // Actions
 ///////////////////////////
 export const {setStatus} = slice.actions;
-
-///////////////////////////
-// Interfaces
-///////////////////////////
-type StatusType = 'loading' | 'idle' | 'failed';
-export interface LoanState {
-  status: StatusType;
-}
-

@@ -1,13 +1,13 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../../../app/store';
-import type { Prestamo } from '../../../datatest/models';
+import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {RootState} from '@app/store';
+import type {Prestamo, CreateLoanState} from '@models/interfaces';
 import {urlBase} from '../../../variables';
 import axios from 'axios';
 
 ///////////////////////////
 // State
 ///////////////////////////
-const initialState: LoanState = {
+const initialState: CreateLoanState = {
   prestamo: {
     observaciones: '',
     status: 'activo',
@@ -93,19 +93,3 @@ export const {setIsLoading} = createLoanSlice.actions;
 // Selectors
 ///////////////////////////
 export const selectLoanIsLoading = (state: RootState) => state.createLoan.isLoading;
-
-///////////////////////////
-// Interfaces
-///////////////////////////
-export interface Alumno {
-  _id?: string;
-  matricula: string;
-  nombre: string;
-}
-
-export interface LoanState {
-  prestamo: Prestamo;
-  isLoading: boolean;
-  error: boolean;
-}
-

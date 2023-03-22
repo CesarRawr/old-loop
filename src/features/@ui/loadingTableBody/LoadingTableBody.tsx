@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import InputLoading from '../inputLoading/InputLoading';
+import {InputLoading} from '@ui/index';
+import type {LoadingTableBodyProps} from '@models/interfaces';
 
 export default function LoadingTableBody(props: LoadingTableBodyProps) {
   // Funcion que regresa la decisión de si se va a incluir o no el loading
@@ -39,9 +39,4 @@ export default function LoadingTableBody(props: LoadingTableBodyProps) {
     }
   </>
   );
-}
-
-interface LoadingTableBodyProps {
-  columnsNumber: number;
-  rowsNumber: number;
 }

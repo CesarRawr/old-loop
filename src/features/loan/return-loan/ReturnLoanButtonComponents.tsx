@@ -1,5 +1,4 @@
-import React from 'react';
-import type {MetaDispositivo} from '../../../datatest/models';
+import type {MetaDispositivo, DispositivosProps} from '@models/interfaces';
 
 export default function DispositivosList({ dispositivos }: DispositivosProps) {
   // Obtener lista de los nombres de los dispositivos
@@ -17,7 +16,3 @@ export default function DispositivosList({ dispositivos }: DispositivosProps) {
     </ul>
   );
 };
-
-interface DispositivosProps {
-  dispositivos: MetaDispositivo[];
-}

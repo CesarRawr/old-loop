@@ -1,10 +1,18 @@
-import { createAsyncThunk, createSlice, PayloadAction, current } from '@reduxjs/toolkit';
-import { RootState } from '../../app/store';
-import { urlBase } from '../../variables';
 import axios from 'axios';
+import {RootState} from '@app/store';
+import {urlBase} from '../../variables';
 
-import type { Item } from './device-selector/deviceSelectorController';
-import type { MetaDispositivo, Dispositivo } from '../../datatest/models';
+import type {
+  Dispositivo,
+  Item,
+  DevicesState 
+} from '@models/interfaces';
+
+import {
+  createSlice, 
+  PayloadAction, 
+  createAsyncThunk
+} from '@reduxjs/toolkit';
 
 ///////////////////////////
 // State
@@ -264,12 +272,3 @@ export const {
 export const selectSelectedDevices = (state: RootState) => state.devices.selectedDevices;
 export const selectDevices = (state: RootState) => state.devices.devices;
 export const selectStatus = (state: RootState) => state.devices.status;
-
-///////////////////////////
-// Interfaces
-///////////////////////////
-interface DevicesState {
-  selectedDevices: Item[];
-  devices: Item[];
-  status: 'idle' | 'loading' | 'failed';
-}

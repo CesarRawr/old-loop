@@ -1,6 +1,7 @@
-import jwtDecode from "jwt-decode";
-import {AlertDialog} from '../@ui';
 import dayjs from 'dayjs';
+import jwtDecode from "jwt-decode";
+import {AlertDialog} from '@ui/index';
+import {Semana, LoanInputName} from '@models/types';
 
 //////////////////////////////
 // Time Utils
@@ -51,8 +52,6 @@ export const getDayjsFormatByHour = (hour?: number) => {
 
   return dayjs(time.toISOString());
 }
-
-type Semana = "lunes" | "martes" | "miercoles" | "jueves" | "viernes" | "sabado" | "domingo";
 
 //////////////////////////////
 // JWT Utils
@@ -112,7 +111,6 @@ export const openAcceptDialog = (
 //////////////////////////////
 // Form Utils
 /////////////////////////////
-type LoanInputName = "nrcs" | "maestros" | "materias" | "aulas" | "horaInicio" | "horaFin" | "observaciones";
 export const resetFormInputs = (setValue: any, inputs: LoanInputName[]) => {
   inputs.forEach((inputName: LoanInputName) => {
     setValue(inputName, '');

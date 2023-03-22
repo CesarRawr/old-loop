@@ -1,8 +1,9 @@
 import {useEffect, useMemo, useState} from 'react';
-import {getDecimalHour} from '../../utils';
-import {SelectorProps} from '../../../types';
+import {Label, ListInput} from '@ui/index';
+import {getDecimalHour} from '@utils/index';
+import {SelectorProps} from '@models/interfaces';
+
 import styles from './HoursSelector.module.css';
-import {Label, ListInput} from '../../@ui';
 import HoursSelectorModal from './HoursSelectorModal/HoursSelectorModal';
 
 import {

@@ -1,6 +1,5 @@
-import React from 'react';
-import Label, {LabelProps} from '../label/Label';
-import ListInput, {ListInputProps} from '../listInput/ListInput';
+import {ListInput, Label} from '@ui/index';
+import type {FormListGroupProps} from '@models/interfaces';
 
 export default function FormListGroup(props: FormListGroupProps) {
   return (
@@ -17,10 +16,4 @@ export default function FormListGroup(props: FormListGroupProps) {
       <ListInput {...props.listInput} />
     </div>
   );
-}
-
-interface FormListGroupProps {
-  label?: LabelProps;
-  listInput: ListInputProps;
-  styles?: any;
 }

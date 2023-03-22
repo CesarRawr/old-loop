@@ -4,6 +4,7 @@ export {default as Button} from './button/Button';
 export {default as Header} from './header/Header';
 export {default as FormGroup} from './formGroup/FormGroup';
 export {default as ListInput} from './listInput/ListInput';
+export {default as HamburgerMenu} from './hamburgerMenu/HamburgerMenu';
 export {default as AlertDialog} from './alertDialog/AlertDialog';
 export {default as InputLoading} from './inputLoading/InputLoading';
 export {default as FormListGroup} from './formListGroup/FormListGroup';

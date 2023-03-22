@@ -1,7 +1,9 @@
-import React, {useState, useEffect} from 'react';
+import {useState, useEffect} from 'react';
 import {Field} from 'react-final-form';
 import { FieldRenderProps } from 'react-final-form';
-import DatePicker, { ReactDatePickerProps } from 'react-datepicker';
+import DatePicker from 'react-datepicker';
+
+import type { DatePickerProps } from '@models/interfaces';
 
 import './DatePicker.css';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -42,11 +44,4 @@ export default function LabelDatepicker(props: DatePickerProps) {
       component={DatePickerAdapter} 
       initialValue={date} />
   );
-}
-
-interface DatePickerProps {
-  disabled?: boolean;
-  maxDate?: Date;
-  minDate?: Date;
-  excludeWeekends?: boolean;
 }

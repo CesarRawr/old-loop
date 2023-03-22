@@ -1,6 +1,9 @@
-import {Item} from '../../devices/device-selector/deviceSelectorController';
-import {Prestamo, MetaDispositivo} from '../../../datatest/models';
-import {ModifyData} from './modifyLoanFormSlice';
+import type {
+  Prestamo, 
+  MetaDispositivo, 
+  Item, 
+  ModifyData
+} from '@models/interfaces';
 
 // Función utilizada en el hook para agregar los datos a los inputs 
 export const getDevicesToSelect = (

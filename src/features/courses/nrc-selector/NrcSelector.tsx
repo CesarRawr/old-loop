@@ -1,12 +1,16 @@
-import React, {useEffect, useMemo} from 'react';
-import {FormListGroup} from '../../@ui';
-import {SelectorProps} from '../../../types';
+import {useEffect, useMemo} from 'react';
 import {ActionMeta} from 'react-select';
-import {NrcTag} from '../courseSlice';
-import {useAppSelector, useAppDispatch} from '../../../app/hooks';
+import {FormListGroup} from '@ui/index';
 
-import {selectSelectedLoan} from '../../loan/modify-loan-form/modifyLoanFormSlice';
-import {fetchNrcs, selectNrcs, selectCourses} from '../courseSlice';
+import type {NrcTag} from '@models/types';
+import type {SelectorProps} from '@models/interfaces';
+import {useAppSelector, useAppDispatch} from '@app/hooks';
+
+import {
+  fetchNrcs, 
+  selectNrcs, 
+  selectCourses
+} from '@courses/courseSlice';
 
 import {
   clearAction,

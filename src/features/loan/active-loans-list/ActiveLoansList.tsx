@@ -1,11 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import {Prestamo} from '../../../datatest/models';
-import {Button, LoadingTableBody, TableMessage} from '../../@ui';
-import {useAppSelector, useAppDispatch} from '../../../app/hooks';
+import {useEffect, useState} from 'react';
+import {Prestamo} from '@models/interfaces';
+import {LoadingTableBody, TableMessage} from '@ui/index';
+import {useAppSelector, useAppDispatch} from '@app/hooks';
 import ActiveLoansListRow from './active-loans-list-row/ActiveLoansListRow';
-
-import './ActiveLoansList.css';
 import {searchExpiredLoans, reorderActiveLoans} from './ActiveLoansListHelpers';
+import './ActiveLoansList.css';
 
 import {
   fetchActiveLoans, 

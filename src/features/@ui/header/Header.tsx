@@ -1,7 +1,6 @@
-import React from 'react';
 import styles from './Header.module.css';
 import {useNavigate} from 'react-router-dom';
-import HamburgerMenu from '../hamburgerMenu/HamburgerMenu';
+import {HamburgerMenu} from '@ui/index';
 
 export default function Header() {
   const navigate = useNavigate();

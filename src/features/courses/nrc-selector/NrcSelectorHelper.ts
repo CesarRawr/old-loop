@@ -1,13 +1,11 @@
-import {NrcTag} from '../courseSlice';
-import {getDayName} from '../../utils';
-import {setControl} from '../../devices/deviceSlice';
+import {setControl} from '@devices/deviceSlice';
+import {getDayName, resetFormInputs} from '@utils/index';
+import type {NrcTag, LoanInputName} from '@models/types';
 
 // Limpia los campos nrc, maestro, materia y aula
 export const clearAction = (setValue: any) => {
-  setValue('nrcs', '');
-  setValue('maestros', '');
-  setValue('materias', '');
-  setValue('aulas', '');
+  const toDelete: LoanInputName[] = ['nrcs', 'maestros', 'materias', 'aulas'];
+  return resetFormInputs(setValue, toDelete);
 }
 
 // Settea el nrc, el maestro y la materia

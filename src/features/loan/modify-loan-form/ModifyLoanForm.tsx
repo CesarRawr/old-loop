@@ -1,30 +1,41 @@
-/*
-* Tablero para modificar el préstamo. 
-* Se activa al seleccionar un préstamo activo.
-**/
-
-import React, {useState, useEffect} from 'react';
-import {getDate} from '../../utils';
+import {useEffect} from 'react';
 import {Form} from 'react-final-form';
 import {useNavigate} from 'react-router-dom';
-import {Prestamo} from '../../../datatest/models';
-import {firstValidations, secondValidations} from '../create-loan-form/createLoanValidations';
-import {fetchActiveLoans, setSelectedLoanIsDisabled} from '../active-loans-list/activeLoansListSlice';
+import {Label, Button, Input} from '@ui/index';
+import {useAppSelector, useAppDispatch} from '@app/hooks';
+import styles from '../create-loan-form/CreateLoanForm.module.css';
+
+import type {
+  Prestamo, 
+  Item, 
+  UpdateLoanProps, 
+  ModifyData
+} from '@models/interfaces';
 
 import {
+  firstValidations, 
+  secondValidations
+} from '../create-loan-form/createLoanValidations';
+
+import {
+  fetchActiveLoans, 
+  setSelectedLoanIsDisabled
+} from '../active-loans-list/activeLoansListSlice';
+
+import {
+  setStatus,
   modifyLoan,
   selectStatus,
-  setStatus,
   selectSelectedLoan,
-  setSelectedLoan,
-  ModifyData,
+  setSelectedLoan
 } from './modifyLoanFormSlice';
 
 import {
-  decodeToken,
+  getDate,
   openDialog, 
+  decodeToken,
   openAcceptDialog
-} from '../../utils';
+} from '@utils/index';
 
 import {
   getDevicesToSelect, 
@@ -32,14 +43,13 @@ import {
   getDeletedDevices
 } from './ModifyLoanFormHelpers';
 
-import DeviceSelector from '../../devices/device-selector/DeviceSelector';
 import {
   ClassroomSelector,
   CourseSelector,
   HoursSelector,
   NrcSelector,
   TeacherSelector
-} from '../../courses';
+} from '@courses/index';
 
 import {
   selectDevices, 
@@ -49,13 +59,8 @@ import {
   setDeviceAmount,
   updateDeviceAmount,
   updateSelected,
-} from '../../devices/deviceSlice';
-
-import {useAppSelector, useAppDispatch} from '../../../app/hooks';
-import {Label, Button, Input, AlertDialog} from '../../@ui';
-
-import styles from '../create-loan-form/CreateLoanForm.module.css';
-import { Item } from '../../devices/device-selector/deviceSelectorController';
+} from '@devices/deviceSlice';
+import DeviceSelector from '@devices/device-selector/DeviceSelector';
 
 // Formulario para crear un prestamo
 export default function ModifyLoanForm() {
@@ -283,9 +288,4 @@ export default function ModifyLoanForm() {
       />
     </div>
   );
-}
-
-interface UpdateLoanProps {
-  form: any;
-  formData: any;
 }

@@ -1,20 +1,16 @@
-import {Button} from '../../@ui';
-import {openAcceptDialog} from '../../utils';
-import type {MouseElementEvent} from '../../../types';
-import {useAppDispatch} from '../../../app/hooks';
-import type {MetaDispositivo} from '../../../datatest/models';
+import {Button} from '@ui/index';
+import {useAppDispatch} from '@app/hooks';
+import {openAcceptDialog} from '@utils/index';
+import type {MouseElementEvent} from '@models/types';
+import type {ReturnLoanButtonProps} from '@models/interfaces';
+import {returnLoanAction} from './ReturnLoanButtonActions';
 import DispositivosList from './ReturnLoanButtonComponents';
 
-import {
-  reloadAll,
-  returnLoanAction
-} from './ReturnLoanButtonActions';
-
-export default function ReturnLoanButton(props: ReturnLoanButton) {
+export default function ReturnLoanButton(props: ReturnLoanButtonProps) {
   const dispatch = useAppDispatch();
   const deviceList = (<DispositivosList dispositivos={props.dispositivos} />);
 
-  const returnLoanHandler = ({loanID}: ReturnLoanButton) => {
+  const returnLoanHandler = ({loanID}: ReturnLoanButtonProps) => {
     returnLoanAction(loanID as string, dispatch);
   }
 
@@ -34,9 +30,4 @@ export default function ReturnLoanButton(props: ReturnLoanButton) {
       style={{flexGrow: 1}}
       onClick={onClick} />
   );
-}
-
-interface ReturnLoanButton {
-  loanID?: string;
-  dispositivos: MetaDispositivo[];
 }

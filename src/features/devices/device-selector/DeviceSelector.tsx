@@ -1,8 +1,8 @@
-import React, {useEffect} from 'react';
-import {MultiSelector} from '../../@ui';
+import {useEffect} from 'react';
+import {MultiSelector} from '@ui/index';
 import {MultiValue, ActionMeta} from 'react-select';
-import type {Item} from './deviceSelectorController';
-import {useAppSelector, useAppDispatch} from '../../../app/hooks';
+import type {Item} from '@models/interfaces';
+import {useAppSelector, useAppDispatch} from '@app/hooks';
 
 import {
   fetchDevices, 
@@ -11,8 +11,8 @@ import {
   updateDeviceAmount,
   selectSelectedDevices, 
   removeSelected
-} from '../deviceSlice';
-import { selectSelectedLoanIndex } from '../../loan/active-loans-list/activeLoansListSlice';
+} from '@devices/deviceSlice';
+import { selectSelectedLoanIndex } from '@loan/active-loans-list/activeLoansListSlice';
 
 export default function DeviceSelector({isLoading}: {isLoading?: any}) {
   const dispatch = useAppDispatch();

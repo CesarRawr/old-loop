@@ -1,9 +1,9 @@
-import React, {useRef, useEffect, useState, useMemo} from 'react';
-import { Field } from 'react-final-form';
-import { ActionMeta } from 'react-select';
+import {useRef, useEffect, useState, useMemo} from 'react';
+import {Field} from 'react-final-form';
 import CreatableSelect from 'react-select/creatable';
 
-import InputLoading from '../inputLoading/InputLoading';
+import {InputLoading} from '@ui/index';
+import type {ListInputProps} from '@models/interfaces';
 
 const CreatableAdapter = ({ input, innerRef, ...rest}: any) => {
   return (
@@ -87,19 +87,4 @@ export default function ListInput(props: ListInputProps) {
       }
     </>
   );
-}
-
-export interface ListInputProps {
-  name: string;
-  size?: number;
-  styles?: any;
-  disabled?: boolean;
-  placeholder?: string;
-  optionList?: any[];
-  select?: boolean;
-  autocomplete?: "on" | "off";
-  isLoading?: boolean;
-  initialValue?: any;
-  disableClearable?: boolean;
-  onChange?: (selectedItem: any, actionMeta: ActionMeta<any>) => void;
 }

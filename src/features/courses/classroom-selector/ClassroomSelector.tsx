@@ -1,10 +1,11 @@
-import React, {useEffect, useMemo} from 'react';
-import {FormListGroup} from '../../@ui';
+import {useEffect, useMemo} from 'react';
+import {FormListGroup} from '@ui/index';
 import {ActionMeta} from 'react-select';
-import {SelectorProps} from '../../../types';
-import {useAppSelector, useAppDispatch} from '../../../app/hooks';
 
-import {setControl} from '../../devices/deviceSlice';
+import {setControl} from '@devices/deviceSlice';
+import type {SelectorProps} from '@models/interfaces';
+import {useAppSelector, useAppDispatch} from '@app/hooks';
+
 import {fetchClassrooms, selectClassrooms} from '../courseSlice';
 
 export default function ClassroomSelector(props: SelectorProps) {

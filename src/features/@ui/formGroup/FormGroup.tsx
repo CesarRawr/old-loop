@@ -1,7 +1,5 @@
-import React from 'react';
-import Label, {LabelProps} from '../label/Label';
-import Input, {InputProps} from '../input/Input';
-
+import {Input, Label} from '@ui/index';
+import type {InputProps, LabelProps} from '@models/interfaces';
 import styles from './FormGroup.module.css';
 
 export default function FormGroup(props: FormGroupProps) {

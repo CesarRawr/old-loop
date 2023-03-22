@@ -1,6 +1,4 @@
-import React from 'react';
-import {Main, Login} from './pages';
-
+import {Main, Login} from '@pages/index';
 import {Routes, Route} from 'react-router-dom';
 
 function App() {

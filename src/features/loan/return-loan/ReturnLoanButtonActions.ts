@@ -1,5 +1,3 @@
-import type { Dispatch, AnyAction } from 'redux';
-
 //////////////////////////////////
 // reloadAll imports
 /////////////////////////////////
@@ -8,9 +6,9 @@ import {
   fetchCourses,
   fetchNrcs,
   fetchTeachers
-} from '../../courses/courseSlice';
+} from '@courses/courseSlice';
 
-import {fetchDevices} from '../../devices/deviceSlice';
+import {fetchDevices} from '@devices/deviceSlice';
 //////////////////////////////////
 
 //////////////////////////////////
@@ -20,11 +18,11 @@ import {
   fetchActiveLoans, 
   setStatus, 
   setSelectedLoanIndex
-} from '../active-loans-list/activeLoansListSlice';
+} from '@loan/active-loans-list/activeLoansListSlice';
 
-import {openDialog} from '../../utils';
+import {openDialog} from '@utils/index';
 import {returnLoan} from './returnLoanSlice';
-import {setSelectedLoan} from '../modify-loan-form/modifyLoanFormSlice';
+import {setSelectedLoan} from '@loan/modify-loan-form/modifyLoanFormSlice';
 /////////////////////////////////
 
 // Reload all input data

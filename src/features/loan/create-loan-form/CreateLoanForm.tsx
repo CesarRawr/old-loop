@@ -1,40 +1,39 @@
-import React, {useState, useEffect} from 'react';
 import {Form} from 'react-final-form';
 import {useNavigate} from 'react-router-dom';
-import {Prestamo, Dispositivo} from '../../../datatest/models';
+import {Prestamo, Dispositivo} from '@models/interfaces';
 import {uploadLoan, selectLoanIsLoading, setIsLoading} from './createLoanFormSlice';
 import {firstValidations, secondValidations} from './createLoanValidations';
 
-import {fetchActiveLoans, setSelectedLoanIsDisabled} from '../active-loans-list/activeLoansListSlice';
+import {
+  fetchActiveLoans, 
+  setSelectedLoanIsDisabled
+} from '../active-loans-list/activeLoansListSlice';
 
 import { 
   addDays, 
-  openDialog, 
-  openAcceptDialog
-} from '../../utils';
-
-import { 
   getDayName, 
-  decodeToken
-} from '../../utils';
+  openDialog, 
+  decodeToken,
+  openAcceptDialog
+} from '@utils/index';
 
-import DeviceSelector from '../../devices/device-selector/DeviceSelector';
+import DeviceSelector from '@devices/device-selector/DeviceSelector';
 import {
   ClassroomSelector,
   CourseSelector,
   HoursSelector,
   NrcSelector,
   TeacherSelector
-} from '../../courses';
+} from '@courses/index';
 
 import {
   selectDevices, 
   selectSelectedDevices, 
   clearDevices
-} from '../../devices/deviceSlice';
+} from '@devices/deviceSlice';
 
-import {useAppSelector, useAppDispatch} from '../../../app/hooks';
-import {Label, Button, Input, AlertDialog, DatePicker} from '../../@ui';
+import {useAppSelector, useAppDispatch} from '@app/hooks';
+import {Label, Button, Input, DatePicker} from '@ui/index';
 
 import styles from './CreateLoanForm.module.css';
 
@@ -240,7 +239,7 @@ export default function CreateLoanForm() {
                   <Input 
                     isLoading={isLoading}
                     name="observaciones"
-                    placeholder="Observaciones" 
+                    placeholder="Observaciones"
                     autocomplete="off"
                     maxlength={60} />
                 </div>

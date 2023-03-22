@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import styles from './Login.module.css';
 import {useNavigate} from 'react-router-dom';
-import {LoginFeature} from '../../features/users';
+import {LoginFeature} from '@users/index';
 
 export default function Login() {
   const navigate = useNavigate();

@@ -1,9 +1,10 @@
-import React, {useState, useEffect, useRef} from 'react';
-import InputLoading from '../inputLoading/InputLoading';
-import {MouseElementFunction} from '../../../types';
+import {useState, useEffect, useRef} from 'react';
 import {Field} from 'react-final-form';
-
 import styles from './Input.module.css';
+
+import {InputLoading} from '@ui/index';
+import type {InputProps} from '@models/interfaces';
+import type {MouseElementFunction} from '@models/types';
 
 function InputAdapter({ input, ...rest }: any) {
   return (
@@ -46,19 +47,4 @@ export default function Input(props: InputProps) {
       }
     </>
   );
-}
-
-export interface InputProps {
-  name: string;
-  styles?: any;
-  disabled?: boolean;
-  placeholder?: string;
-  select?: boolean;
-  autocomplete?: "on" | "off";
-  isLoading?: boolean;
-  value?: string;
-  type?: string;
-  onClick?: MouseElementFunction;
-  ref?: any;
-  maxlength?: number;
 }

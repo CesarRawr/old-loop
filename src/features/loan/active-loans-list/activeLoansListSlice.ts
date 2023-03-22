@@ -1,8 +1,14 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../../../app/store';
-import type { Prestamo } from '../../../datatest/models';
+import type {Prestamo, LoanState} from '@models/interfaces';
+import type {StatusType} from '@models/types';
 import {urlBase} from '../../../variables';
+import {RootState} from '@app/store';
 import axios from 'axios';
+
+import {
+  createSlice,
+  PayloadAction,
+  createAsyncThunk
+} from '@reduxjs/toolkit';
 
 ///////////////////////////
 // State
@@ -84,15 +90,3 @@ export const selectStatus = (state: RootState) => state.activeLoans.status;
 export const selectActiveLoans = (state: RootState) => state.activeLoans.activeLoans;
 export const selectSelectedLoanIndex = (state: RootState) => state.activeLoans.selectedLoanIndex;
 export const selectSelectedLoanIsDisabled = (state: RootState) => state.activeLoans.selectedLoanIsDisabled;
-
-///////////////////////////
-// Interfaces
-///////////////////////////
-export type StatusType = 'loading' | 'idle' | 'failed';
-export interface LoanState {
-  activeLoans: Prestamo[];
-  selectedLoanIndex: number;
-  selectedLoanIsDisabled: boolean;
-  status: StatusType;
-}
-

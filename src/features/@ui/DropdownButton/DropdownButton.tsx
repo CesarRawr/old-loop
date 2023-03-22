@@ -1,19 +1,19 @@
-import React from "react";
-import Button from '../button/Button';
+import {useState, MouseEvent} from "react";
 import MenuItem from '@mui/material/MenuItem';
-import Menu, { MenuProps } from '@mui/material/Menu';
+import Menu from '@mui/material/Menu';
+
+import {Button} from '@ui/index';
+import type {DropdownButtonProps} from '@models/interfaces';
 
 export default function DropdownButton(props: DropdownButtonProps) {
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
-    // Open
-    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    const handleClick = (event: MouseEvent<HTMLElement>) => {
         event.stopPropagation();
         setAnchorEl(event.currentTarget);
     };
 
-    // Close
     const handleClose = () => {
         setAnchorEl(null);
     };
@@ -21,6 +21,7 @@ export default function DropdownButton(props: DropdownButtonProps) {
     const listItems: JSX.Element[] = props.listItems.map((itemText: string, index: number) => (
         <MenuItem key={index} onClick={handleClose}>{ itemText }</MenuItem>
     ));
+
     return (
         <>
             <Button text={props.text} onClick={handleClick}/>
@@ -35,9 +36,4 @@ export default function DropdownButton(props: DropdownButtonProps) {
             </Menu>
         </>
     );
-}
-
-interface DropdownButtonProps {
-    text: string;
-    listItems: string[];
 }

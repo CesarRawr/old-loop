@@ -1,6 +1,6 @@
 import { Dayjs } from 'dayjs';
-import {TimePickerModal} from '../../../@ui';
-import {getDayjsFormatByHour} from '../../../utils';
+import {TimePickerModal} from '@ui/index';
+import {getDayjsFormatByHour} from '@utils/index';
 
 export default function HoursSelectorModal(props: HoursSelectorModalProps) {
   const onAccept = (value: Dayjs | null) => {

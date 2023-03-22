@@ -1,44 +1,16 @@
-import React, {useState, useEffect, useRef} from 'react';
-import Select, {MultiValue, ActionMeta} from 'react-select';
-import InputLoading from '../inputLoading/InputLoading';
+import {useState, useEffect, useRef} from 'react';
+import Select from 'react-select';
 
-const customStyles = {
-  control: (provided: any, state: any) => ({
-    ...provided,
-    background: '#fafafa',
-    borderColor: '#d1d1d1',
-    minHeight: '4.5vh',
-    border: "1px solid #d1d1d1",
-    borderRadius: "4px",
-    boxShadow: state.isFocused ? null : null,
-    fontSize: "16px"
-  }),
-  valueContainer: (provided: any, state: any) => ({
-    ...provided,
-    minHeight: '30px',
-    padding: '0 6px'
-  }),
-  input: (provided: any, state: any) => ({
-    ...provided,
-    margin: '0px',
-  }),
-  indicatorSeparator: (state: any) => ({
-    display: 'none',
-  }),
-  indicatorsContainer: (provided: any, state: any) => ({
-    ...provided,
-    display: 'none',
-  }),
-};
+import {InputLoading} from '@ui/index';
+import customStyles from './MultiSelectorStyles';
+import type {MultiSelectorProps} from '@models/interfaces';
 
 export default function MultiSelector(props: MultiSelectorProps) {
   const [height, setHeight] = useState<number>(0);
-  const [width, setWidth] = useState<number>(0);
   const ref = useRef<any>(null);
 
   useEffect(() => {
     if (!!ref) {
-      setWidth(ref.current.clientWidth);
       setHeight(ref.current.offsetHeight);
     }
   }, [ref]);
@@ -74,15 +46,4 @@ export default function MultiSelector(props: MultiSelectorProps) {
       }
     </>
   );
-}
-
-type onChangeFunction = (selected: MultiValue<any>, action: ActionMeta<any>) => void;
-
-export interface MultiSelectorProps {
-  isLoading?: boolean;
-  options: any[];
-  name: string;
-  placeholder: string;
-  onChange: onChangeFunction;
-  values: any[];
 }

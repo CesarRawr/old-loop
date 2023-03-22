@@ -1,13 +1,21 @@
-import React, {useEffect, useMemo} from 'react';
-import {FormListGroup} from '../../@ui';
+import {useEffect, useMemo} from 'react';
+import {FormListGroup} from '@ui/index';
 import {ActionMeta} from 'react-select';
-import {SelectorProps} from '../../../types';
-import type {Horario} from '../../../datatest/models';
-import {getDecimalHour, getDayName, getDecimalMinutes, getMDYDateString} from '../../utils';
-import {useAppSelector, useAppDispatch} from '../../../app/hooks';
 
-import {setControl} from '../../devices/deviceSlice';
-import {fetchTeachers, selectTeachers, selectNrcs, NrcTag} from '../courseSlice';
+import type {NrcTag} from '@models/types';
+import type {SelectorProps, Horario} from '@models/interfaces';
+
+import {
+  getDecimalHour, 
+  getDayName, 
+  getDecimalMinutes, 
+  getMDYDateString
+} from '@utils/index';
+
+import {useAppSelector, useAppDispatch} from '@app/hooks';
+
+import {setControl} from '@devices/deviceSlice';
+import {fetchTeachers, selectTeachers, selectNrcs} from '../courseSlice';
 
 export default function TeacherSelector(props: SelectorProps) {
   const dispatch = useAppDispatch();

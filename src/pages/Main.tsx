@@ -1,16 +1,16 @@
 import React, {useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 import UserLayout from './layouts/UserLayout';
-import {selectSelectedLoan} from '../features/loan/slices';
-import {useAppSelector, useAppDispatch} from '../app/hooks';
+import {selectSelectedLoan} from '@loan/slices';
+import {useAppSelector, useAppDispatch} from '@app/hooks';
 
 import {
   CreateLoanForm, 
   ActiveLoansList,
   ModifyLoanForm
-} from '../features/loan';
+} from '@loan/index';
 
-import {decodeToken} from '../features/utils';
+import {decodeToken} from '@utils/index';
 
 export function Main() {
   const navigate = useNavigate();

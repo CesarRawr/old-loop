@@ -1,10 +1,20 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { RootState } from '../../app/store';
+import { RootState } from '@app/store';
 import { urlBase } from '../../variables';
 import axios from 'axios';
 
-import {Maestro, Materia, Asignacion} from '../../datatest/models';
-import {getDayName} from '../utils';
+import type {
+  CourseTag, 
+  NrcTag, 
+  TeacherTag
+} from '@models/types';
+
+import type {
+  Maestro, 
+  Materia, 
+  Asignacion,
+  CourseState
+} from '@models/interfaces';
 
 ///////////////////////////
 // State
@@ -170,29 +180,3 @@ export const selectClassrooms = (state: RootState) => state.courses.classrooms;
 export const selectCourses = (state: RootState) => state.courses.courses;
 export const selectNrcs = (state: RootState) => state.courses.nrcs;
 export const selectTeachers = (state: RootState) => state.courses.teachers;
-
-///////////////////////////
-// Interfaces
-///////////////////////////
-interface Tag {
-  label: string;
-  value: string;
-}
-
-interface NrcMeta {
-  materia: {
-    readonly _id: string;
-    readonly nombre: string;
-  };
-}
-
-export type TeacherTag = Tag & Maestro;
-export type CourseTag = Tag & Materia;
-export type NrcTag = Tag & Asignacion & NrcMeta;
-
-export interface CourseState {
-  classrooms: Tag[];
-  courses: CourseTag[];
-  nrcs: NrcTag[];
-  teachers: TeacherTag[];
-};

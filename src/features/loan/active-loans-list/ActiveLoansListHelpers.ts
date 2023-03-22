@@ -1,5 +1,5 @@
-import {Prestamo} from '../../../datatest/models';
-import {getDecimalHour} from '../../utils';
+import {Prestamo} from '@models/interfaces';
+import {getDecimalHour} from '@utils/index';
 
 // Buscar préstamos expirados
 export const searchExpiredLoans = (

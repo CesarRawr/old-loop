@@ -18,7 +18,15 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@ui/*": ["src/features/@ui/*"]
+      "@app/*": ["src/app/*"],
+      "@pages/*": ["src/pages/*"],
+      "@models/*": ["src/models/*"],
+      "@ui/*": ["src/features/@ui/*"],
+      "@loan/*": ["src/features/loan/*"],
+      "@utils/*": ["src/features/utils/*"],
+      "@users/*": ["src/features/users/*"],
+      "@courses/*": ["src/features/courses/*"],
+      "@devices/*": ["src/features/devices/*"],
     }
   },
   "include": [

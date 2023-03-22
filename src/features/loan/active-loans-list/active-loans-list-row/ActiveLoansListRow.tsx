@@ -1,12 +1,12 @@
 import {useEffect, useState} from 'react';
+import {getDate} from '@utils/index';
+import {LabelTooltip} from '@ui/index';
+import {ActiveLoansListRowProps} from '@models/interfaces';
+import {setSelectedLoan} from '@loan/slices';
+import {useAppDispatch, useAppSelector} from '@app/hooks';
+import ReturnLoanButton from '@loan/return-loan/ReturnLoanButton';
+import DevicesDropdown from '@devices/devices-dropdown/DevicesDropdown';
 import '../ActiveLoansList.css';
-import {getDate} from '../../../utils';
-import {Prestamo} from '../../../../datatest/models';
-import ReturnLoanButton from '../../return-loan/ReturnLoanButton';
-import {useAppDispatch, useAppSelector} from '../../../../app/hooks';
-import DevicesDropdown from '../../../devices/devices-dropdown/DevicesDropdown';
-import {setSelectedLoan} from '../../slices';
-import {LabelTooltip} from '../../../@ui';
 
 import {
   setSelectedLoanIndex, 
@@ -95,9 +95,4 @@ export default function ActiveLoansListRow({id, prestamo}: ActiveLoansListRowPro
       </td>
     </tr> 
   );
-}
-
-interface ActiveLoansListRowProps {
-  id: number;
-  prestamo: Prestamo;
 }

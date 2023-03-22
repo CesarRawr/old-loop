@@ -1,6 +1,5 @@
-import React from 'react';
-import {DropdownButton} from '../../@ui';
-import {MetaDispositivo} from '../../../datatest/models';
+import {DropdownButton} from '@ui/index';
+import {MetaDispositivo, DevicesDropdownProps} from '@models/interfaces';
 
 // Botón para desplegar la lista de dispositivos 
 // prestados en la lista de prestamos activos
@@ -10,8 +9,4 @@ export default function DevicesDropdown(props: DevicesDropdownProps) {
   return (
     <DropdownButton text='Dispositivos' listItems={listItems} />
   );
-}
-
-interface DevicesDropdownProps {
-  devicesList: MetaDispositivo[];
 }

@@ -1,13 +1,24 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../../../app/store';
-import type { Prestamo } from '../../../datatest/models';
-import {urlBase} from '../../../variables';
 import axios from 'axios';
+import { RootState } from '@app/store';
+import {urlBase} from '../../../variables';
+import type {StatusType} from '@models/types';
+
+import type {
+  Prestamo,
+  DataToSend,
+  ModifyLoanState
+} from '@models/interfaces';
+
+import {
+  createAsyncThunk, 
+  createSlice, 
+  PayloadAction
+} from '@reduxjs/toolkit';
 
 ///////////////////////////
 // State
 ///////////////////////////
-const initialState: LoanState = {
+const initialState: ModifyLoanState = {
   selectedLoan: undefined,
   status: 'idle',
 }
@@ -70,33 +81,3 @@ export const {setStatus, setSelectedLoan} = slice.actions;
 ///////////////////////////
 export const selectStatus = (state: RootState) => state.modifyLoan.status;
 export const selectSelectedLoan = (state: RootState) => state.modifyLoan.selectedLoan;
-
-///////////////////////////
-// Interfaces
-///////////////////////////
-export interface ModifyData {
-  isNew?: boolean,
-  operation?: 'suma' | 'resta' | 'idle',
-  difference: number,
-  deviceID: string,
-  nombre: string,
-}
-
-export interface DataToSend {
-  loanID: string;
-  changedDevices: ModifyData[];
-  deletedDevices: (ModifyData | undefined)[] | undefined;
-  aula?: string;
-}
-
-export interface Alumno {
-  _id?: string;
-  matricula: string;
-  nombre: string;
-}
-
-type StatusType = 'loading' | 'idle' | 'failed'
-export interface LoanState {
-  selectedLoan?: Prestamo;
-  status: StatusType;
-}

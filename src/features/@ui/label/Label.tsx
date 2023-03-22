@@ -1,4 +1,5 @@
-import {useRef, forwardRef, CSSProperties} from 'react';
+import type {LabelProps} from '@models/interfaces';
+import {forwardRef} from 'react';
 
 const Label = forwardRef<HTMLSpanElement, LabelProps>((props, ref) => {
   const {text, size = "16px", className, styles, ...other} = props;
@@ -18,12 +19,3 @@ const Label = forwardRef<HTMLSpanElement, LabelProps>((props, ref) => {
 });
 
 export default Label;
-
-export interface LabelProps {
-  text: string;
-  size?: string;
-  className?: string;
-  styles?: CSSProperties;
-  other?: any;
-}
-
