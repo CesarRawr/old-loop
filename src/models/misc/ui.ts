@@ -50,6 +50,7 @@ export interface ListInputProps {
   autocomplete?: "on" | "off";
   isLoading?: boolean;
   initialValue?: any;
+  disableCreate?: boolean;
   disableClearable?: boolean;
   onChange?: (selectedItem: any, actionMeta: ActionMeta<any>) => void;
 }

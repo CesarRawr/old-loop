@@ -1,54 +1,14 @@
 import { useRef, useEffect, useState, useMemo } from "react";
 import { Field } from "react-final-form";
-import CreatableSelect from "react-select/creatable";
+import customStyles from "./ListInputStyles";
+import { CreatableAdapter } from "./ListInputComponents";
 
 import { InputLoading } from "@ui/index";
 import type { ListInputProps } from "@models/interfaces";
 
-const CreatableAdapter = ({ input, innerRef, ...rest }: any) => {
-  return (
-    <CreatableSelect
-      {...input}
-      {...rest}
-      onInputChange={(inputValue) =>
-        inputValue.length <= rest.maxLength
-          ? inputValue.toUpperCase()
-          : inputValue.substr(0, rest.maxLength).toUpperCase()
-      }
-      searchable
-    />
-  );
-};
-
 export default function ListInput(props: ListInputProps) {
   const [height, setHeight] = useState<number>(0);
   const ref = useRef<any>(null);
-  const customStyles = {
-    container: (provided: any, state: any) => ({
-      ...provided,
-    }),
-    control: (provided: any, state: any) => ({
-      ...provided,
-      background: "#fafafa",
-      borderColor: "#dcdcdc",
-      minHeight: "4.5vh",
-      border: "1px solid #dcdcdc",
-      borderRadius: "4px",
-      boxShadow: state.isFocused ? null : null,
-    }),
-    valueContainer: (provided: any, state: any) => ({
-      ...provided,
-      padding: "0 6px",
-    }),
-    input: (provided: any, state: any) => ({
-      ...provided,
-      margin: "0px",
-    }),
-    indicatorsContainer: (provided: any, state: any) => ({
-      ...provided,
-      height: "4.5vh",
-    }),
-  };
 
   const { initialValue } = props;
   const defaultValue: any = useMemo(() => {
@@ -61,9 +21,8 @@ export default function ListInput(props: ListInputProps) {
   }, [initialValue]);
 
   useEffect(() => {
-    if (!!ref) {
-      setHeight(ref.current.clientHeight);
-    }
+    if (!ref) return;
+    setHeight(ref.current.clientHeight);
   }, [ref]);
 
   return (
@@ -85,6 +44,7 @@ export default function ListInput(props: ListInputProps) {
             maxLength={props.size}
             onChange={props.onChange}
             isDisabled={props.disabled}
+            createOptionPosition={!!props.disableCreate ? null : "last"}
             components={{
               DropdownIndicator: () => null,
               IndicatorSeparator: () => null,
