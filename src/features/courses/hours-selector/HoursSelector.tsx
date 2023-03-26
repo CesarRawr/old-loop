@@ -123,6 +123,7 @@ export default function HoursSelector(props: SelectorProps) {
             disabled={props.disabled}
             initialValue={defaultValueHoraInicio}
             disableClearable
+            disableCreate
           />
         </div>
 
@@ -141,6 +142,7 @@ export default function HoursSelector(props: SelectorProps) {
             disabled={props.disabled}
             initialValue={defaultValueHoraFin}
             disableClearable
+            disableCreate
           />
         </div>
       </div>

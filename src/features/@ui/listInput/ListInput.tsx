@@ -25,6 +25,17 @@ export default function ListInput(props: ListInputProps) {
     setHeight(ref.current.clientHeight);
   }, [ref]);
 
+  const isValidNewOptionDefault = (
+    inputValue: string,
+    selectValue: any,
+    selectOptions: any
+  ) => {
+    return (
+      inputValue.trim().length > 0 &&
+      selectOptions.findIndex((option: any) => option.label === inputValue) === -1
+    );
+  };
+
   return (
     <>
       {!!props.isLoading ? (
@@ -44,7 +55,7 @@ export default function ListInput(props: ListInputProps) {
             maxLength={props.size}
             onChange={props.onChange}
             isDisabled={props.disabled}
-            createOptionPosition={!!props.disableCreate ? null : "last"}
+            isValidNewOption={!!props.disableCreate ? () => false : isValidNewOptionDefault}
             components={{
               DropdownIndicator: () => null,
               IndicatorSeparator: () => null,
