@@ -1,17 +1,20 @@
 import {Button} from '@ui/index';
-import {useAppDispatch} from '@app/hooks';
-import {openAcceptDialog} from '@utils/index';
-import type {MouseElementEvent} from '@models/types';
-import type {ReturnLoanButtonProps} from '@models/interfaces';
+import {useAppDispatch, useAppSelector} from '@app/hooks';
+import {openAcceptDialog, getDayName, getDateFromISOFormat} from '@utils/index';
 import {returnLoanAction} from './ReturnLoanButtonActions';
 import DispositivosList from './ReturnLoanButtonComponents';
+
+import type {MouseElementEvent, Semana} from '@models/types';
+import type {ReturnLoanButtonProps} from '@models/interfaces';
 
 export default function ReturnLoanButton(props: ReturnLoanButtonProps) {
   const dispatch = useAppDispatch();
   const deviceList = (<DispositivosList dispositivos={props.dispositivos} />);
 
   const returnLoanHandler = ({loanID}: ReturnLoanButtonProps) => {
-    returnLoanAction(loanID as string, dispatch);
+    const date: Date = getDateFromISOFormat();
+    const dayname: Semana = getDayName(date);
+    returnLoanAction(dispatch, dayname, loanID as string);
   }
 
   const onClick = (e: MouseElementEvent) => {

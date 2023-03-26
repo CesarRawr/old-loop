@@ -13,7 +13,7 @@ export default function Header() {
   return (
     <header className={styles.header}>
       <HamburgerMenu />
-      <span className={styles.logo} onClick={onClick}>Loop</span>
+      <span className={styles.logo} onClick={onClick}>loop</span>
     </header>
   );
 }

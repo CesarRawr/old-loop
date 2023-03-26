@@ -1,8 +1,11 @@
 import {useEffect, useMemo} from 'react';
 import {FormListGroup} from '@ui/index';
 import {ActionMeta} from 'react-select';
+import {setControl} from '@devices/deviceSlice';
+import {useAppSelector, useAppDispatch} from '@app/hooks';
+import {thereAreConsecutives, getNearestCourse} from '@courses/course-selector/CourseSelectorHelper';
 
-import type {NrcTag} from '@models/types';
+import type {NrcTag, TeacherTag, Semana} from '@models/types';
 import type {SelectorProps, Horario} from '@models/interfaces';
 
 import {
@@ -12,14 +15,25 @@ import {
   getMDYDateString
 } from '@utils/index';
 
-import {useAppSelector, useAppDispatch} from '@app/hooks';
+import {
+  setLoanData,
+  clearAction,
+  getTeacherNrcs,
+  getTeachersWithTodayCourses,
+  getOrderedSchedules
+} from './TeacherSelectorHelper';
 
-import {setControl} from '@devices/deviceSlice';
-import {fetchTeachers, selectTeachers, selectNrcs} from '../courseSlice';
+import {
+  fetchTeachers,
+  selectTeachers,
+  selectNrcs,
+  selectDate
+} from '../courseSlice';
 
 export default function TeacherSelector(props: SelectorProps) {
   const dispatch = useAppDispatch();
   const nrcs = useAppSelector(selectNrcs);
+  const date = useAppSelector(selectDate);
   const teachers = useAppSelector(selectTeachers);
 
   // En caso de haber un valor inicial, se crea una función
@@ -40,132 +54,42 @@ export default function TeacherSelector(props: SelectorProps) {
     }
   }, [dispatch, nrcs, isLoading]);
 
-  const onChange = (selectedItem: any, actionMeta: ActionMeta<any>) => {
-    if (actionMeta.action === 'clear') {
-      props.setValue('maestros', '');
-      return;
-    }
-
-    props.setValue('maestros', selectedItem);
+  const loadLoanData = (setValue: any, maestro: TeacherTag) => {
+    setValue('maestros', maestro);
 
     const decimalHour: number = getDecimalHour();
-    const teacherCourses: NrcTag[] = nrcs.filter((nrc: NrcTag) => !!nrc.maestro && nrc.maestro._id === selectedItem._id);
+    // Obtener las materias de lo maestros.
+    const teacherCourses: NrcTag[] = getTeacherNrcs(nrcs, maestro);
+    if (!teacherCourses.length) return;
 
-    // Si el maestro no tiene cursos hoy
-    if (!teacherCourses.length) {
-      return;
-    }
-
-    const dayName = getDayName();
+    const dayname: Semana = getDayName(date);
     // Obtener los maestros y sus horarios de hoy si es que tienen
-    const horariosDesordenados: any = teacherCourses.map((course: NrcTag) => {
-      const horarios: any = course.horarios.filter((horario: Horario) => {
-        let isToday = false;
-        if (horario.dia === dayName) {
-          isToday = true;
-        }
-
-        return isToday;
-      });
-
-      return !!horarios.length ? {
-        ...course,
-        horarios,
-      }: undefined;
-    }).filter((item: any) => item !== undefined);
-
-    if (!horariosDesordenados.length) {
-      return;
-    }
+    const horariosDesordenados: NrcTag[] = getTeachersWithTodayCourses(teacherCourses, dayname);
+    if (!horariosDesordenados || !horariosDesordenados.length) return;
 
     // Ordenar los horarios de mas temprano a mas tarde
-    const horariosActuales: any = horariosDesordenados.sort((a: any, b: any) => {
-      return a.horarios[0].horaInicio - b.horarios[0].horaInicio;
-    });
+    const horariosActuales: NrcTag[] = getOrderedSchedules(horariosDesordenados);
 
-    let areConsecutive = false;
-    if (horariosActuales.length > 1) {
-      // Detectar horarios consecutivos
-      for (let i = 1; i < horariosActuales.length; i++) {
-        if (horariosActuales[i-1].horarios[0].horaFin === horariosActuales[i].horarios[0].horaInicio) {
-          areConsecutive = true;
-        }
-      }
-    }
+    // Saber si hay horarios consecutivos
+    let areConsecutive: boolean = thereAreConsecutives(horariosActuales);
 
-    const actualHour = getDecimalHour();
-    const actualMinutes = getDecimalMinutes();
-    const actualDate = getMDYDateString(new Date());
-    const actualTime = new Date(`${actualDate} ${actualHour}:${actualMinutes}`);
     // Conseguir el horario mas cercano a la hora mas cercana
-    const nearest: any = horariosActuales.filter((course: any) => {
-      let isNear = false;
-      for (let horario of course.horarios) {
-        // Si existen consecutivos
-        if (areConsecutive) {
-          // Parseando horas del horario a objetos Date
-          const horaInicio = new Date(`${actualDate} ${horario.horaInicio-1}:40`);
-          const horaFin = new Date(`${actualDate} ${horario.horaFin-1}:39`);
+    const nearest: NrcTag | undefined = getNearestCourse(horariosActuales, areConsecutive);
+    if (!nearest) return;
 
-          // Si le faltan 20 mins para comenzar y hay consecutivos
-          if (actualTime >= horaInicio && horaFin >= actualTime) {
-            isNear = true;
-            break;
-          }
+    return setLoanData(setValue, nearest, dispatch);
+  }
 
-          break;
-        }
-
-        /* 
-          Si no hay consecutivos 
-        */
-        
-        // Parseando horas del horario a objetos Date
-        const horaInicio = new Date(`${actualDate} ${horario.horaInicio-1}:40`);
-        const horaFin = new Date(`${actualDate} ${horario.horaFin}:00`);
-
-        if (actualTime >= horaInicio && horaFin >= actualTime) {
-          isNear = true;
-          break;
-        }
+  const onChange = (selectedItem: TeacherTag, {action}: ActionMeta<any>) => {
+    const {setValue} = props;
+    const options: any = {
+      'clear': () => clearAction(setValue),
+      'select-option': () => {
+        loadLoanData(setValue, selectedItem);
       }
-
-      return isNear;
-    });
-
-    if (!nearest.length) {
-      return;
     }
 
-    // Setteando nrc
-    props.setValue('nrcs', nearest[0]);
-    
-    // Setteando materia
-    props.setValue('materias', {
-      ...nearest[0].materia,
-      label: nearest[0].materia.nombre,
-      value: nearest[0].materia._id,
-    });
-
-    // Setteando aulas
-    props.setValue('aulas', {
-      label: nearest[0].horarios[0].aula,
-      value: nearest[0].horarios[0].aula,
-    });
-
-    // Setteando hora de inicio
-    props.setValue('horaInicio', {
-      label: `${nearest[0].horarios[0].horaInicio}:00`,
-      value: nearest[0].horarios[0].horaInicio,
-    });
-
-    // Setteando hora de fin
-    props.setValue('horaFin', {
-      label: `${nearest[0].horarios[0].horaFin}:00`,
-      value: nearest[0].horarios[0].horaFin,
-    });
-
-    dispatch(setControl(nearest[0].horarios[0].aula));
+    return options[action]();
   }
 
   return (

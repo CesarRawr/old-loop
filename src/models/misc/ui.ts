@@ -65,11 +65,13 @@ export interface LabelTooltipProps {
   text?: string;
 }
 
-export interface DatePickerProps {
+export interface LabelDatePickerProps {
+  date: Date;
   disabled?: boolean;
   maxDate?: Date;
   minDate?: Date;
   excludeWeekends?: boolean;
+  onChangeCustom?: (date: Date) => void;
 }
 
 export interface DropdownButtonProps {
@@ -119,4 +121,9 @@ export interface TimePickerModalProps {
   maxTime?: Dayjs;
   shouldDisableTime?: (value: Dayjs, unit: string) => boolean;
   onAccept: (value: Dayjs | null) => void;
+}
+
+export interface DateSelectorProps {
+  disabled: boolean;
+  setValue: any;
 }

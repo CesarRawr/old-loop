@@ -1,10 +1,11 @@
 import {useEffect, useMemo} from 'react';
 import {FormListGroup} from '@ui/index';
 import {ActionMeta} from 'react-select';
+import {getDayName} from '@utils/index';
 import {setControl} from '@devices/deviceSlice';
 import {useAppSelector, useAppDispatch} from '@app/hooks';
 
-import type {NrcTag} from '@models/types';
+import type {NrcTag, Semana} from '@models/types';
 import type {SelectorProps, Horario} from '@models/interfaces';
 
 import {
@@ -20,12 +21,14 @@ import {
 import {
   fetchCourses, 
   selectCourses, 
-  selectNrcs
+  selectNrcs,
+  selectDate
 } from '@courses/courseSlice';
 
 export default function CourseSelector(props: SelectorProps) {
   const dispatch = useAppDispatch();
   const nrcs = useAppSelector(selectNrcs);
+  const date = useAppSelector(selectDate);
   const courses = useAppSelector(selectCourses);
 
   // En caso de haber un valor inicial, se crea una función
@@ -40,10 +43,9 @@ export default function CourseSelector(props: SelectorProps) {
 
   const {isLoading, disabled} = props;
   useEffect(() => {
-    // Dejar que carguen los nrc primero
-    if (!isLoading && !disabled) {
-      dispatch(fetchCourses());
-    }
+    if (isLoading && disabled) return;
+    const dayname: Semana = getDayName(date);
+    dispatch(fetchCourses(dayname));
   }, [dispatch, nrcs, isLoading]);
 
   const loadLoanData = (setValue: any, selectedItem: any) => {

@@ -29,8 +29,13 @@ export const setFirstLoanData = (setValue: any, selectedItem: NrcTag) => {
 }
 
 // Settea el control del aula, el aula, hora de inicio y hora de fin.
-export const setSecondLoanData = (setValue: any, selectedItem: NrcTag, dispatch: any) => {
-  const dayName = getDayName();
+export const setSecondLoanData = (
+  setValue: any, 
+  selectedItem: NrcTag, 
+  dispatch: any,
+  date: Date
+) => {
+  const dayName = getDayName(date);
   const horario = selectedItem.horarios.filter((horario: any) => horario.dia === dayName);
   if (!horario.length) {
     setValue('aulas', '');

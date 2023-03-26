@@ -1,126 +1,143 @@
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from "dayjs";
 import jwtDecode from "jwt-decode";
-import {AlertDialog} from '@ui/index';
-import {Semana, LoanInputName} from '@models/types';
+import { AlertDialog } from "@ui/index";
+import { Semana, LoanInputName } from "@models/types";
 
 //////////////////////////////
 // Time Utils
 /////////////////////////////
+import "dayjs/locale/es";
+dayjs.locale("es");
+
 export const addDays = (date: Date, days: number): Date => {
-  const newDate: Date = new Date(date);
-  newDate.setDate(newDate.getDate() + days);
+  const newDate: Date = dayjs(date).add(days, "day").toDate();
   return newDate;
 };
 
-// Obtener string de la hora en el formato dd/mm/yyyy
-const getDate = (date: Date): string => {
-  const formatedDate: string = `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
-  return formatedDate;
-}
-
-const getMDYDateString = (date: Date): string => {
-  const formatedDate: string = `${date.getMonth()+1}/${date.getDate()}/${date.getFullYear()}`;
-  return formatedDate;
-}
-
-// Obtener minutos
-const getDecimalMinutes = (): number => new Date().getMinutes();
-// Obtener el número decimal de la hora actual
-const getDecimalHour = (): number => new Date().getHours();
-// Obtener nombre del dia
-const getDayName = (): Semana => {
-  const days: Semana[] = [
-      "domingo",
-      "lunes",
-      "martes",
-      "miercoles",
-      "jueves",
-      "viernes",
-      "sabado"
-  ];
-
-  return days[new Date().getDay()];
+export const addHoursToHour = (hour: number, toAdd: number): Dayjs => {
+  const formatedHour = dayjs().hour(hour).add(toAdd, "hour");
+  return formatedHour;
 };
 
-export const getDayjsFormatByHour = (hour?: number) => {
-  const time = new Date();
+// Obtener una fecha en formato iso 8601
+export const getDateISOFormat = (date?: Date): string =>
+  dayjs(date ?? undefined).format();
 
-  if (!!hour) time.setHours(hour); 
+// Obtener date de fecha en formato iso 8601
+export const getDateFromISOFormat = (date?: string): Date =>
+  dayjs(date ?? undefined).toDate();
+
+// Obtener string de la hora en el formato dd/mm/yyyy
+export const getDate = (date?: Date): string => {
+  const formatedDate: string = dayjs(date ?? undefined).format("DD/MM/YYYY");
+  return formatedDate;
+};
+
+export const getMDYDateString = (date?: Date): string => {
+  const formatedDate: string = dayjs(date ?? undefined).format("MM/DD/YYYY");
+  return formatedDate;
+};
+
+/* Obtener los numeros decimales de la fecha */
+export const getDecimalMinutes = (date?: Date): number =>
+  dayjs(date ?? undefined).minute();
+export const getDecimalHour = (date?: Date): number =>
+  dayjs(date ?? undefined).hour();
+export const getDecimalDay = (date?: Date): number =>
+  dayjs(date ?? undefined).day();
+
+// Obtener nombre del dia
+export const getDayName = (date?: Date): Semana => {
+  const today: Semana = dayjs(date ?? undefined)
+    .format("dddd")
+    .toLowerCase() as Semana;
+  return today;
+};
+
+// Transforma la hora en decimal enviada al formato de fecha ISOString
+export const getDayjsFormatByHour = (hour?: number): Dayjs => {
+  const time = new Date();
+  if (!!hour) time.setHours(hour);
 
   time.setMinutes(0);
   time.setSeconds(0);
 
   return dayjs(time.toISOString());
-}
+};
+
+export const areSameDates = (date1: Date, date2: Date): boolean => {
+  const dayte1: Dayjs = dayjs(date1);
+  const dayte2: Dayjs = dayjs(date2);
+  return dayte1.isSame(dayte2, "day");
+};
 
 //////////////////////////////
 // JWT Utils
 /////////////////////////////
 export const decodeToken = (): any => {
-  const token: string | null = localStorage.getItem('token');
-  return !!token ? jwtDecode(token): null;
-}
+  const token: string | null = localStorage.getItem("token");
+  return !!token ? jwtDecode(token) : null;
+};
 
 //////////////////////////////
 // Dialog Utils
 /////////////////////////////
 const basicConfigs: any = {
-  width: '22em',
-  padding:'0',
+  width: "22em",
+  padding: "0",
   showClass: {
-    popup: 'animate__animated animate__fadeInDown'
+    popup: "animate__animated animate__fadeInDown",
   },
   hideClass: {
-    popup: 'animate__animated animate__fadeOutUp'
-  }
-}
+    popup: "animate__animated animate__fadeOutUp",
+  },
+};
 
-export const openDialog = (
-  title: string, 
-  text: string | JSX.Element
-) => {
-  const content: any = typeof text === 'string' ? {text}: {html: text};
+export const openDialog = (title: string, text: string | JSX.Element) => {
+  const content: any = typeof text === "string" ? { text } : { html: text };
   AlertDialog.fire({
     title,
     ...basicConfigs,
     ...content,
   });
-}
+};
 
 export const openAcceptDialog = (
-  title: string, 
-  text: string | JSX.Element, 
+  title: string,
+  text: string | JSX.Element,
   callback: (args?: any) => void,
-  args?: any,
+  args?: any
 ) => {
-  const content: any = typeof text === 'string' ? {text}: {html: text};
+  const content: any = typeof text === "string" ? { text } : { html: text };
   AlertDialog.fire({
     title,
     showCancelButton: true,
-    confirmButtonText: 'Aceptar',
-    cancelButtonText: 'Cancelar',
+    confirmButtonText: "Aceptar",
+    cancelButtonText: "Cancelar",
     ...basicConfigs,
     ...content,
   }).then((result) => {
     if (result.isConfirmed) {
       callback(args);
     }
-  })
-}
+  });
+};
 
 //////////////////////////////
 // Form Utils
 /////////////////////////////
 export const resetFormInputs = (setValue: any, inputs: LoanInputName[]) => {
   inputs.forEach((inputName: LoanInputName) => {
-    setValue(inputName, '');
+    setValue(inputName, "");
   });
-}
+};
 
-export {
-  getDate,
-  getDecimalHour,
-  getDayName,
-  getDecimalMinutes,
-  getMDYDateString,
-}
+//////////////////////////////
+// API Utils
+/////////////////////////////
+export const getFetchConfig = () => {
+  const token = localStorage.getItem("token");
+  return {
+    headers: { Authorization: `Bearer ${token}` },
+  };
+};

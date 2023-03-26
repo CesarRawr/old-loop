@@ -1,9 +1,8 @@
-import {useState, useEffect} from 'react';
 import {Field} from 'react-final-form';
-import { FieldRenderProps } from 'react-final-form';
 import DatePicker from 'react-datepicker';
 
-import type { DatePickerProps } from '@models/interfaces';
+import type { DatePickerAdapterProps } from '@models/types';
+import type { LabelDatePickerProps } from '@models/interfaces';
 
 import './DatePicker.css';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -11,37 +10,41 @@ import 'react-datepicker/dist/react-datepicker.css';
 function DatePickerAdapter({ 
   input: { onChange, value }, 
   meta: { error, touched }, 
-  ...rest }: FieldRenderProps<Date, HTMLElement>
+  onChangeCustom,
+  ...rest }: DatePickerAdapterProps
 ) {
-  const filterWeekends = (date: any) => {
-    const day = date.getDay();
-    return day !== 0 && day !== 6;
+  const onChangeCustomized = (newValue: Date) => {
+    if (!!onChangeCustom) {
+      onChangeCustom(newValue);
+    }
+
+    onChange(newValue);
   }
 
   return (
     <DatePicker
       selected={value}
       dateFormat="dd/MM/yyyy"
-      onChange={onChange}
+      onChange={onChangeCustomized}
       className="custom"
       {...rest}
     />
   );
 }
 
-export default function LabelDatepicker(props: DatePickerProps) {
-  const [date, setDate] = useState<Date>();
-  useEffect(() => {
-    setDate(new Date());
-  }, []);
-
+export default function LabelDatepicker(props: LabelDatePickerProps) {
   return (
     <Field 
       name="fecha" 
       minDate={props.minDate} 
       maxDate={props.maxDate}
       disabled={props.disabled}
-      component={DatePickerAdapter} 
-      initialValue={date} />
+      initialValue={props.date}
+      component={(fieldProps) => (
+        <DatePickerAdapter 
+          {...fieldProps} 
+          onChangeCustom={props.onChangeCustom} />
+      )} 
+       />
   );
 }

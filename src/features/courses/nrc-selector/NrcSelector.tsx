@@ -1,14 +1,16 @@
-import {useEffect, useMemo} from 'react';
+import {useEffect, useState, useMemo} from 'react';
 import {ActionMeta} from 'react-select';
 import {FormListGroup} from '@ui/index';
 
-import type {NrcTag} from '@models/types';
+import type {NrcTag, Semana} from '@models/types';
 import type {SelectorProps} from '@models/interfaces';
 import {useAppSelector, useAppDispatch} from '@app/hooks';
+import {getDecimalDay, getDayName, areSameDates} from '@utils/index';
 
 import {
   fetchNrcs, 
   selectNrcs, 
+  selectDate,
   selectCourses
 } from '@courses/courseSlice';
 
@@ -21,6 +23,7 @@ import {
 export default function NrcSelector(props: SelectorProps) {
   const dispatch = useAppDispatch();
   const nrcs = useAppSelector(selectNrcs);
+  const date = useAppSelector(selectDate);
   const courses = useAppSelector(selectCourses);
 
   // En caso de haber un valor inicial, se crea una función
@@ -33,12 +36,25 @@ export default function NrcSelector(props: SelectorProps) {
     }
   }, [initialValue]);
 
+  const loadNrcs = () => {
+    const dayname: Semana = getDayName(date);
+    dispatch(fetchNrcs(dayname));
+  }
+
+  // Hook que se activa cuando cambia la fecha, no se mezcla con el hook de carga inicial
+  // para disminuir la cantidad de fallos a la hora de cargar los datos
+  const [lastDate, setLastDate] = useState<Date>(date);
+  useEffect(() => {
+    if (areSameDates(lastDate, date)) return;
+    setLastDate(date);
+    loadNrcs();
+  }, [date]);
+
   // Cargar los nrc iniciales al montar el componente.
   const {isLoading, disabled} = props;
   useEffect(() => {
-    if (!isLoading && !disabled) {
-      dispatch(fetchNrcs());
-    }
+    if (isLoading && disabled) return;
+    loadNrcs();
   }, [dispatch, isLoading]);
 
   // Cargar la información en los input del préstamo
@@ -47,9 +63,9 @@ export default function NrcSelector(props: SelectorProps) {
     setFirstLoanData(setValue, selectedItem);
 
     // Si no hay clases en el horario, dejar vacios los campos de aula, horainicio y hora fin
-    const dayNumber = new Date().getDay();
+    const dayNumber = getDecimalDay(date);
     if (dayNumber > 0 && dayNumber < 6) {
-      setSecondLoanData(setValue, selectedItem, dispatch);
+      setSecondLoanData(setValue, selectedItem, dispatch, date);
     }
   }
 

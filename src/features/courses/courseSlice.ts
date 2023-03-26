@@ -1,12 +1,24 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { RootState } from '@app/store';
-import { urlBase } from '../../variables';
+import {RootState} from '@app/store';
+import {urlBase} from '../../variables';
 import axios from 'axios';
+
+import {
+  getDateISOFormat, 
+  getDateFromISOFormat, 
+  getFetchConfig
+} from '@utils/index';
+
+import {
+  createAsyncThunk, 
+  createSlice, 
+  PayloadAction
+} from '@reduxjs/toolkit';
 
 import type {
   CourseTag, 
   NrcTag, 
-  TeacherTag
+  TeacherTag,
+  Semana
 } from '@models/types';
 
 import type {
@@ -20,6 +32,7 @@ import type {
 // State
 ///////////////////////////
 const initialState: CourseState = {
+  loanDate: getDateISOFormat(),
   classrooms: [],
   courses: [],
   nrcs: [],
@@ -32,11 +45,7 @@ const initialState: CourseState = {
 
 // Function to get all classrooms
 export const fetchClassrooms = createAsyncThunk('courses/fetchClassrooms', async () => {
-  const token = localStorage.getItem('token');
-  const config = {
-    headers: { Authorization: `Bearer ${token}` }
-  };
-
+  const config = getFetchConfig();
   const response: any = await axios.get<any>(`${urlBase}/v1/classrooms`, config);
   return response.data.data.map((aula: any) => ({
     label: aula.nombre,
@@ -45,14 +54,11 @@ export const fetchClassrooms = createAsyncThunk('courses/fetchClassrooms', async
 });
 
 // Function to get all courses
-export const fetchCourses = createAsyncThunk('courses/fetchCourseNames', async (arg, { getState }) => {
+export const fetchCourses = createAsyncThunk('courses/fetchCourseNames', async (dayname: Semana, { getState }) => {
   const state: any = getState();
-  const token = localStorage.getItem('token');
-  const config = {
-    headers: { Authorization: `Bearer ${token}` }
-  };
+  const config = getFetchConfig();
 
-  const response: any = await axios.get<any>(`${urlBase}/v1/courses`, config);
+  const response: any = await axios.get<any>(`${urlBase}/v1/courses/${dayname}`, config);
   // Settear label y value a las materias que tienen clases hoy
   const courses: CourseTag[] = response.data.data.map((materia: Materia) => {
     if (!!materia.asignaciones.length) {
@@ -70,14 +76,11 @@ export const fetchCourses = createAsyncThunk('courses/fetchCourseNames', async (
 });
 
 // Function to get all nrc
-export const fetchNrcs = createAsyncThunk('courses/fetchNrcs', async () => {
-  const token = localStorage.getItem('token');
-  const config = {
-    headers: { Authorization: `Bearer ${token}` }
-  };
-
-  const response: any = await axios.get<any>(`${urlBase}/v1/courses`, config);
+export const fetchNrcs = createAsyncThunk('courses/fetchNrcs', async (dayname: Semana) => {
+  const config = getFetchConfig();
+  const response: any = await axios.get<any>(`${urlBase}/v1/courses/${dayname}`, config);
   const materias: Materia[] = response.data.data;
+
   const nrcs: any[] = materias.map((materia: Materia) => {
     return materia.asignaciones.map((asignacion: Asignacion) => {
       return {
@@ -97,12 +100,8 @@ export const fetchNrcs = createAsyncThunk('courses/fetchNrcs', async () => {
 });
 
 // Function to get all teachers
-export const fetchTeachers = createAsyncThunk('courses/fetchTeachers', async (arg, { getState }) => {
-  const token = localStorage.getItem('token');
-  const config = {
-    headers: { Authorization: `Bearer ${token}` }
-  };
-
+export const fetchTeachers = createAsyncThunk('courses/fetchTeachers', async (arg, {getState}) => {
+  const config = getFetchConfig();
   const response: any = await axios.get<any>(`${urlBase}/v1/teachers`, config);
 
   const state: any = getState();
@@ -151,9 +150,13 @@ export const fetchTeachers = createAsyncThunk('courses/fetchTeachers', async (ar
 // Slice
 ///////////////////////////
 export const courseSlice = createSlice({
-  name: 'devices',
+  name: 'courses',
   initialState,
-  reducers: {},
+  reducers: {
+    setDate: (state, action: PayloadAction<string>) => {
+      state.loanDate = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchClassrooms.fulfilled, (state, action) => {
@@ -171,6 +174,8 @@ export const courseSlice = createSlice({
   },
 });
 
+export const {setDate} = courseSlice.actions; 
+
 export default courseSlice.reducer;
 
 ///////////////////////////
@@ -180,3 +185,5 @@ export const selectClassrooms = (state: RootState) => state.courses.classrooms;
 export const selectCourses = (state: RootState) => state.courses.courses;
 export const selectNrcs = (state: RootState) => state.courses.nrcs;
 export const selectTeachers = (state: RootState) => state.courses.teachers;
+export const selectDate = (state: RootState) => getDateFromISOFormat(state.courses.loanDate);
+export const selectDateString = (state: RootState) => state.courses.loanDate;

@@ -23,7 +23,8 @@ import {
   CourseSelector,
   HoursSelector,
   NrcSelector,
-  TeacherSelector
+  TeacherSelector,
+  DateSelector,
 } from '@courses/index';
 
 import {
@@ -195,10 +196,9 @@ export default function CreateLoanForm() {
               {/* Fecha */}
               <div className={styles.formGroup}>
                 <Label className={styles.marginBottom} text="Fecha" size="16px" />
-                <DatePicker 
-                  disabled={isLoading}
-                  minDate={new Date()}
-                  maxDate={addDays(new Date(), 7)} />
+                <DateSelector
+                  setValue={setValue}
+                  disabled={isLoading} />
               </div>
 
               {/* Nrc */}

@@ -1,4 +1,4 @@
-import type {StatusType} from '@models/types';
+import type {StatusType, Semana} from '@models/types';
 
 /**
 * @loans
@@ -16,7 +16,7 @@ export interface Horario {
   aula: string;
   horaInicio: number;
   horaFin: number;
-  dia: "lunes" | "martes" | "miercoles" | "jueves" | "viernes" | "sabado" | "domingo";
+  dia: Semana;
 }
 
 export interface Maestro {

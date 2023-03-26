@@ -1,7 +1,8 @@
 import {useEffect, useMemo, useState} from 'react';
 import {Label, ListInput} from '@ui/index';
-import {getDecimalHour} from '@utils/index';
+import {getDecimalHour, addHoursToHour} from '@utils/index';
 import {SelectorProps} from '@models/interfaces';
+import {Dayjs} from 'dayjs';
 
 import styles from './HoursSelector.module.css';
 import HoursSelectorModal from './HoursSelectorModal/HoursSelectorModal';
@@ -52,11 +53,14 @@ export default function HoursSelector(props: SelectorProps) {
   }, [initialValue]);
 
   const defaultValueHoraFin: any = useMemo(() => {
-    const finalHour = actualHour+2 > 21 ? actualHour+1: actualHour+2;
+    const finalHour: Dayjs = addHoursToHour(actualHour, 2);
+    const finalHourFormated: string = finalHour.format('HH:00');
+    const decimalFinalHour: number = getDecimalHour(finalHour.toDate());
+
     // Si no hay un initialValue, se asigna la hora actual+2horas al input final.
     return !initialValue ? {
-      label: `${finalHour}:00`,
-      value: finalHour,
+      label: finalHourFormated,
+      value: decimalFinalHour,
     }:{
       label: `${initialValue.materia.horario.horaFin}:00`,
       value: initialValue.materia.horario.horaFin,

@@ -1,4 +1,5 @@
 import type {MultiValue, ActionMeta} from 'react-select';
+import {FieldRenderProps} from 'react-final-form';
 import type {
   Maestro, 
   Materia, 
@@ -19,9 +20,11 @@ export type NrcTag = Tag & Asignacion & NrcMeta;
 export type StatusType = 'loading' | 'idle' | 'failed';
 
 // @Utils alias
-export type Semana = "lunes" | "martes" | "miercoles" | "jueves" | "viernes" | "sabado" | "domingo";
+export type Semana = "lunes" | "martes" | "miércoles" | "jueves" | "viernes" | "sábado" | "domingo";
 export type LoanInputName = "nrcs" | "maestros" | "materias" | "aulas" | "horaInicio" | "horaFin" | "observaciones";
 
+// @ui alias
+export type DatePickerAdapterProps = FieldRenderProps<Date, HTMLElement> & { onChangeCustom?: (value: Date) => void }
 
 ////////////////////////////////////
 // @FunctionAlias

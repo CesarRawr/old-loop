@@ -9,6 +9,7 @@ import {
 } from '@courses/courseSlice';
 
 import {fetchDevices} from '@devices/deviceSlice';
+import type {Semana} from '@models/types';
 //////////////////////////////////
 
 //////////////////////////////////
@@ -26,16 +27,16 @@ import {setSelectedLoan} from '@loan/modify-loan-form/modifyLoanFormSlice';
 /////////////////////////////////
 
 // Reload all input data
-export const reloadAll = (dispatch: any): void => {
-  dispatch(fetchNrcs());
+export const reloadAll = (dispatch: any, dayname: Semana): void => {
+  dispatch(fetchNrcs(dayname));
   dispatch(fetchDevices());
   dispatch(fetchClassrooms());
-  dispatch(fetchCourses());
+  dispatch(fetchCourses(dayname));
   dispatch(fetchTeachers());
 };
 
 // Regresa un préstamo en la base de datos
-export const returnLoanAction = (loanID: string, dispatch: any): void => {
+export const returnLoanAction = (dispatch: any, dayname: Semana, loanID: string): void => {
   // Eliminar el dispositivo seleccionado en caso de que sea devuelto
   dispatch(setSelectedLoanIndex(-1));
   dispatch(setSelectedLoan(undefined));
@@ -46,7 +47,7 @@ export const returnLoanAction = (loanID: string, dispatch: any): void => {
   dispatch(returnLoan(loanID as string)).unwrap()
   .then((result: any) => {
     if (!result.error) {
-      reloadAll(dispatch);
+      reloadAll(dispatch, dayname);
       dispatch(fetchActiveLoans());
     }
   })

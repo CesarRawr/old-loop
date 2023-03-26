@@ -1,3 +1,4 @@
+import { Dayjs } from 'dayjs';
 import {Prestamo} from './loan';
 import {CourseTag, NrcTag, TeacherTag} from '@models/types';
 
@@ -21,6 +22,7 @@ export interface NrcMeta {
 }
 
 export interface CourseState {
+  loanDate: string;
   classrooms: Tag[];
   courses: CourseTag[];
   nrcs: NrcTag[];

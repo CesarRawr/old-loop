@@ -6,12 +6,11 @@ export const getInitialHoursList = (hourNumber: number) => {
   }];
 
   for (let i = hourNumber; i < hourNumber+3; i++) {
+    if (i > 20) break;
     list.push({
       label: `${i}:00`,
       value: i,
     });
-
-    if (i === 20) break;
   }
 
   return list;
@@ -25,12 +24,11 @@ export const getLastHoursList = (hourNumber: number) => {
   }];
   
   for (let i = hourNumber+1; i < hourNumber+6; i++) {
+    if (i > 21) break;
     list.push({
       label: `${i}:00`,
       value: i,
     });
-
-    if (i === 21) break;
   }
 
   return list;
