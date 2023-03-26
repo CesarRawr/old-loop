@@ -1,9 +1,9 @@
-import {useState, useEffect, useRef} from 'react';
-import Select from 'react-select';
+import { useState, useEffect, useRef } from "react";
+import Select from "react-select";
 
-import {InputLoading} from '@ui/index';
-import customStyles from './MultiSelectorStyles';
-import type {MultiSelectorProps} from '@models/interfaces';
+import { InputLoading } from "@ui/index";
+import customStyles from "./MultiSelectorStyles";
+import type { MultiSelectorProps } from "@models/interfaces";
 
 export default function MultiSelector(props: MultiSelectorProps) {
   const [height, setHeight] = useState<number>(0);
@@ -17,33 +17,32 @@ export default function MultiSelector(props: MultiSelectorProps) {
 
   return (
     <>
-      {
-        !!props.isLoading ? (
-          <InputLoading height={`${height}px`} />
-        ):(
-          <div ref={ref}>
-            <Select 
-              styles={customStyles}
-              options={props.options} 
-              name={props.name} 
-              placeholder={props.placeholder}
-              onChange={props.onChange}
-              value={props.values}
-              hideSelectedOptions={false}
-              isOptionSelected={() => false}
-              theme={(theme: any) => ({
-                ...theme,
-                borderRadius: 0,
-                colors: {
-                  ...theme.colors,
-                  primary25: '#f1f1f1',
-                  primary50: '#f1f1f1',
-                },
-              })} 
-              isMulti />
-          </div>
-        )
-      }
+      {!!props.isLoading ? (
+        <InputLoading height={`${height}px`} />
+      ) : (
+        <div ref={ref}>
+          <Select
+            styles={customStyles}
+            options={props.options}
+            name={props.name}
+            placeholder={props.placeholder}
+            onChange={props.onChange}
+            value={props.values}
+            hideSelectedOptions={false}
+            isOptionSelected={() => false}
+            theme={(theme: any) => ({
+              ...theme,
+              borderRadius: 0,
+              colors: {
+                ...theme.colors,
+                primary25: "#f1f1f1",
+                primary50: "#f1f1f1",
+              },
+            })}
+            isMulti
+          />
+        </div>
+      )}
     </>
   );
 }

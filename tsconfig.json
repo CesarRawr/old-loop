@@ -26,10 +26,8 @@
       "@utils/*": ["src/features/utils/*"],
       "@users/*": ["src/features/users/*"],
       "@courses/*": ["src/features/courses/*"],
-      "@devices/*": ["src/features/devices/*"],
+      "@devices/*": ["src/features/devices/*"]
     }
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }

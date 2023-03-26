@@ -1,20 +1,20 @@
-import {useEffect} from 'react';
-import {MultiSelector} from '@ui/index';
-import {MultiValue, ActionMeta} from 'react-select';
-import type {Item} from '@models/interfaces';
-import {useAppSelector, useAppDispatch} from '@app/hooks';
+import { useEffect } from "react";
+import { MultiSelector } from "@ui/index";
+import { MultiValue, ActionMeta } from "react-select";
+import type { Item } from "@models/interfaces";
+import { useAppSelector, useAppDispatch } from "@app/hooks";
 
 import {
-  fetchDevices, 
+  fetchDevices,
   selectDevices,
   updateSelected,
   updateDeviceAmount,
-  selectSelectedDevices, 
-  removeSelected
-} from '@devices/deviceSlice';
-import { selectSelectedLoanIndex } from '@loan/active-loans-list/activeLoansListSlice';
+  selectSelectedDevices,
+  removeSelected,
+} from "@devices/deviceSlice";
+import { selectSelectedLoanIndex } from "@loan/active-loans-list/activeLoansListSlice";
 
-export default function DeviceSelector({isLoading}: {isLoading?: any}) {
+export default function DeviceSelector({ isLoading }: { isLoading?: any }) {
   const dispatch = useAppDispatch();
   const values = useAppSelector(selectSelectedDevices);
   const devices = useAppSelector(selectDevices);
@@ -29,28 +29,33 @@ export default function DeviceSelector({isLoading}: {isLoading?: any}) {
   const selectOption = (itemSelected: Item) => {
     dispatch(updateDeviceAmount(itemSelected));
     dispatch(updateSelected(itemSelected));
-  }
+  };
 
   const removeValue = (itemSelected: MultiValue<Item>) => {
     dispatch(removeSelected(itemSelected as Item[]));
-  }
+  };
 
-  const onChange = (itemsSelected: MultiValue<Item>, {action}: ActionMeta<any>) => {
+  const onChange = (
+    itemsSelected: MultiValue<Item>,
+    { action }: ActionMeta<any>
+  ) => {
     const actions: any = {
-      'select-option': () => selectOption(itemsSelected[itemsSelected.length-1]),
-      'remove-value': () => removeValue(itemsSelected),
-    }
+      "select-option": () =>
+        selectOption(itemsSelected[itemsSelected.length - 1]),
+      "remove-value": () => removeValue(itemsSelected),
+    };
 
     actions[action]();
-  }
+  };
 
   return (
-    <MultiSelector 
+    <MultiSelector
       options={devices}
-      name="dispositivos" 
+      name="dispositivos"
       placeholder="Dispositivos"
-      onChange={onChange} 
+      onChange={onChange}
       values={values}
-      isLoading={isLoading} />
+      isLoading={isLoading}
+    />
   );
 }

@@ -1,5 +1,5 @@
-import {Main, Login} from '@pages/index';
-import {Routes, Route} from 'react-router-dom';
+import { Main, Login } from "@pages/index";
+import { Routes, Route } from "react-router-dom";
 
 function App() {
   return (

@@ -1,16 +1,12 @@
-import React, {useEffect} from 'react';
-import {useNavigate} from 'react-router-dom';
-import UserLayout from './layouts/UserLayout';
-import {selectSelectedLoan} from '@loan/slices';
-import {useAppSelector, useAppDispatch} from '@app/hooks';
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import UserLayout from "./layouts/UserLayout";
+import { selectSelectedLoan } from "@loan/slices";
+import { useAppSelector, useAppDispatch } from "@app/hooks";
 
-import {
-  CreateLoanForm, 
-  ActiveLoansList,
-  ModifyLoanForm
-} from '@loan/index';
+import { CreateLoanForm, ActiveLoansList, ModifyLoanForm } from "@loan/index";
 
-import {decodeToken} from '@utils/index';
+import { decodeToken } from "@utils/index";
 
 export function Main() {
   const navigate = useNavigate();
@@ -21,21 +17,21 @@ export function Main() {
 
     if (!userData) {
       localStorage.clear();
-      navigate('/', { replace: true });
+      navigate("/", { replace: true });
     }
   }, []);
 
   return (
     <UserLayout>
-      <div style={{
-        height: "100%",
-        display: "flex",
-        flexFlow: "column",
-        alignItems: "center",
-      }}>
-        {
-          !loan ? <CreateLoanForm />: <ModifyLoanForm />
-        }
+      <div
+        style={{
+          height: "100%",
+          display: "flex",
+          flexFlow: "column",
+          alignItems: "center",
+        }}
+      >
+        {!loan ? <CreateLoanForm /> : <ModifyLoanForm />}
         <ActiveLoansList />
       </div>
     </UserLayout>

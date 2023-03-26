@@ -1,19 +1,14 @@
-import {setControl} from '@devices/deviceSlice';
-import {getDayName, resetFormInputs} from '@utils/index';
-import type {Horario} from '@models/interfaces';
+import { setControl } from "@devices/deviceSlice";
+import { getDayName, resetFormInputs } from "@utils/index";
+import type { Horario } from "@models/interfaces";
 
-import type {
-  NrcTag, 
-  TeacherTag, 
-  LoanInputName, 
-  Semana
-} from '@models/types';
+import type { NrcTag, TeacherTag, LoanInputName, Semana } from "@models/types";
 
 // Limpia los campos nrc, maestro, materia y aula
 export const clearAction = (setValue: any) => {
-  const toDelete: LoanInputName[] = ['maestros'];
+  const toDelete: LoanInputName[] = ["maestros"];
   return resetFormInputs(setValue, toDelete);
-}
+};
 
 // Obtener las materias de lo maestros.
 export const getTeacherNrcs = (
@@ -32,7 +27,7 @@ export const getOrderedSchedules = (
   return horariosDesordenados.sort(
     (a: any, b: any) => a.horarios[0].horaInicio - b.horarios[0].horaInicio
   );
-}
+};
 
 export const getTeachersWithTodayCourses = (
   teacherCourses: NrcTag[],
@@ -62,37 +57,37 @@ export const getTeachersWithTodayCourses = (
 };
 
 export const setLoanData = (
-  setValue: any, 
+  setValue: any,
   nearest: NrcTag,
   dispatch: any
 ): void => {
   // Setteando nrc
-  setValue('nrcs', nearest);
-  
+  setValue("nrcs", nearest);
+
   // Setteando materia
-  setValue('materias', {
+  setValue("materias", {
     ...nearest.materia,
     label: nearest.materia.nombre,
     value: nearest.materia._id,
   });
 
   // Setteando aulas
-  setValue('aulas', {
+  setValue("aulas", {
     label: nearest.horarios[0].aula,
     value: nearest.horarios[0].aula,
   });
 
   // Setteando hora de inicio
-  setValue('horaInicio', {
+  setValue("horaInicio", {
     label: `${nearest.horarios[0].horaInicio}:00`,
     value: nearest.horarios[0].horaInicio,
   });
 
   // Setteando hora de fin
-  setValue('horaFin', {
+  setValue("horaFin", {
     label: `${nearest.horarios[0].horaFin}:00`,
     value: nearest.horarios[0].horaFin,
   });
 
   dispatch(setControl(nearest.horarios[0].aula));
-}
+};

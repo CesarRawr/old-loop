@@ -1,66 +1,66 @@
-import {useEffect} from 'react';
-import {Form} from 'react-final-form';
-import {useNavigate} from 'react-router-dom';
-import {Label, Button, Input} from '@ui/index';
-import {useAppSelector, useAppDispatch} from '@app/hooks';
-import styles from '../create-loan-form/CreateLoanForm.module.css';
+import { useEffect } from "react";
+import { Form } from "react-final-form";
+import { useNavigate } from "react-router-dom";
+import { Label, Button, Input } from "@ui/index";
+import { useAppSelector, useAppDispatch } from "@app/hooks";
+import styles from "../create-loan-form/CreateLoanForm.module.css";
 
 import type {
-  Prestamo, 
-  Item, 
-  UpdateLoanProps, 
-  ModifyData
-} from '@models/interfaces';
+  Prestamo,
+  Item,
+  UpdateLoanProps,
+  ModifyData,
+} from "@models/interfaces";
 
 import {
-  firstValidations, 
-  secondValidations
-} from '../create-loan-form/createLoanValidations';
+  firstValidations,
+  secondValidations,
+} from "../create-loan-form/createLoanValidations";
 
 import {
-  fetchActiveLoans, 
-  setSelectedLoanIsDisabled
-} from '../active-loans-list/activeLoansListSlice';
+  fetchActiveLoans,
+  setSelectedLoanIsDisabled,
+} from "../active-loans-list/activeLoansListSlice";
 
 import {
   setStatus,
   modifyLoan,
   selectStatus,
   selectSelectedLoan,
-  setSelectedLoan
-} from './modifyLoanFormSlice';
+  setSelectedLoan,
+} from "./modifyLoanFormSlice";
 
 import {
   getDate,
-  openDialog, 
+  openDialog,
   decodeToken,
-  openAcceptDialog
-} from '@utils/index';
+  openAcceptDialog,
+} from "@utils/index";
 
 import {
-  getDevicesToSelect, 
-  getDataToSend, 
-  getDeletedDevices
-} from './ModifyLoanFormHelpers';
+  getDevicesToSelect,
+  getDataToSend,
+  getDeletedDevices,
+} from "./ModifyLoanFormHelpers";
 
 import {
   ClassroomSelector,
   CourseSelector,
   HoursSelector,
   NrcSelector,
-  TeacherSelector
-} from '@courses/index';
+  TeacherSelector,
+} from "@courses/index";
 
 import {
-  selectDevices, 
+  selectDevices,
   selectStatus as selectDevicesStatus,
-  selectSelectedDevices, 
+  selectSelectedDevices,
   clearDevices,
   setDeviceAmount,
   updateDeviceAmount,
   updateSelected,
-} from '@devices/deviceSlice';
-import DeviceSelector from '@devices/device-selector/DeviceSelector';
+} from "@devices/deviceSlice";
+import DeviceSelector from "@devices/device-selector/DeviceSelector";
 
 // Formulario para crear un prestamo
 export default function ModifyLoanForm() {
@@ -70,14 +70,18 @@ export default function ModifyLoanForm() {
   const selectedDevices: Item[] = useAppSelector(selectSelectedDevices);
   const status = useAppSelector(selectStatus);
 
-  // Préstamo seleccionado, agrega los dispositivos seleccionados 
+  // Préstamo seleccionado, agrega los dispositivos seleccionados
   // al input de los dispositivos.
   const selectedLoan: Prestamo | undefined = useAppSelector(selectSelectedLoan);
-  const devicesListStatus: 'idle' | 'loading' | 'failed' = useAppSelector(selectDevicesStatus);
+  const devicesListStatus: "idle" | "loading" | "failed" =
+    useAppSelector(selectDevicesStatus);
   useEffect(() => {
-    if (!selectedLoan && devicesListStatus !== 'idle') return;
+    if (!selectedLoan && devicesListStatus !== "idle") return;
     dispatch(clearDevices());
-    const devicesToSelect: (Item | undefined)[] = getDevicesToSelect(devices, selectedLoan);
+    const devicesToSelect: (Item | undefined)[] = getDevicesToSelect(
+      devices,
+      selectedLoan
+    );
 
     // Resta la cantidad de prèstamo al dispositivo en la lista de dispositivos
     for (let device of devicesToSelect) {
@@ -86,7 +90,7 @@ export default function ModifyLoanForm() {
 
     // Selecciona cada dispositivo y lo coloca en el input de dispositivos.
     for (let device of devicesToSelect) {
-      const {localPrestado} = device as Item;
+      const { localPrestado } = device as Item;
       for (let i = 0; i < localPrestado; i++) {
         dispatch(updateDeviceAmount(device as Item));
         dispatch(updateSelected(device as Item));
@@ -106,48 +110,60 @@ export default function ModifyLoanForm() {
     // ésto solo es por si acaso, en teoria nadie puede acceder al sistema sin un token.
     if (!userData) {
       localStorage.clear();
-      navigate('/', { replace: true });
+      navigate("/", { replace: true });
       return;
     }
 
     // Obtener la informacion que se va a enviár
-    const dataToSend: ModifyData[] = getDataToSend(selectedDevices, selectedLoan);
+    const dataToSend: ModifyData[] = getDataToSend(
+      selectedDevices,
+      selectedLoan
+    );
 
     // La función dataToSend no recupera los dispositivos eliminados.
     // Recuperar los dispositivos eliminados.
-    const deletedDevices: (ModifyData | undefined)[] | undefined = getDeletedDevices(selectedDevices, selectedLoan);
+    const deletedDevices: (ModifyData | undefined)[] | undefined =
+      getDeletedDevices(selectedDevices, selectedLoan);
 
     // Obtener los dispositivos que tengan cambios
-    const changedDevices: ModifyData[] = dataToSend.filter((device: any) => device.operation !== "idle");
+    const changedDevices: ModifyData[] = dataToSend.filter(
+      (device: any) => device.operation !== "idle"
+    );
     // Si no hay dispositivos modificados o eliminados
     if (!changedDevices.length && !deletedDevices?.length && !aula) {
-      openDialog('Mensaje', 'No se han hecho cambios en el préstamo seleccionado');
+      openDialog(
+        "Mensaje",
+        "No se han hecho cambios en el préstamo seleccionado"
+      );
       return;
     }
 
     // Desactivar lista para que no interfiera con el envio de la informacion
     dispatch(setSelectedLoanIsDisabled(true));
     // Enviar datos
-    dispatch(modifyLoan({
-      loanID: selectedLoan?._id as string,
-      changedDevices, 
-      deletedDevices,
-      aula
-    })).unwrap()
-    .then((result: any) => {
-      if (!result.data.error) {
-        dispatch(fetchActiveLoans());
-        dispatch(setSelectedLoan(undefined));
-      }
-      
-      dispatch(setSelectedLoanIsDisabled(false));
-      openDialog('Mensaje', result.data.msg);
-    })
-    .catch((e) => {
-      dispatch(setSelectedLoanIsDisabled(false));
-      openDialog('Mensaje', 'Error al conectar con el servidor');
-    });
-  }
+    dispatch(
+      modifyLoan({
+        loanID: selectedLoan?._id as string,
+        changedDevices,
+        deletedDevices,
+        aula,
+      })
+    )
+      .unwrap()
+      .then((result: any) => {
+        if (!result.data.error) {
+          dispatch(fetchActiveLoans());
+          dispatch(setSelectedLoan(undefined));
+        }
+
+        dispatch(setSelectedLoanIsDisabled(false));
+        openDialog("Mensaje", result.data.msg);
+      })
+      .catch((e) => {
+        dispatch(setSelectedLoanIsDisabled(false));
+        openDialog("Mensaje", "Error al conectar con el servidor");
+      });
+  };
 
   const onSubmit = (data: any, form: any) => {
     // Validaciones de campos sencillas
@@ -155,7 +171,7 @@ export default function ModifyLoanForm() {
     if (!validationsResult.isValid) {
       dispatch(setStatus(validationsResult.isValid));
       return openDialog(
-        validationsResult.dialog.title, 
+        validationsResult.dialog.title,
         validationsResult.dialog.description
       );
     }
@@ -163,7 +179,7 @@ export default function ModifyLoanForm() {
     const args: UpdateLoanProps = {
       form,
       formData: data,
-    }
+    };
 
     // Validaciones complejas relacionadas con dispositivos
     validationsResult = secondValidations(data, selectedDevices, devices);
@@ -172,21 +188,21 @@ export default function ModifyLoanForm() {
 
       if (validationsResult.requireAcceptOption) {
         return openAcceptDialog(
-          validationsResult.dialog.title, 
-          validationsResult.dialog.description, 
+          validationsResult.dialog.title,
+          validationsResult.dialog.description,
           updateLoan,
           args
         );
       }
-      
+
       return openDialog(
-        validationsResult.dialog.title, 
+        validationsResult.dialog.title,
         validationsResult.dialog.description
       );
     }
 
     updateLoan(args);
-  }
+  };
 
   return (
     <div className={styles.createLoan}>
@@ -196,90 +212,113 @@ export default function ModifyLoanForm() {
         mutators={{
           // expect (field, value) args from the mutator
           setValue: ([field, value], state, { changeValue }) => {
-            changeValue(state, field, () => value)
-          }
+            changeValue(state, field, () => value);
+          },
         }}
-        render={({ handleSubmit, form: { mutators: { setValue } }, values }) => (
+        render={({
+          handleSubmit,
+          form: {
+            mutators: { setValue },
+          },
+          values,
+        }) => (
           <form onSubmit={handleSubmit} className={styles.form}>
             {/* Top pane */}
             <div className={styles.topPane}>
-
               {/* Fecha */}
               <div className={styles.formGroup}>
-                <Label className={styles.marginBottom} text="Fecha" size="16px" />
-                <Label className={styles.marginLeft} text={getDate(new Date(selectedLoan?.timelog.inicio as string))} size="20px" />
+                <Label
+                  className={styles.marginBottom}
+                  text="Fecha"
+                  size="16px"
+                />
+                <Label
+                  className={styles.marginLeft}
+                  text={getDate(
+                    new Date(selectedLoan?.timelog.inicio as string)
+                  )}
+                  size="20px"
+                />
               </div>
 
               {/* Nrc */}
-              <NrcSelector 
+              <NrcSelector
                 initialValue={values}
-                setValue={setValue} 
-                isLoading={status === 'loading'} 
-                disabled />
+                setValue={setValue}
+                isLoading={status === "loading"}
+                disabled
+              />
 
               {/* Maestro */}
-              <TeacherSelector 
+              <TeacherSelector
                 initialValue={values}
-                setValue={setValue} 
-                isLoading={status === 'loading'} 
-                disabled />
+                setValue={setValue}
+                isLoading={status === "loading"}
+                disabled
+              />
 
               {/* Materia */}
-              <CourseSelector 
+              <CourseSelector
                 initialValue={values}
-                setValue={setValue} 
-                isLoading={status === 'loading'}
-                disabled />
+                setValue={setValue}
+                isLoading={status === "loading"}
+                disabled
+              />
 
               {/* Aula */}
-              <ClassroomSelector 
+              <ClassroomSelector
                 initialValue={values}
-                setValue={setValue} 
-                isLoading={status === 'loading'} />
+                setValue={setValue}
+                isLoading={status === "loading"}
+              />
 
               {/* Horario */}
-              <HoursSelector 
+              <HoursSelector
                 initialValue={values}
-                setValue={setValue} 
-                isLoading={status === 'loading'}
-                disabled />
+                setValue={setValue}
+                isLoading={status === "loading"}
+                disabled
+              />
             </div>
 
             {/* Bottom pane */}
             <div className={styles.bottomPane}>
               {/* Selector de devices */}
-              <DeviceSelector isLoading={status === 'loading'} />
-              
-              <div 
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '76.6% 1fr',
-                  gridGap: '1.6%',
-                }} >
+              <DeviceSelector isLoading={status === "loading"} />
 
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "76.6% 1fr",
+                  gridGap: "1.6%",
+                }}
+              >
                 {/* Input de observaciones */}
-                <div 
+                <div
                   style={{
                     display: "flex",
                     flexFlow: "column",
                     alignItems: "stretch",
-                  }}>
-                  <Input 
+                  }}
+                >
+                  <Input
                     value={values.observaciones}
-                    isLoading={status === 'loading'}
+                    isLoading={status === "loading"}
                     name="observaciones"
-                    placeholder="Observaciones" 
+                    placeholder="Observaciones"
                     autocomplete="off"
-                    disabled />
+                    disabled
+                  />
                 </div>
 
                 {/* Botón de modificar */}
                 <div className={styles.btnContainer}>
-                  <Button 
+                  <Button
                     type="submit"
-                    text="Modificar" 
-                    style={{flexGrow: 1}}
-                    disabled={status === 'loading'} />
+                    text="Modificar"
+                    style={{ flexGrow: 1 }}
+                    disabled={status === "loading"}
+                  />
                 </div>
               </div>
             </div>

@@ -1,13 +1,13 @@
-import { Dayjs } from 'dayjs';
-import type {CSSProperties} from 'react';
-import type {ActionMeta} from 'react-select';
-import type {MouseElementFunction, onChangeFunction} from '../types';
+import { Dayjs } from "dayjs";
+import type { CSSProperties } from "react";
+import type { ActionMeta } from "react-select";
+import type { MouseElementFunction, onChangeFunction } from "../types";
 
 /**
-* @ui 
-* Estas son interfaces que pertenecen a
-* el folder @ui
-* */
+ * @ui
+ * Estas son interfaces que pertenecen a
+ * el folder @ui
+ * */
 export interface ButtonProps {
   text: string;
   type?: "button" | "submit" | "reset";
@@ -92,7 +92,7 @@ export interface InputMuiProps {
   autocomplete?: "on" | "off";
   isLoading?: boolean;
   type?: string;
-  margin?: "none" | "dense" | "normal"
+  margin?: "none" | "dense" | "normal";
 }
 
 export interface LoadingTableBodyProps {

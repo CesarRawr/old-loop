@@ -1,11 +1,13 @@
 // Obtener la lista de horas para el input inicial
 export const getInitialHoursList = (hourNumber: number) => {
-  let list: ValueList[] = [{
-    label: 'Otro',
-    value: -1,
-  }];
+  let list: ValueList[] = [
+    {
+      label: "Otro",
+      value: -1,
+    },
+  ];
 
-  for (let i = hourNumber; i < hourNumber+3; i++) {
+  for (let i = hourNumber; i < hourNumber + 3; i++) {
     if (i > 20) break;
     list.push({
       label: `${i}:00`,
@@ -14,16 +16,18 @@ export const getInitialHoursList = (hourNumber: number) => {
   }
 
   return list;
-}
+};
 
 //Obtener la lista de horas para el input final
 export const getLastHoursList = (hourNumber: number) => {
-  let list: ValueList[] = [{
-    label: 'Otro',
-    value: -1,
-  }];
-  
-  for (let i = hourNumber+1; i < hourNumber+6; i++) {
+  let list: ValueList[] = [
+    {
+      label: "Otro",
+      value: -1,
+    },
+  ];
+
+  for (let i = hourNumber + 1; i < hourNumber + 6; i++) {
     if (i > 21) break;
     list.push({
       label: `${i}:00`,
@@ -32,7 +36,7 @@ export const getLastHoursList = (hourNumber: number) => {
   }
 
   return list;
-}
+};
 
 export interface ValueList {
   label: string;

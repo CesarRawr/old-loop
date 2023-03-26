@@ -1,12 +1,12 @@
-import { Dayjs } from 'dayjs';
-import {TimePickerModal} from '@ui/index';
-import {getDayjsFormatByHour} from '@utils/index';
+import { Dayjs } from "dayjs";
+import { TimePickerModal } from "@ui/index";
+import { getDayjsFormatByHour } from "@utils/index";
 
 export default function HoursSelectorModal(props: HoursSelectorModalProps) {
   const onAccept = (value: Dayjs | null) => {
     // Si value no es null
     if (!!value) {
-      const {setValue, inputName} = props;
+      const { setValue, inputName } = props;
       const hourSelected: number = value.hour();
       props.handleClose();
 
@@ -15,10 +15,10 @@ export default function HoursSelectorModal(props: HoursSelectorModalProps) {
         value: hourSelected,
       });
     }
-  }
+  };
 
   return (
-    <TimePickerModal 
+    <TimePickerModal
       ampm={false}
       open={props.open}
       handleClose={props.handleClose}
@@ -28,7 +28,8 @@ export default function HoursSelectorModal(props: HoursSelectorModalProps) {
       shouldDisableTime={(value, unit) => {
         // Deshabilita los minutos.
         return unit === "minutes" && value.minute() > 0;
-      }} />
+      }}
+    />
   );
 }
 
@@ -36,5 +37,5 @@ interface HoursSelectorModalProps {
   open: boolean;
   handleClose: () => void;
   setValue: any;
-  inputName: 'horaInicio' | 'horaFin';
+  inputName: "horaInicio" | "horaFin";
 }

@@ -1,24 +1,24 @@
-import {useEffect, useState, useMemo} from 'react';
-import {ActionMeta} from 'react-select';
-import {FormListGroup} from '@ui/index';
+import { useEffect, useState, useMemo } from "react";
+import { ActionMeta } from "react-select";
+import { FormListGroup } from "@ui/index";
 
-import type {NrcTag, Semana} from '@models/types';
-import type {SelectorProps} from '@models/interfaces';
-import {useAppSelector, useAppDispatch} from '@app/hooks';
-import {getDecimalDay, getDayName, areSameDates} from '@utils/index';
+import type { NrcTag, Semana } from "@models/types";
+import type { SelectorProps } from "@models/interfaces";
+import { useAppSelector, useAppDispatch } from "@app/hooks";
+import { getDecimalDay, getDayName, areSameDates } from "@utils/index";
 
 import {
-  fetchNrcs, 
-  selectNrcs, 
+  fetchNrcs,
+  selectNrcs,
   selectDate,
-  selectCourses
-} from '@courses/courseSlice';
+  selectCourses,
+} from "@courses/courseSlice";
 
 import {
   clearAction,
   setFirstLoanData,
-  setSecondLoanData
-} from './NrcSelectorHelper';
+  setSecondLoanData,
+} from "./NrcSelectorHelper";
 
 export default function NrcSelector(props: SelectorProps) {
   const dispatch = useAppDispatch();
@@ -28,18 +28,20 @@ export default function NrcSelector(props: SelectorProps) {
 
   // En caso de haber un valor inicial, se crea una función
   // estática para enviar el valor en su respectivo objeto.
-  const {initialValue} = props;
+  const { initialValue } = props;
   const defaultValue: any = useMemo(() => {
-    return !initialValue ? undefined: {
-      label: initialValue.materia.nrc,
-      value: initialValue.materia.nrc,
-    }
+    return !initialValue
+      ? undefined
+      : {
+          label: initialValue.materia.nrc,
+          value: initialValue.materia.nrc,
+        };
   }, [initialValue]);
 
   const loadNrcs = () => {
     const dayname: Semana = getDayName(date);
     dispatch(fetchNrcs(dayname));
-  }
+  };
 
   // Hook que se activa cuando cambia la fecha, no se mezcla con el hook de carga inicial
   // para disminuir la cantidad de fallos a la hora de cargar los datos
@@ -51,7 +53,7 @@ export default function NrcSelector(props: SelectorProps) {
   }, [date]);
 
   // Cargar los nrc iniciales al montar el componente.
-  const {isLoading, disabled} = props;
+  const { isLoading, disabled } = props;
   useEffect(() => {
     if (isLoading && disabled) return;
     loadNrcs();
@@ -67,33 +69,33 @@ export default function NrcSelector(props: SelectorProps) {
     if (dayNumber > 0 && dayNumber < 6) {
       setSecondLoanData(setValue, selectedItem, dispatch, date);
     }
-  }
+  };
 
   // Ejecuta la opción que lanza el input.
-  const onChange = (selectedItem: NrcTag, {action}: ActionMeta<any>) => {
-    const {setValue} = props;
+  const onChange = (selectedItem: NrcTag, { action }: ActionMeta<any>) => {
+    const { setValue } = props;
     const options: any = {
-      'clear': () => clearAction(setValue),
-      'select-option': () => {
+      clear: () => clearAction(setValue),
+      "select-option": () => {
         loadLoanData(setValue, selectedItem);
-      }
-    }
+      },
+    };
 
     return options[action]();
-  }
+  };
 
   return (
-    <FormListGroup 
+    <FormListGroup
       label={{
-        text: 'Nrc',
+        text: "Nrc",
         styles: {
           marginBottom: ".5rem",
-        }
+        },
       }}
       listInput={{
         isLoading: isLoading,
-        name: 'nrcs',
-        placeholder: 'Nrc',
+        name: "nrcs",
+        placeholder: "Nrc",
         size: 5,
         optionList: nrcs,
         styles: {
@@ -103,6 +105,7 @@ export default function NrcSelector(props: SelectorProps) {
         onChange,
         initialValue: defaultValue,
         disabled,
-      }} />
+      }}
+    />
   );
 }

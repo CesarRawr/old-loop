@@ -1,20 +1,23 @@
-import {useEffect, useState} from 'react';
-import {getDate} from '@utils/index';
-import {LabelTooltip} from '@ui/index';
-import {ActiveLoansListRowProps} from '@models/interfaces';
-import {setSelectedLoan} from '@loan/slices';
-import {useAppDispatch, useAppSelector} from '@app/hooks';
-import ReturnLoanButton from '@loan/return-loan/ReturnLoanButton';
-import DevicesDropdown from '@devices/devices-dropdown/DevicesDropdown';
-import '../ActiveLoansList.css';
+import { useEffect, useState } from "react";
+import { getDate } from "@utils/index";
+import { LabelTooltip } from "@ui/index";
+import { ActiveLoansListRowProps } from "@models/interfaces";
+import { setSelectedLoan } from "@loan/slices";
+import { useAppDispatch, useAppSelector } from "@app/hooks";
+import ReturnLoanButton from "@loan/return-loan/ReturnLoanButton";
+import DevicesDropdown from "@devices/devices-dropdown/DevicesDropdown";
+import "../ActiveLoansList.css";
 
 import {
-  setSelectedLoanIndex, 
-  selectSelectedLoanIndex, 
-  selectSelectedLoanIsDisabled
-} from '../activeLoansListSlice';
+  setSelectedLoanIndex,
+  selectSelectedLoanIndex,
+  selectSelectedLoanIsDisabled,
+} from "../activeLoansListSlice";
 
-export default function ActiveLoansListRow({id, prestamo}: ActiveLoansListRowProps) {
+export default function ActiveLoansListRow({
+  id,
+  prestamo,
+}: ActiveLoansListRowProps) {
   const dispatch = useAppDispatch();
   const selectedLoanIndex = useAppSelector(selectSelectedLoanIndex);
   const loanIsDisabled = useAppSelector(selectSelectedLoanIsDisabled);
@@ -40,42 +43,40 @@ export default function ActiveLoansListRow({id, prestamo}: ActiveLoansListRowPro
     setIsActive(true);
     dispatch(setSelectedLoanIndex(id));
     dispatch(setSelectedLoan(prestamo));
-  }
+  };
 
   return (
-    <tr 
-      onClick={!loanIsDisabled ? onClick: () => {}} 
+    <tr
+      onClick={!loanIsDisabled ? onClick : () => {}}
       style={{
-        backgroundColor: selectedLoanIndex === id ? 'rgba(0, 0, 0, 0.07)': (prestamo.status === 'deuda' ? '#FF8A80': ''),
-      }}>
+        backgroundColor:
+          selectedLoanIndex === id
+            ? "rgba(0, 0, 0, 0.07)"
+            : prestamo.status === "deuda"
+            ? "#FF8A80"
+            : "",
+      }}
+    >
       {/* Fecha */}
-      <td className="f-center">
-        {
-          getDate(new Date(prestamo.timelog.inicio))
-        }
-      </td>
+      <td className="f-center">{getDate(new Date(prestamo.timelog.inicio))}</td>
 
       {/* Nrc */}
-      <td className="f-center">{ prestamo.materia.nrc }</td>
+      <td className="f-center">{prestamo.materia.nrc}</td>
 
       {/* Nombre del solicitante */}
-      <td className="f-center">
-        { 
-          prestamo.maestro.nombre 
-        }
-      </td>
+      <td className="f-center">{prestamo.maestro.nombre}</td>
 
       {/* Nombre de la materia */}
-      <td className="f-center">{ prestamo.materia.nombre }</td>
+      <td className="f-center">{prestamo.materia.nombre}</td>
 
       {/* Aula */}
-      <td className="f-center">{ prestamo.materia.horario.aula }</td>
+      <td className="f-center">{prestamo.materia.horario.aula}</td>
 
       {/* Fecha inicio */}
-      <td className="f-center">{ `${prestamo.materia.horario.horaInicio}:00` }</td>
+      <td className="f-center">{`${prestamo.materia.horario.horaInicio}:00`}</td>
 
       {/* Fecha de fin */}
-      <td className="f-center">{ `${prestamo.materia.horario.horaFin}:00` }</td>
+      <td className="f-center">{`${prestamo.materia.horario.horaFin}:00`}</td>
 
       {/* Dispositivos */}
       <td className="f-center">
@@ -84,15 +85,16 @@ export default function ActiveLoansListRow({id, prestamo}: ActiveLoansListRowPro
 
       {/* Observaciones */}
       <td className="f-center">
-        <LabelTooltip visibleWords={10} text={prestamo.observaciones} />  
+        <LabelTooltip visibleWords={10} text={prestamo.observaciones} />
       </td>
 
       {/* Botón para devolver el préstamo */}
       <td>
-        <ReturnLoanButton 
+        <ReturnLoanButton
           loanID={prestamo._id}
-          dispositivos={prestamo.dispositivos} />
+          dispositivos={prestamo.dispositivos}
+        />
       </td>
-    </tr> 
+    </tr>
   );
 }

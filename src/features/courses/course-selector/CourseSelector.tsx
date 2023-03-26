@@ -1,29 +1,29 @@
-import {useEffect, useMemo} from 'react';
-import {FormListGroup} from '@ui/index';
-import {ActionMeta} from 'react-select';
-import {getDayName} from '@utils/index';
-import {setControl} from '@devices/deviceSlice';
-import {useAppSelector, useAppDispatch} from '@app/hooks';
+import { useEffect, useMemo } from "react";
+import { FormListGroup } from "@ui/index";
+import { ActionMeta } from "react-select";
+import { getDayName } from "@utils/index";
+import { setControl } from "@devices/deviceSlice";
+import { useAppSelector, useAppDispatch } from "@app/hooks";
 
-import type {NrcTag, Semana} from '@models/types';
-import type {SelectorProps, Horario} from '@models/interfaces';
+import type { NrcTag, Semana } from "@models/types";
+import type { SelectorProps, Horario } from "@models/interfaces";
 
 import {
   setLoanData,
-  clearAction, 
-  getTodayCourses, 
+  clearAction,
+  getTodayCourses,
   getNearestCourse,
   getOrderedSchedules,
   thereAreConsecutives,
   getTodayCoursesSchedule,
-} from './CourseSelectorHelper';
+} from "./CourseSelectorHelper";
 
 import {
-  fetchCourses, 
-  selectCourses, 
+  fetchCourses,
+  selectCourses,
   selectNrcs,
-  selectDate
-} from '@courses/courseSlice';
+  selectDate,
+} from "@courses/courseSlice";
 
 export default function CourseSelector(props: SelectorProps) {
   const dispatch = useAppDispatch();
@@ -33,15 +33,17 @@ export default function CourseSelector(props: SelectorProps) {
 
   // En caso de haber un valor inicial, se crea una función
   // estática para enviar el valor en su respectivo objeto.
-  const {initialValue} = props;
+  const { initialValue } = props;
   const defaultValue: any = useMemo(() => {
-    return !initialValue ? undefined: {
-      label: initialValue.materia.nombre,
-      value: initialValue.materia._id,
-    }
+    return !initialValue
+      ? undefined
+      : {
+          label: initialValue.materia.nombre,
+          value: initialValue.materia._id,
+        };
   }, [initialValue]);
 
-  const {isLoading, disabled} = props;
+  const { isLoading, disabled } = props;
   useEffect(() => {
     if (isLoading && disabled) return;
     const dayname: Semana = getDayName(date);
@@ -49,7 +51,7 @@ export default function CourseSelector(props: SelectorProps) {
   }, [dispatch, nrcs, isLoading]);
 
   const loadLoanData = (setValue: any, selectedItem: any) => {
-    props.setValue('materias', selectedItem);
+    props.setValue("materias", selectedItem);
 
     // Si el curso no tiene horarios hoy
     const todayCourses: NrcTag[] = getTodayCourses(nrcs, selectedItem);
@@ -58,49 +60,56 @@ export default function CourseSelector(props: SelectorProps) {
     }
 
     // Obtener los horarios de hoy de los cursos
-    const horariosDesordenados: (NrcTag | undefined)[] = getTodayCoursesSchedule(todayCourses);
+    const horariosDesordenados: (NrcTag | undefined)[] =
+      getTodayCoursesSchedule(todayCourses);
     if (!horariosDesordenados || !horariosDesordenados.length) {
       return;
     }
 
     // Ordenar los horarios de mas temprano a mas tarde
-    const horariosActuales: (NrcTag | undefined)[] = getOrderedSchedules(horariosDesordenados);
+    const horariosActuales: (NrcTag | undefined)[] =
+      getOrderedSchedules(horariosDesordenados);
 
     // Saber si existen horarios consecutivos
-    const areConsecutive: boolean = thereAreConsecutives(horariosActuales as NrcTag[]);
+    const areConsecutive: boolean = thereAreConsecutives(
+      horariosActuales as NrcTag[]
+    );
     // Conseguir el horario mas cercano a la hora mas cercana
-    const nearestCourse: NrcTag | undefined = getNearestCourse(horariosActuales, areConsecutive);
+    const nearestCourse: NrcTag | undefined = getNearestCourse(
+      horariosActuales,
+      areConsecutive
+    );
     if (!nearestCourse) {
       return;
     }
 
     return setLoanData(setValue, nearestCourse, dispatch);
-  }
+  };
 
-  const onChange = (selectedItem: any, {action}: ActionMeta<any>) => {
-    const {setValue} = props;
+  const onChange = (selectedItem: any, { action }: ActionMeta<any>) => {
+    const { setValue } = props;
     const options: any = {
-      'clear': () => clearAction(setValue),
-      'select-option': () => {
+      clear: () => clearAction(setValue),
+      "select-option": () => {
         loadLoanData(setValue, selectedItem);
-      }
-    }
+      },
+    };
 
     return options[action]();
-  }
+  };
 
   return (
-    <FormListGroup 
+    <FormListGroup
       label={{
-        text: 'Materia',
+        text: "Materia",
         styles: {
           marginBottom: ".5rem",
-        }
+        },
       }}
       listInput={{
         isLoading: isLoading,
-        name: 'materias',
-        placeholder: 'Materia',
+        name: "materias",
+        placeholder: "Materia",
         size: 70,
         optionList: courses,
         styles: {
@@ -110,6 +119,7 @@ export default function CourseSelector(props: SelectorProps) {
         onChange,
         initialValue: defaultValue,
         disabled,
-      }} />
+      }}
+    />
   );
 }

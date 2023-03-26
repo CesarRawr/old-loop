@@ -1,11 +1,11 @@
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import { composeWithDevTools } from 'redux-devtools-extension';
+import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
+import { composeWithDevTools } from "redux-devtools-extension";
 
-import devicesReducer from '../features/devices/deviceSlice';
-import coursesReducer from '../features/courses/courseSlice';
-import createLoanReducer from '../features/loan/create-loan-form/createLoanFormSlice';
-import activeLoansListReducer from '../features/loan/active-loans-list/activeLoansListSlice';
-import modifyLoanReducer from '../features/loan/modify-loan-form/modifyLoanFormSlice';
+import devicesReducer from "../features/devices/deviceSlice";
+import coursesReducer from "../features/courses/courseSlice";
+import createLoanReducer from "../features/loan/create-loan-form/createLoanFormSlice";
+import activeLoansListReducer from "../features/loan/active-loans-list/activeLoansListSlice";
+import modifyLoanReducer from "../features/loan/modify-loan-form/modifyLoanFormSlice";
 
 export const store = configureStore({
   reducer: {

@@ -2,10 +2,10 @@
   display: flex;
   align-items: center;
   height: 100%;
-  padding: 0 .4rem;
+  padding: 0 0.4rem;
 
   cursor: default;
-  transition: background-color .2s ease 0s;
+  transition: background-color 0.2s ease 0s;
 }
 
 .nav:hover {
@@ -35,11 +35,11 @@
 .dropdownBtn {
   display: block;
   text-decoration: none;
-  padding: .6rem 1.6rem;
+  padding: 0.6rem 1.6rem;
 
   font-size: 1.3rem;
-  font-family: 'Roboto', sans-serif;
-  transition: background-color .2s ease 0s;
+  font-family: "Roboto", sans-serif;
+  transition: background-color 0.2s ease 0s;
 }
 
 .dropdownBtn:hover {

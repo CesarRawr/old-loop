@@ -1,14 +1,14 @@
-import {useState} from 'react';
-import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
-import style from './TimePickerModalStyles';
+import { useState } from "react";
+import Box from "@mui/material/Box";
+import Modal from "@mui/material/Modal";
+import style from "./TimePickerModalStyles";
 
-import {getDayjsFormatByHour} from '@utils/index';
-import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
-import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
-import {StaticTimePicker} from '@mui/x-date-pickers/StaticTimePicker';
+import { getDayjsFormatByHour } from "@utils/index";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { StaticTimePicker } from "@mui/x-date-pickers/StaticTimePicker";
 
-import type {TimePickerModalProps} from '@models/interfaces';
+import type { TimePickerModalProps } from "@models/interfaces";
 
 export default function TimePickerModal(props: TimePickerModalProps) {
   const [initialTime] = useState(getDayjsFormatByHour());
@@ -22,14 +22,15 @@ export default function TimePickerModal(props: TimePickerModalProps) {
       >
         <Box sx={style}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <StaticTimePicker 
+            <StaticTimePicker
               ampm={props.ampm}
               defaultValue={initialTime}
               minTime={props.minTime}
               maxTime={props.maxTime}
               shouldDisableTime={props.shouldDisableTime}
               onClose={props.handleClose}
-              onAccept={props.onAccept} />
+              onAccept={props.onAccept}
+            />
           </LocalizationProvider>
         </Box>
       </Modal>

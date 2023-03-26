@@ -1,14 +1,14 @@
-import type {StatusType, Semana} from '@models/types';
+import type { StatusType, Semana } from "@models/types";
 
 /**
-* @loans
-* Estas son interfaces que pertenecen a
-* las features de loan
-* */
+ * @loans
+ * Estas son interfaces que pertenecen a
+ * las features de loan
+ * */
 export interface Usuario {
   readonly _id: string;
   readonly nickname: string;
-  readonly pass: string; 
+  readonly pass: string;
   readonly rol: "common" | "admin";
 }
 
@@ -74,9 +74,9 @@ export interface Prestamo {
 }
 
 /*
-* @props
-* Props necesarias en los componentes.
-* */
+ * @props
+ * Props necesarias en los componentes.
+ * */
 export interface ActiveLoansListRowProps {
   id: number;
   prestamo: Prestamo;
@@ -97,9 +97,9 @@ export interface DispositivosProps {
 }
 
 /*
-* @state
-* States necesarias en los slices.
-* */
+ * @state
+ * States necesarias en los slices.
+ * */
 export interface ModifyLoanState {
   selectedLoan?: Prestamo;
   status: StatusType;
@@ -123,15 +123,15 @@ export interface ReturnLoanState {
 }
 
 /*
-* @misc
-* Interfaces varias usadas en la carpeta loan.
-* */
+ * @misc
+ * Interfaces varias usadas en la carpeta loan.
+ * */
 export interface ModifyData {
-  isNew?: boolean,
-  operation?: 'suma' | 'resta' | 'idle',
-  difference: number,
-  deviceID: string,
-  nombre: string,
+  isNew?: boolean;
+  operation?: "suma" | "resta" | "idle";
+  difference: number;
+  deviceID: string;
+  nombre: string;
 }
 
 export interface DataToSend {

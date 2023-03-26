@@ -1,12 +1,12 @@
-import {useEffect, useMemo} from 'react';
-import {FormListGroup} from '@ui/index';
-import {ActionMeta} from 'react-select';
+import { useEffect, useMemo } from "react";
+import { FormListGroup } from "@ui/index";
+import { ActionMeta } from "react-select";
 
-import {setControl} from '@devices/deviceSlice';
-import type {SelectorProps} from '@models/interfaces';
-import {useAppSelector, useAppDispatch} from '@app/hooks';
+import { setControl } from "@devices/deviceSlice";
+import type { SelectorProps } from "@models/interfaces";
+import { useAppSelector, useAppDispatch } from "@app/hooks";
 
-import {fetchClassrooms, selectClassrooms} from '../courseSlice';
+import { fetchClassrooms, selectClassrooms } from "../courseSlice";
 
 export default function ClassroomSelector(props: SelectorProps) {
   const dispatch = useAppDispatch();
@@ -14,15 +14,17 @@ export default function ClassroomSelector(props: SelectorProps) {
 
   // En caso de haber un valor inicial, se crea una función
   // estática para enviar el valor en su respectivo objeto.
-  const {initialValue} = props;
+  const { initialValue } = props;
   const defaultValue: any = useMemo(() => {
-    return !initialValue ? undefined: {
-      label: initialValue.materia.horario.aula,
-      value: initialValue.materia.horario.aula,
-    }
+    return !initialValue
+      ? undefined
+      : {
+          label: initialValue.materia.horario.aula,
+          value: initialValue.materia.horario.aula,
+        };
   }, [initialValue]);
 
-  const {isLoading, disabled} = props;
+  const { isLoading, disabled } = props;
   useEffect(() => {
     if (!isLoading && !disabled) {
       dispatch(fetchClassrooms());
@@ -30,27 +32,27 @@ export default function ClassroomSelector(props: SelectorProps) {
   }, [dispatch, isLoading]);
 
   const onChange = (selectedItem: any, actionMeta: ActionMeta<any>) => {
-    if (actionMeta.action === 'clear') {
-      props.setValue('aulas', '');
+    if (actionMeta.action === "clear") {
+      props.setValue("aulas", "");
       return;
     }
 
-    props.setValue('aulas', selectedItem);
+    props.setValue("aulas", selectedItem);
     dispatch(setControl(selectedItem.value));
-  }
+  };
 
   return (
-    <FormListGroup 
+    <FormListGroup
       label={{
-        text: 'Aula',
+        text: "Aula",
         styles: {
           marginBottom: ".5rem",
-        }
+        },
       }}
       listInput={{
         isLoading: isLoading,
-        name: 'aulas',
-        placeholder: 'Aula',
+        name: "aulas",
+        placeholder: "Aula",
         size: 20,
         optionList: classrooms,
         styles: {
@@ -61,6 +63,7 @@ export default function ClassroomSelector(props: SelectorProps) {
         initialValue: defaultValue,
         disabled,
         disableClearable: true,
-      }} />
+      }}
+    />
   );
 }

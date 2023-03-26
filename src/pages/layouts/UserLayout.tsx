@@ -1,17 +1,13 @@
-import {Header} from '@ui/index';
-import styles from './UserLayout.module.css';
-import type {UserLayoutProps} from '@models/interfaces';
+import { Header } from "@ui/index";
+import styles from "./UserLayout.module.css";
+import type { UserLayoutProps } from "@models/interfaces";
 
 // This layout contains a header with not admin options
-export default function UserLayout({children}: UserLayoutProps) {
+export default function UserLayout({ children }: UserLayoutProps) {
   return (
     <div className={styles.layout}>
       <Header />
-      <main>
-        {
-          children
-        }
-      </main>
+      <main>{children}</main>
     </div>
   );
 }

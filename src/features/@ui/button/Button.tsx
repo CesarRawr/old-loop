@@ -1,8 +1,8 @@
-import {useRef, useEffect, useState} from 'react';
-import style from './Button.module.css';
+import { useRef, useEffect, useState } from "react";
+import style from "./Button.module.css";
 
-import type {MouseElementFunction} from '@models/types';
-import type {ButtonProps} from '@models/interfaces';
+import type { MouseElementFunction } from "@models/types";
+import type { ButtonProps } from "@models/interfaces";
 
 export default function Button(props: ButtonProps) {
   const ref = useRef<any>(null);
@@ -17,16 +17,15 @@ export default function Button(props: ButtonProps) {
   }, [ref]);
 
   return (
-    <button 
+    <button
       ref={ref}
-      type={props.type ? props.type: "button"}
-      className={style.btn} 
-      onClick={props.onClick} 
+      type={props.type ? props.type : "button"}
+      className={style.btn}
+      onClick={props.onClick}
       disabled={props.disabled}
-      style={{...props.style, ...styles}}>
-      {
-        props.text
-      }
+      style={{ ...props.style, ...styles }}
+    >
+      {props.text}
     </button>
   );
 }

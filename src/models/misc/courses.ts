@@ -1,6 +1,6 @@
-import { Dayjs } from 'dayjs';
-import {Prestamo} from './loan';
-import {CourseTag, NrcTag, TeacherTag} from '@models/types';
+import { Dayjs } from "dayjs";
+import { Prestamo } from "./loan";
+import { CourseTag, NrcTag, TeacherTag } from "@models/types";
 
 export interface SelectorProps {
   initialValue?: Prestamo;
@@ -27,4 +27,4 @@ export interface CourseState {
   courses: CourseTag[];
   nrcs: NrcTag[];
   teachers: TeacherTag[];
-};
+}

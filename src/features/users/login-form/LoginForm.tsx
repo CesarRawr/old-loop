@@ -1,14 +1,14 @@
-import axios from 'axios';
-import {useState} from 'react';
-import {Form} from 'react-final-form';
-import Button from '@mui/material/Button';
-import {useNavigate} from 'react-router-dom';
+import axios from "axios";
+import { useState } from "react";
+import { Form } from "react-final-form";
+import Button from "@mui/material/Button";
+import { useNavigate } from "react-router-dom";
 
-import {openDialog} from '@utils/index';
-import {useAppDispatch} from '@app/hooks';
-import {InputMui, Label} from '@ui/index';
-import {urlBase} from '../../../variables';
-import styles from './LoginForm.module.css';
+import { openDialog } from "@utils/index";
+import { useAppDispatch } from "@app/hooks";
+import { InputMui, Label } from "@ui/index";
+import { urlBase } from "../../../variables";
+import styles from "./LoginForm.module.css";
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -18,71 +18,72 @@ export default function LoginForm() {
   // Function to get values when submit form
   const onSubmit = (values: any) => {
     if (!values.nickname || !values.password) {
-      openDialog('Mensaje', 'No deje campos vacios');
+      openDialog("Mensaje", "No deje campos vacios");
       return;
-    };
+    }
 
     setIsLoading(true);
-    axios.post(`${urlBase}/v1/login`, {
-      nickname: values.nickname,
-      pass: values.password,
-    })
-    .then((response: any) => {
-      setIsLoading(false);
-      if (response.status === 200) {
-        localStorage.setItem('token', response.data.token);
-        navigate('/home');
-      }
-    })
-    .catch((error: any) => {
-      setIsLoading(false);
-      console.log(error);
-      if (error.code === 'ERR_NETWORK') {
-        openDialog('Mensaje', 'Error al conectar con servidor');
-        return;
-      }
+    axios
+      .post(`${urlBase}/v1/login`, {
+        nickname: values.nickname,
+        pass: values.password,
+      })
+      .then((response: any) => {
+        setIsLoading(false);
+        if (response.status === 200) {
+          localStorage.setItem("token", response.data.token);
+          navigate("/home");
+        }
+      })
+      .catch((error: any) => {
+        setIsLoading(false);
+        console.log(error);
+        if (error.code === "ERR_NETWORK") {
+          openDialog("Mensaje", "Error al conectar con servidor");
+          return;
+        }
 
-      if (error.response.status === 401) {
-        openDialog('Mensaje', 'Usuario y/o contraseña incorrectos');
-        return;
-      }
+        if (error.response.status === 401) {
+          openDialog("Mensaje", "Usuario y/o contraseña incorrectos");
+          return;
+        }
 
-      if (error.response.status === 500) {
-        openDialog('Mensaje', 'Error al conectar con servidor');
-        return;
-      }
+        if (error.response.status === 500) {
+          openDialog("Mensaje", "Error al conectar con servidor");
+          return;
+        }
 
-      openDialog('Mensaje', 'Error al conectar con servidor');
-    });
-  }
+        openDialog("Mensaje", "Error al conectar con servidor");
+      });
+  };
 
   return (
     <div className={styles.loginForm}>
-      <Form 
+      <Form
         onSubmit={onSubmit}
         render={({ handleSubmit, form }) => (
-          <form
-            onSubmit={handleSubmit}
-            className={styles.form}>
-            <div style={{
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <div
+              style={{
                 display: "flex",
                 justifyContent: "center",
                 marginBottom: ".9rem",
-              }}>
+              }}
+            >
               <Label text="Login" size="28px" />
             </div>
 
-            <InputMui label="Usuario" name="nickname"/>
+            <InputMui label="Usuario" name="nickname" />
             <InputMui label="Contraseña" type="password" name="password" />
 
-            <div style={{marginTop: '.5rem'}}>
-              <Button 
-              type="submit"
-              disabled={isLoading}
-              variant="contained">Login</Button>
+            <div style={{ marginTop: ".5rem" }}>
+              <Button type="submit" disabled={isLoading} variant="contained">
+                Login
+              </Button>
             </div>
           </form>
-        )} />
+        )}
+      />
     </div>
   );
 }

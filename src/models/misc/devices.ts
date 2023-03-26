@@ -1,4 +1,4 @@
-import {Dispositivo, MetaDispositivo} from '@models/interfaces';
+import { Dispositivo, MetaDispositivo } from "@models/interfaces";
 
 export interface Item extends Dispositivo {
   value: string;
@@ -14,5 +14,5 @@ export interface DevicesDropdownProps {
 export interface DevicesState {
   selectedDevices: Item[];
   devices: Item[];
-  status: 'idle' | 'loading' | 'failed';
+  status: "idle" | "loading" | "failed";
 }

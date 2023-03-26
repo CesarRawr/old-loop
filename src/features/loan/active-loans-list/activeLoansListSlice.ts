@@ -1,14 +1,10 @@
-import type {Prestamo, LoanState} from '@models/interfaces';
-import type {StatusType} from '@models/types';
-import {urlBase} from '../../../variables';
-import {RootState} from '@app/store';
-import axios from 'axios';
+import type { Prestamo, LoanState } from "@models/interfaces";
+import type { StatusType } from "@models/types";
+import { urlBase } from "../../../variables";
+import { RootState } from "@app/store";
+import axios from "axios";
 
-import {
-  createSlice,
-  PayloadAction,
-  createAsyncThunk
-} from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 
 ///////////////////////////
 // State
@@ -17,30 +13,36 @@ const initialState: LoanState = {
   activeLoans: [],
   selectedLoanIndex: -1,
   selectedLoanIsDisabled: false,
-  status: 'loading',
-}
+  status: "loading",
+};
 
 ///////////////////////////
 // Async functions
 ///////////////////////////
 
 // Function to getActiveLoans
-export const fetchActiveLoans = createAsyncThunk('loan/getActiveLoans', async (arg, {dispatch}) => {
-  dispatch(setSelectedLoanIndex(-1));
-  const token = localStorage.getItem('token');
-  const config = {
-    headers: { Authorization: `Bearer ${token}` }
-  };
+export const fetchActiveLoans = createAsyncThunk(
+  "loan/getActiveLoans",
+  async (arg, { dispatch }) => {
+    dispatch(setSelectedLoanIndex(-1));
+    const token = localStorage.getItem("token");
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
 
-  const {data, status} = await axios.get(`${urlBase}/v1/loans/active`, config);
-  return data.data;
-});
+    const { data, status } = await axios.get(
+      `${urlBase}/v1/loans/active`,
+      config
+    );
+    return data.data;
+  }
+);
 
 ///////////////////////////
 // Slice
 ///////////////////////////
 export const activeLoansListSlice = createSlice({
-  name: 'activeLoansList',
+  name: "activeLoansList",
   initialState,
   reducers: {
     setStatus: (state, action: PayloadAction<StatusType>) => {
@@ -58,16 +60,16 @@ export const activeLoansListSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-    .addCase(fetchActiveLoans.pending, (state) => {
-      state.status = 'loading';
-    })
-    .addCase(fetchActiveLoans.fulfilled, (state, action) => {
-      state.status = 'idle';
-      state.activeLoans = action.payload;
-    })
-    .addCase(fetchActiveLoans.rejected, (state) => {
-      state.status = 'failed';
-    });
+      .addCase(fetchActiveLoans.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchActiveLoans.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.activeLoans = action.payload;
+      })
+      .addCase(fetchActiveLoans.rejected, (state) => {
+        state.status = "failed";
+      });
   },
 });
 
@@ -77,16 +79,19 @@ export default activeLoansListSlice.reducer;
 // Actions
 ///////////////////////////
 export const {
-  setStatus, 
+  setStatus,
   setActiveLoans,
-  setSelectedLoanIndex, 
-  setSelectedLoanIsDisabled
+  setSelectedLoanIndex,
+  setSelectedLoanIsDisabled,
 } = activeLoansListSlice.actions;
 
 ///////////////////////////
 // Selectors
 ///////////////////////////
 export const selectStatus = (state: RootState) => state.activeLoans.status;
-export const selectActiveLoans = (state: RootState) => state.activeLoans.activeLoans;
-export const selectSelectedLoanIndex = (state: RootState) => state.activeLoans.selectedLoanIndex;
-export const selectSelectedLoanIsDisabled = (state: RootState) => state.activeLoans.selectedLoanIsDisabled;
+export const selectActiveLoans = (state: RootState) =>
+  state.activeLoans.activeLoans;
+export const selectSelectedLoanIndex = (state: RootState) =>
+  state.activeLoans.selectedLoanIndex;
+export const selectSelectedLoanIsDisabled = (state: RootState) =>
+  state.activeLoans.selectedLoanIsDisabled;

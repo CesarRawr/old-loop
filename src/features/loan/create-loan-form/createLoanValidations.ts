@@ -1,6 +1,6 @@
 // Validaciones sencillas
 export const firstValidations = (formData: any, selectedDevices: any) => {
-	const formDataProperties: string[] = [
+  const formDataProperties: string[] = [
     "aulas",
     "horaFin",
     "horaInicio",
@@ -14,26 +14,27 @@ export const firstValidations = (formData: any, selectedDevices: any) => {
       return {
         isValid: false,
         dialog: {
-          title: 'Alerta',
-          description: 'No dejes campos vacios',
-        }
-      }
+          title: "Alerta",
+          description: "No dejes campos vacios",
+        },
+      };
     }
   }
 
   // Revisar si no hay campos vacios
-  if (typeof formData.aulas === 'string' ||
-    typeof formData.horaFin === 'string' || 
-    typeof formData.horaInicio === 'string' || 
-    typeof formData.maestros === 'string' || 
-    typeof formData.materias === 'string') {
-    
+  if (
+    typeof formData.aulas === "string" ||
+    typeof formData.horaFin === "string" ||
+    typeof formData.horaInicio === "string" ||
+    typeof formData.maestros === "string" ||
+    typeof formData.materias === "string"
+  ) {
     return {
       isValid: false,
       dialog: {
-        title: 'Alerta',
-        description: 'No dejes campos vacios',
-      }
+        title: "Alerta",
+        description: "No dejes campos vacios",
+      },
     };
   }
 
@@ -42,9 +43,9 @@ export const firstValidations = (formData: any, selectedDevices: any) => {
     return {
       isValid: false,
       dialog: {
-        title: 'Alerta',
-        description: 'La hora de inicio no puede ser igual a la hora de fin',
-      }
+        title: "Alerta",
+        description: "La hora de inicio no puede ser igual a la hora de fin",
+      },
     };
   }
 
@@ -53,9 +54,9 @@ export const firstValidations = (formData: any, selectedDevices: any) => {
     return {
       isValid: false,
       dialog: {
-        title: 'Alerta',
-        description: 'La hora de inicio no puede ser mayor a la hora de fin',
-      }
+        title: "Alerta",
+        description: "La hora de inicio no puede ser mayor a la hora de fin",
+      },
     };
   }
 
@@ -64,9 +65,9 @@ export const firstValidations = (formData: any, selectedDevices: any) => {
     return {
       isValid: false,
       dialog: {
-        title: 'Alerta',
-        description: 'Selecciona al menos un dispositivo',
-      }
+        title: "Alerta",
+        description: "Selecciona al menos un dispositivo",
+      },
     };
   }
 
@@ -76,19 +77,24 @@ export const firstValidations = (formData: any, selectedDevices: any) => {
       isValid: false,
       requireAcceptOption: true,
       dialog: {
-        title: 'Alerta',
-        description: 'Hay información en el préstamo que no se encuentra en la base de datos. ¿Deseas continuar?',
-      }
+        title: "Alerta",
+        description:
+          "Hay información en el préstamo que no se encuentra en la base de datos. ¿Deseas continuar?",
+      },
     };
   }
 
   return {
     isValid: true,
   };
-}
+};
 
 // Validaciones complejas relacionadas con dispositivos
-export const secondValidations = (formData: any, selectedDevices: any, devices: any) => {
+export const secondValidations = (
+  formData: any,
+  selectedDevices: any,
+  devices: any
+) => {
   // saber si el salón seleccionado tiene un control
   const isThereAControl = devices.filter((device: any) => {
     const deviceName = device.nombre.split(" ")[1];
@@ -107,9 +113,10 @@ export const secondValidations = (formData: any, selectedDevices: any, devices: 
       isValid: false,
       requireAcceptOption: true,
       dialog: {
-        title: 'Alerta',
-        description: 'Usted seleccionó un salón que tiene un control de proyector. Pero no eligió ningun control, ¿Desea continuar?',
-      }
+        title: "Alerta",
+        description:
+          "Usted seleccionó un salón que tiene un control de proyector. Pero no eligió ningun control, ¿Desea continuar?",
+      },
     };
   }
 
@@ -119,9 +126,10 @@ export const secondValidations = (formData: any, selectedDevices: any, devices: 
       isValid: false,
       requireAcceptOption: true,
       dialog: {
-        title: 'Alerta',
-        description: 'Te estás llevando mas de un control de proyector. ¿Deseas continuar?',
-      }
+        title: "Alerta",
+        description:
+          "Te estás llevando mas de un control de proyector. ¿Deseas continuar?",
+      },
     };
   }
 
@@ -131,9 +139,10 @@ export const secondValidations = (formData: any, selectedDevices: any, devices: 
       isValid: false,
       requireAcceptOption: true,
       dialog: {
-        title: 'Alerta',
-        description: 'Usted seleccionó un salón que no tiene un control de proyector. Pero eligió un control de proyector, ¿Desea continuar?',
-      }
+        title: "Alerta",
+        description:
+          "Usted seleccionó un salón que no tiene un control de proyector. Pero eligió un control de proyector, ¿Desea continuar?",
+      },
     };
   }
 
@@ -146,32 +155,32 @@ export const secondValidations = (formData: any, selectedDevices: any, devices: 
         isValid: false,
         requireAcceptOption: false,
         dialog: {
-          title: 'Alerta',
+          title: "Alerta",
           description: `Solo puedes llevarte el control que pertenece al aula ${formData.aulas.value}`,
-        }
+        },
       };
     }
   }
 
   return {
     isValid: true,
-  }
-}
+  };
+};
 
 const checkNew = (formData: any) => {
   let newDataNames = [];
 
-  if (formData.aulas.hasOwnProperty('__isNew__')) {
-    newDataNames.push('aula');
+  if (formData.aulas.hasOwnProperty("__isNew__")) {
+    newDataNames.push("aula");
   }
 
-  if (formData.maestros.hasOwnProperty('__isNew__')) {
-    newDataNames.push('maestro');
+  if (formData.maestros.hasOwnProperty("__isNew__")) {
+    newDataNames.push("maestro");
   }
 
-  if (formData.materias.hasOwnProperty('__isNew__')) {
-    newDataNames.push('materia');
+  if (formData.materias.hasOwnProperty("__isNew__")) {
+    newDataNames.push("materia");
   }
 
   return newDataNames;
-}
+};

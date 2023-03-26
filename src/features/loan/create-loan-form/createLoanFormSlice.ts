@@ -1,35 +1,35 @@
-import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {RootState} from '@app/store';
-import type {Prestamo, CreateLoanState} from '@models/interfaces';
-import {urlBase} from '../../../variables';
-import axios from 'axios';
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "@app/store";
+import type { Prestamo, CreateLoanState } from "@models/interfaces";
+import { urlBase } from "../../../variables";
+import axios from "axios";
 
 ///////////////////////////
 // State
 ///////////////////////////
 const initialState: CreateLoanState = {
   prestamo: {
-    observaciones: '',
-    status: 'activo',
+    observaciones: "",
+    status: "activo",
     maestro: {
-      _id: '',
-      nombre: '',
+      _id: "",
+      nombre: "",
     },
     materia: {
-      _id: '',
-      nombre: '',
-      nrc: '',
+      _id: "",
+      nombre: "",
+      nrc: "",
       horario: {
-        aula: '',
+        aula: "",
         horaInicio: 0,
         horaFin: 0,
-        dia: 'lunes',
+        dia: "lunes",
       },
     },
     dispositivos: [],
     usuario: {
-      _id: '',
-      nickname: '',
+      _id: "",
+      nickname: "",
     },
     timelog: {
       inicioOriginal: new Date().toString(),
@@ -39,31 +39,38 @@ const initialState: CreateLoanState = {
   },
   isLoading: false,
   error: false,
-}
+};
 
 ///////////////////////////
 // Async functions
 ///////////////////////////
 
 // Function to upload loan
-export const uploadLoan = createAsyncThunk('loan/uploadLoan', async (prestamo: Prestamo) => {
-  const token = localStorage.getItem('token');
-  const config = {
-    headers: { Authorization: `Bearer ${token}` }
-  };
+export const uploadLoan = createAsyncThunk(
+  "loan/uploadLoan",
+  async (prestamo: Prestamo) => {
+    const token = localStorage.getItem("token");
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
 
-  const {data, status} = await axios.post(`${urlBase}/v1/loan`, prestamo, config);
-  return {
-    data,
-    status,
-  };
-});
+    const { data, status } = await axios.post(
+      `${urlBase}/v1/loan`,
+      prestamo,
+      config
+    );
+    return {
+      data,
+      status,
+    };
+  }
+);
 
 ///////////////////////////
 // Slice
 ///////////////////////////
 export const createLoanSlice = createSlice({
-  name: 'createLoan',
+  name: "createLoan",
   initialState,
   reducers: {
     setIsLoading: (state, action: PayloadAction<boolean>) => {
@@ -87,9 +94,10 @@ export default createLoanSlice.reducer;
 ///////////////////////////
 // Actions
 ///////////////////////////
-export const {setIsLoading} = createLoanSlice.actions;
+export const { setIsLoading } = createLoanSlice.actions;
 
 ///////////////////////////
 // Selectors
 ///////////////////////////
-export const selectLoanIsLoading = (state: RootState) => state.createLoan.isLoading;
+export const selectLoanIsLoading = (state: RootState) =>
+  state.createLoan.isLoading;
