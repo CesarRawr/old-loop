@@ -1,5 +1,10 @@
 import { Prestamo } from "@models/interfaces";
-import { getDecimalHour } from "@utils/index";
+import {
+  getDecimalHour,
+  getDateFromISOFormat,
+  setHourToDate,
+  isDate1AfterDate2,
+} from "@utils/index";
 
 // Buscar préstamos expirados
 export const searchExpiredLoans = (
@@ -7,21 +12,26 @@ export const searchExpiredLoans = (
 ): Prestamo[] | undefined => {
   let isChanged: boolean = false;
   const actualHour: number = getDecimalHour();
-  const today: Date = new Date(new Date().toLocaleDateString("en-US"));
+  const today: Date = getDateFromISOFormat();
   // Actualizar los préstamos activos de manera local
   const updatedActiveLoans: Prestamo[] = activeLoans.map(
     (prestamo: Prestamo) => {
-      // Obtener objetos date de las fechas con formato MM/DD/YYYY
-      // para compararlas
-      const loanDay: Date = new Date(
-        new Date(prestamo.timelog.inicio).toLocaleDateString("en-US")
+      // Obtener fecha de inicio del préstamo
+      const loanDate: Date = getDateFromISOFormat(prestamo.timelog.inicio);
+      // Agregar hora del préstamo a la fecha del préstamo
+      const completeLoanDate: Date = setHourToDate(
+        loanDate,
+        prestamo.materia.horario.horaFin
       );
 
-      // Si la hora o fecha actual es mayor a la hora de regreso y el status es diferente de deuda
-      const isOutOfDay: boolean = loanDay < today;
-      const isOutOfHour: boolean =
-        actualHour >= prestamo.materia.horario.horaFin;
-      if ((isOutOfDay || isOutOfHour) && prestamo.status !== "deuda") {
+      // Almacenar si la fecha y hora de hoy es mayor a la fecha de préstamo
+      const isTodayAfterLoanDate: boolean = isDate1AfterDate2(
+        today,
+        completeLoanDate
+      );
+      // Si la fecha del préstamo es mayor a la actual, y no tiene el status de deuda
+      // Se actualiza el status a deuda.
+      if (isTodayAfterLoanDate && prestamo.status !== "deuda") {
         isChanged = true;
         return {
           ...prestamo,

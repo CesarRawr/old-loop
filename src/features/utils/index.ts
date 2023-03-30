@@ -9,14 +9,22 @@ import { Semana, LoanInputName } from "@models/types";
 import "dayjs/locale/es";
 dayjs.locale("es");
 
+// Agregar dias a una fecha
 export const addDays = (date: Date, days: number): Date => {
   const newDate: Date = dayjs(date).add(days, "day").toDate();
   return newDate;
 };
 
+// Agregar horas a una hora
 export const addHoursToHour = (hour: number, toAdd: number): Dayjs => {
-  const formatedHour = dayjs().hour(hour).add(toAdd, "hour");
+  const formatedHour: Dayjs = dayjs().hour(hour).add(toAdd, "hour");
   return formatedHour;
+};
+
+// Setear una hora especifica a una fecha
+export const setHourToDate = (date: Date, hour: number): Date => {
+  const hourAdded = dayjs(date).hour(hour).toDate();
+  return hourAdded;
 };
 
 // Obtener una fecha en formato iso 8601
@@ -33,6 +41,7 @@ export const getDate = (date?: Date): string => {
   return formatedDate;
 };
 
+// Obtener fecha en formato MM/DD/YYYY
 export const getMDYDateString = (date?: Date): string => {
   const formatedDate: string = dayjs(date ?? undefined).format("MM/DD/YYYY");
   return formatedDate;
@@ -65,10 +74,15 @@ export const getDayjsFormatByHour = (hour?: number): Dayjs => {
   return dayjs(time.toISOString());
 };
 
+// Saber si dos fechas son iguales
 export const areSameDates = (date1: Date, date2: Date): boolean => {
   const dayte1: Dayjs = dayjs(date1);
-  const dayte2: Dayjs = dayjs(date2);
-  return dayte1.isSame(dayte2, "day");
+  return dayte1.isSame(date2, "day");
+};
+
+export const isDate1AfterDate2 = (date1: Date, date2: Date): boolean => {
+  const dayte1: Dayjs = dayjs(date1);
+  return dayte1.isAfter(date2);
 };
 
 //////////////////////////////

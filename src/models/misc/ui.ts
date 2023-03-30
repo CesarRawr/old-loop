@@ -128,3 +128,7 @@ export interface DateSelectorProps {
   disabled: boolean;
   setValue: any;
 }
+
+export interface CheckboxListProps {
+  itemList: string[];
+}
