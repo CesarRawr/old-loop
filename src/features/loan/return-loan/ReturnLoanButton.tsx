@@ -1,4 +1,4 @@
-import { Button } from "@ui/index";
+import { Button, CheckboxList } from "@ui/index";
 import { useAppDispatch, useAppSelector } from "@app/hooks";
 import {
   openAcceptDialog,
@@ -25,7 +25,7 @@ export default function ReturnLoanButton(props: ReturnLoanButtonProps) {
     e.stopPropagation();
     openAcceptDialog(
       "Lista de dispositivos a devolver:",
-      deviceList,
+      <CheckboxList itemList={["hola", "adios", "Hola de nuevo", "asd", "hehehe"]} />,
       returnLoanHandler,
       props
     );

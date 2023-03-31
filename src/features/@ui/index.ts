@@ -16,3 +16,4 @@ export { default as InputMui } from "./inputMui/InputMui";
 export { default as DatePicker } from "./datePicker/DatePicker";
 export { default as LabelTooltip } from "./labelTooltip/LabelTooltip";
 export { default as TimePickerModal } from "./timePickerModal/TimePickerModal";
+export { default as CheckboxList } from "./checkboxList/CheckboxList";
